@@ -1,0 +1,36 @@
+name: CAPSTONE
+services:
+    node-back:
+        container_name: node-back
+        restart: always
+        build:
+            dockerfile: dev.DockerFile
+            context: ./nodejs
+        volumes:
+            - ./nodejs:/usr/back/app
+        ports:
+            - "3000:3000" # Express가 3000 포트에서 실행한다고 가정
+        command: ["npm", "run", "start"] # 서버 실행
+
+    react-front:
+      container_name: react-front
+      restart: always
+      build:
+        dockerfile: dev.DockerFile
+        context: ./reactfront
+      volumes:
+        - ./reactfront:/usr/front/app
+      ports:
+        - '3005:3000'
+      command: ["npm", "run", "start"]
+
+    python:
+      container_name: python
+      restart: always
+      build:
+        dockerfile: dev.DockerFile
+        context: ./python
+      volumes:
+        - ./python:/usr/python/app
+      ports:
+        - '5000:5000'  # Flask가 5000 포트에서 실행한다고 가정
