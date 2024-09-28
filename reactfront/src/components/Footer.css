@@ -1,0 +1,77 @@
+.footer {
+    color: rgb(99, 99, 99);
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+    padding: 0% 10%;
+    background-color: #f8f9fa; /* 상단 배경색 */
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px; /* 요소 간의 간격을 설정 */
+}
+
+.footer-content div {
+    min-width: 150px; /* 최소 너비 설정 */
+    margin: 10px; /* 각 요소의 여백 */
+}
+
+.customer-service {
+    flex: 2; /* 고객센터 비율 */
+}
+
+.service {
+    flex: 1; /* 서비스 비율 (공지사항 포함) */
+}
+
+.travel {
+    flex: 1; /* 모든 여행 비율 */
+}
+
+.footer h3 {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    font-weight: bold; /* 글씨 굵게 */
+    margin-bottom: 1.2em;
+}
+
+.footer p {
+    margin: 10px 0; /* 줄 간격 늘리기 */
+    font-size: 0.9em;
+    line-height: 1.2; /* 줄 간격 설정 */
+    font-weight: 600; /* 글씨 굵게 */
+}
+
+.phone-number {
+    font-weight: bold;
+}
+
+.kakao-button {
+    background-color: #ffeb3b;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9em;
+    border-radius: 5px;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #888;
+    font-weight: 600; /* 글씨 굵게 */
+}
+
+.footer a {
+    color: rgb(99, 99, 99); /* 기본 링크 색상 */
+    text-decoration: none; /* 밑줄 제거 */
+    transition: color 0.3s; /* 색상 변화 시 부드러운 전환 효과 */
+}
+
+.footer a:hover {
+    color: rgba(99, 99, 99, 0.6); /* 마우스 오버 시 색상 변경 (더 옅은 회색) */
+    text-decoration: underline; /* 마우스 오버 시 밑줄 추가 */
+}

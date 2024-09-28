@@ -1,0 +1,7 @@
+.Login {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1% 10%;
+    background-color: #f8f9fa; /* 상단 배경색 */
+  }
