@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import joi from 'joi';
+import jwt from 'jsonwebtoken';
 import { prisma } from '../utils/prisma/prisma.js';
 const UsersRouter = express.Router();
 
@@ -59,9 +60,34 @@ const SignUpSchema = joi.object({
             'any.required': '성별은 필수입니다.'
         })
   });
+/*---------------------------------------------
+    [JOI-로그인 스키마]
+---------------------------------------------*/
+  const SignInSchema = joi.object({
+    email: joi.string().email().min(8).max(70).required().messages({
+      'string.min': '이메일은 최소 8자 이상이어야 한다.',
+      'string.max': '이메일은 최대 70자 이하여야 한다.',
+      'any.required': '이메일은 반드시 작성해야 한다.',
+    }),
+    password: joi
+      .string()
+      .min(6)
+      .max(20)
+      .pattern(/^[!@#$%^&*a-zA-Z0-9]*$/)
+      .required()
+      .messages({
+        'string.min': '비밀번호는 최소 6자 이상이어야 합니다.',
+        'string.max': '비밀번호는 최대 20자까지 가능합니다.',
+        'string.pattern.base': '패스워드는 영문, 숫자, 특수문자 중 한 가지 이상 포함되어야 한다.',
+        'any.required': '패스워드는 반드시 작성해야 한다.',
+      }),
+  });
 
 /*---------------------------------------------
     [회원가입]
+    1. JOI 유효성 검사
+    2. 이메일 중복 검사
+    3. DB에 삽입
 ---------------------------------------------*/
 UsersRouter.post('/sign/signup', async (req, res) => {
     try {
@@ -104,5 +130,66 @@ UsersRouter.post('/sign/signup', async (req, res) => {
       //return next(error);
     }
   });
+
+/*---------------------------------------------
+    [로그인]
+    1. JOI 유효성 검사
+    2. 이메일 중복 검사
+    3. DB에 삽입
+
+    TODO:
+      에러 처리 미들웨어 구현
+---------------------------------------------*/
+UsersRouter.post('/sign/signin', async (req, res) => {
+    try {
+        const userVal = await SignInSchema.validateAsync(req.body);
+  
+        const { email, password } = userVal;
+        const loginUser = await prisma.users.findUnique({
+            where: {
+              email,
+            },
+        });
+      
+        if (!loginUser) {
+            res.send(400).send("존재하지 않는 이메일입니다.");
+        }
+    
+        const hashedPassword = loginUser.password;
+        const match = await bcrypt.compare(password, hashedPassword);
+    
+        if (!match) {
+            res.send(400).send("비밀번호가 일치하지 않습니다.");
+        }
+      
+        const accessToken = jwt.sign(
+        {
+            id: loginUser.id,
+        },
+        process.env.ACCESS_SECRET_KEY,
+        { expiresIn: '1h' },
+        );
+    
+        const refreshToken = jwt.sign(
+            { id: loginUser.id,},
+            process.env.REFRESH_SECRET_KEY,
+            { expiresIn: '7d' },
+        );
+      
+        res.setHeader('Authorization', `Bearer ${accessToken}`);
+    
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+      
+        return res.status(200).json({ message: '로그인 성공' });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send("실패");
+    }
+});
+
   
 export default UsersRouter;
