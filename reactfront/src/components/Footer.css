@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 20px; /* 요소 간의 간격을 설정 */
+    gap: 20px; /* 요소 간의 간격 설정 */
 }
 
 .footer-content div {
