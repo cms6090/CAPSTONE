@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 20px; /* 요소 간의 간격 설정 */
+    gap: 20px; /* 요소 간의 간격을 설정 */
 }
 
 .footer-content div {
@@ -62,11 +62,11 @@
     margin-top: 20px;
     font-size: 0.8em;
     color: #888;
-    font-weight: 600;
+    font-weight: 600; /* 글씨 굵게 */
 }
 
 .footer a {
-    color: rgb(99, 99, 99);
+    color: rgb(99, 99, 99); /* 기본 링크 색상 */
     text-decoration: none; /* 밑줄 제거 */
     transition: color 0.3s; /* 색상 변화 시 부드러운 전환 효과 */
 }

@@ -7,6 +7,8 @@ import Login from './pages/Login';
 import Notice from './pages/Notice';
 import FAQ from './pages/FAQ';
 import './App.css';
+import COMPONENTTEST from './pages/COMPONENTTEST'
+import Signup from './pages/Signup';
 
 function App() {
   return (
@@ -17,6 +19,9 @@ function App() {
         <Route path="/login" element={<Login />} /> {/* 로그인 페이지 */}
         <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/} 
         <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/} 
+        <Route path="/componenettest" element={<COMPONENTTEST/>}/>
+        <Route path="/signup" element={<Signup/>}/>
+
 
         {/* 필요한 다른 라우트 추가 */}
       </Routes>

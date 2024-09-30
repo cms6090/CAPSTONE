@@ -1,5 +1,5 @@
 import React from 'react';
-import './Footer.css';
+import './Footer.css'; // CSS 스타일을 위한 파일
 import { Button1 } from './Button.style';
 import { HiMiniChatBubbleOvalLeft } from 'react-icons/hi2';
 import { IoIosCall } from 'react-icons/io';

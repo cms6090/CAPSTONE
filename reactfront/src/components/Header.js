@@ -1,7 +1,7 @@
 import React from 'react';
-import './Header.css';
+import './Header.css'; // CSS 파일을 통해 스타일링을 적용합니다.
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logo.svg'; // 경로 수정
 import { Button1, Button2 } from './Button.style'; // Button1과 Button2 불러오기
 
 function Header() {

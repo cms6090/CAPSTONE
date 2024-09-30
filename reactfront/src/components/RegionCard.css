@@ -1,0 +1,26 @@
+.region-card {
+  scroll-snap-align: start; /* 스냅 정렬 */
+  flex: 0 0 15.2%; /* 화면에서 6개 카드가 보이도록 설정 */
+  box-sizing: border-box; /* 패딩 및 마진 포함 */
+  margin-right: 10px; /* 카드 간격 */
+  overflow: hidden; /* 이미지가 모서리를 넘지 않도록 */
+  cursor: pointer; /* 포인터 커서로 변경 */
+  transition: transform 0.3s; /* 부드러운 전환 효과 */
+}
+
+.region-card:hover {
+    filter: brightness(0.8); /* 마우스를 올렸을 때 어두워짐 */
+}
+
+.region-image {
+  width: 100%; /* 카드 너비에 맞추기 */
+  object-fit: cover; /* 이미지 비율 유지 */
+  border-radius: 15px; /* 동그란 모서리 */
+}
+
+.region-name {
+  font-size: 1em; /* 텍스트 크기 */
+  font-weight: bold; /* 텍스트 두껍게 */
+  padding: 10px; /* 패딩 추가 */
+  color: #333; /* 텍스트 색상 */
+}
