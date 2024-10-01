@@ -1,6 +1,6 @@
 .login-container {
   max-width: 35%;
-  margin:  auto; /* 페이지 중앙 정렬 */
+  margin: auto; /* 페이지 중앙 정렬 */
   padding: 20px;
   background-color: #fff; /* 배경색 */
 }
@@ -36,23 +36,11 @@ input::placeholder {
   color: rgb(200, 200, 200);
 }
 
-input::-webkit-input-placeholder{
-  color: rgb(200, 200, 200);
-}
-
-input:-ms-input-placeholder{
-  color: rgb(200, 200, 200);
-}
-
 .options {
   display: flex; /* 플렉스 박스 사용 */
   justify-content: space-between; /* 양쪽 끝으로 정렬 */
   align-items: center; /* 세로 중앙 정렬 */
   margin: 10px 0; /* 위, 아래쪽 여백 추가 */
-}
-
-.options p {
-  font-size: 0.8em;
 }
 
 .remember-me-label {

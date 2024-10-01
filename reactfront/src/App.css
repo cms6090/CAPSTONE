@@ -3,7 +3,7 @@
 
 /* 모든 요소에 기본 폰트 적용 */
 * {
-    font-family: 'pretendard-bold', 'pretendard-black', 'pretendard-regular', Arial, sans-serif;  /* 기본 폰트 설정 */
+    font-family: 'pretendard-bold', 'pretendard-regular', 'pretendard-light', Arial, sans-serif;  /* 기본 폰트 설정 */
     margin: 0; /* 기본 여백 제거 */
     padding: 0; /* 기본 패딩 제거 */
     box-sizing: border-box; /* 박스 모델 설정 */

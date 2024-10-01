@@ -18,6 +18,7 @@ import {
   GridToolbarExport,
 } from '@mui/x-data-grid';
 
+// 초기 데이터(행) 정의
 const initialRows = [
   {
     id: 129067,
@@ -77,25 +78,36 @@ const initialRows = [
 ];
 
 function EditToolbar(props) {
-  const { setRows, onSearch } = props;
+  const { setRows, existingIDs, onSearch, saveChanges } = props;
+
+  const generateUniqueContentID = (existingIDs) => {
+    let newID;
+    do {
+      newID = Math.floor(100000 + Math.random() * 900000);
+    } while (existingIDs.includes(newID));
+    return newID;
+  };
 
   const handleClick = () => {
-    const id = Math.random(); // Random ID for new row
-    setRows((oldRows) => [
-      ...oldRows,
-      {
-        id,
-        title: '',
-        part: '',
-        area: '',
-        sigungu: '',
-        addr: '',
-        tel: '',
-        firstimage: '',
-        firstimage2: '',
-        isNew: true,
-      },
-    ]);
+    const newID = generateUniqueContentID(existingIDs);
+    setRows((oldRows) => {
+      const newRows = [
+        ...oldRows,
+        {
+          id: newID,
+          title: '',
+          part: '',
+          area: '',
+          sigungu: '',
+          addr: '',
+          tel: '',
+          firstimage: '',
+          firstimage2: '',
+          isNew: true,
+        },
+      ];
+      return newRows;
+    });
   };
 
   return (
@@ -105,12 +117,10 @@ function EditToolbar(props) {
       </Button>
       <GridToolbarColumnsButton />
       <GridToolbarDensitySelector />
-      <GridToolbarExport
-        csvOptions={{
-          fileName: 'customerDataBase',
-          utf8WithBom: true,
-        }}
-      />
+      <GridToolbarExport csvOptions={{ fileName: 'customerDataBase', utf8WithBom: true }} />
+      <Button color="primary" startIcon={<SaveIcon />} onClick={saveChanges}>
+        Save Changes
+      </Button>
       <Box sx={{ flexGrow: 1 }} />
       <GridToolbarFilterButton />
       <TextField
@@ -122,33 +132,35 @@ function EditToolbar(props) {
           width: '200px',
           '& .MuiOutlinedInput-root': {
             borderRadius: '4px',
-            border: '1px solid primary', // 회색 테두리
+            border: '1px solid primary',
             backgroundColor: 'white',
           },
-          '& .MuiOutlinedInput-input': {
-            padding: '10px',
-          },
-        }} // 오른쪽 끝으로 이동
+          '& .MuiOutlinedInput-input': { padding: '10px' },
+        }}
       />
     </GridToolbarContainer>
   );
 }
 
 export default function CombinedDataGrid() {
-  const [rows, setRows] = React.useState(initialRows);
+  const [rows, setRows] = React.useState(() => {
+    const savedRows = localStorage.getItem('rows');
+    return savedRows ? JSON.parse(savedRows) : initialRows; // 로컬 스토리지에서 데이터 불러오기
+  });
   const [rowModesModel, setRowModesModel] = React.useState({});
   const [searchText, setSearchText] = React.useState('');
+
+  const existingIDs = rows.map((row) => row.id);
 
   const handleEditClick = (id) => () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
   const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    setRows((prevRows) => {
+      const newRows = prevRows.filter((row) => row.id !== id); // 해당 ID의 행을 삭제
+      return newRows;
+    });
   };
 
   const handleCancelClick = (id) => () => {
@@ -156,16 +168,21 @@ export default function CombinedDataGrid() {
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
-
     const editedRow = rows.find((row) => row.id === id);
     if (editedRow.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
+      setRows((prevRows) => {
+        const newRows = prevRows.filter((row) => row.id !== id); // 새로 추가된 행이면 삭제
+        return newRows;
+      });
     }
   };
 
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    setRows((prevRows) => {
+      const newRows = prevRows.map((row) => (row.id === newRow.id ? updatedRow : row));
+      return newRows;
+    });
     return updatedRow;
   };
 
@@ -173,16 +190,25 @@ export default function CombinedDataGrid() {
     setRowModesModel(newRowModesModel);
   };
 
+  const handleCellEditCommit = (params) => {
+    setRowModesModel({ ...rowModesModel, [params.id]: { mode: GridRowModes.Edit } });
+  };
+
+  const saveChanges = () => {
+    localStorage.setItem('rows', JSON.stringify(rows)); // 모든 변경 사항을 로컬 스토리지에 저장
+    alert('Changes saved!'); // 사용자에게 저장 완료 메시지
+  };
+
   const columns = [
-    {field:'id', headName:'contentId',editable:false},
+    { field: 'id', headerName: 'Content ID', editable: false },
     { field: 'title', headerName: 'Title', width: 180, editable: true },
     { field: 'part', headerName: 'Part', width: 120, editable: true },
     { field: 'area', headerName: 'Area', width: 150, editable: true },
     { field: 'sigungu', headerName: 'Sigungu', width: 150, editable: true },
     { field: 'addr', headerName: 'Address', width: 250, editable: true },
     { field: 'tel', headerName: 'Telephone', width: 120, editable: true },
-    { field: 'firstimage', headerName: 'image1', width: 120, editable: true },
-    { field: 'firstimage2', headerName: 'imaeg2', width: 120, editable: true },
+    { field: 'firstimage', headerName: 'Image 1', width: 120, editable: true },
+    { field: 'firstimage2', headerName: 'Image 2', width: 120, editable: true },
     {
       field: 'actions',
       type: 'actions',
@@ -193,7 +219,7 @@ export default function CombinedDataGrid() {
 
         if (isInEditMode) {
           return [
-            <GridActionsCellItem icon={<SaveIcon />} label="Save" onClick={handleSaveClick(id)} />,
+            <GridActionsCellItem icon={<SaveIcon />} label="Save" onClick={saveChanges} />,
             <GridActionsCellItem
               icon={<CancelIcon />}
               label="Cancel"
@@ -235,11 +261,12 @@ export default function CombinedDataGrid() {
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
         processRowUpdate={processRowUpdate}
+        onCellEditCommit={handleCellEditCommit}
         slots={{
           toolbar: EditToolbar,
         }}
         slotProps={{
-          toolbar: { setRows, onSearch: setSearchText },
+          toolbar: { setRows, existingIDs, onSearch: setSearchText, saveChanges }, // saveChanges를 props로 추가
         }}
       />
     </Box>
