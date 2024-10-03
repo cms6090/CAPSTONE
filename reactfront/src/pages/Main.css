@@ -1,5 +1,10 @@
 .Main {
-    align-items: center;
-    padding: 1% 10%;
-    background-color: #f8f9fa; /* 상단 배경색 */
-  }
+  align-items: center;
+  padding: 1% 10%;
+  background-color: #f8f9fa; /* 상단 배경색 */
+}
+
+.main-content {
+  margin-Bottom: 1%; 
+  padding-Left: 1%
+}

@@ -23,11 +23,11 @@ const Footer = () => {
           </p>
           <p>
             <Button1 style={buttonStyle}>
-              <IoIosCall style={{ marginRight: '10px' }} />
+              <IoIosCall style={{ marginRight: '10px' }}/>
               전화 문의
             </Button1>
             <Button1 style={buttonStyle}>
-              <HiMiniChatBubbleOvalLeft style={{ marginRight: '10px' }} />
+              <HiMiniChatBubbleOvalLeft style={{ marginRight: '10px' }}/>
               카카오 문의
             </Button1>
           </p>

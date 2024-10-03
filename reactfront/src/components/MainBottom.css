@@ -1,0 +1,34 @@
+.Bottom-title {
+    margin-bottom: 2%;
+}
+
+.region-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6개씩 배치 */
+  gap: 10px; /* 카드 사이의 간격 */
+  justify-items: start;
+}
+
+.region-part {
+  text-align: center; /* 중앙 정렬 */
+}
+
+.region-link {
+  color: #2979ff; /* 글씨색 파란색 */
+  text-decoration: none; /* 밑줄 제거 */
+}
+
+.region-link:hover {
+  /* 마우스를 올렸을 때 효과 */
+  text-decoration: underline; /* 밑줄 추가 */
+}
+
+.region-link:visited {
+  color: #2979ff; /* 클릭한 후에도 색상이 파란색으로 유지 */
+}
+
+.region-part span {
+  font-family: 'pretendard-regular';
+  font-size: 0.9em;
+  font-weight: 700;
+}
