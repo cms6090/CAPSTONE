@@ -14,32 +14,40 @@ const SearchSection = () => {
   });
   const [isStartDate, setIsStartDate] = useState(true); // Track if selecting start date
 
+  // Handle the selection of dates
   const handleSelect = (ranges) => {
     const { startDate, endDate } = ranges.selection;
-
-    // Update the selection range
-    if (isStartDate) {
+  
+    // Check if endDate is before startDate, and swap them if necessary
+    if (endDate && startDate && endDate < startDate) {
+      setSelectionRange({
+        startDate: endDate,  // Swap dates
+        endDate: startDate,
+        key: 'selection',
+      });
+    } else {
       setSelectionRange({
         startDate: startDate,
         endDate: endDate || startDate, // If no endDate, set it to startDate
         key: 'selection',
       });
-      setIsStartDate(false); // Switch to selecting end date
-    } else {
-      setSelectionRange({
-        startDate: selectionRange.startDate, // Keep the previous start date
-        endDate: endDate,
-        key: 'selection',
-      });
-      setShowDatePicker(false); // Close date picker after selecting end date
     }
+  
+    if (!isStartDate) {
+      setShowDatePicker(false); // Close the date picker after selecting the end date
+    }
+  
+    // Toggle date selection mode between start and end date
+    setIsStartDate(!isStartDate);
   };
 
+  // Handle Start Date selection click
   const handleStartDateClick = () => {
     setIsStartDate(true);
     setShowDatePicker(true);
   };
 
+  // Handle End Date selection click
   const handleEndDateClick = () => {
     if (selectionRange.startDate) {
       setIsStartDate(false);
@@ -69,26 +77,35 @@ const SearchSection = () => {
             </div>
 
             {/* Start Date Input */}
-            <div className="col-md-2">
+            <div className="col-md-3">
               <input
                 type="text"
                 className="form-control"
-                value={selectionRange.startDate ? selectionRange.startDate.toLocaleDateString('ko-KR') : '시작일 선택'}
+                value={
+                    selectionRange.startDate && selectionRange.endDate
+                      ? `${selectionRange.startDate.toLocaleDateString('ko-KR')} - ${selectionRange.endDate.toLocaleDateString('ko-KR')}`
+                      : '날짜 선택하기'
+                  }
                 onClick={handleStartDateClick}
                 readOnly
               />
             </div>
 
-            {/* End Date Input */}
+            {/* End Date Input
             <div className="col-md-2">
               <input
                 type="text"
                 className="form-control"
-                value={selectionRange.endDate ? selectionRange.endDate.toLocaleDateString('ko-KR') : '종료일 선택'}
+                value={
+                    selectionRange.startDate && selectionRange.endDate
+                      ? `${selectionRange.startDate.toLocaleDateString('ko-KR')} - ${selectionRange.endDate.toLocaleDateString('ko-KR')}`
+                      : '날짜 선택하기'
+                  }
+                // value={selectionRange.endDate ? selectionRange.endDate.toLocaleDateString('ko-KR') : '종료일 선택'}
                 onClick={handleEndDateClick}
                 readOnly
               />
-            </div>
+            </div> */}
 
             <div className="col-md-2">
               <select className="form-select">
