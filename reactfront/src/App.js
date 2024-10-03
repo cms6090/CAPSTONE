@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import SignIn from './components/SignIn';
+import Navbar from './components/Navbar';
+import SearchSection from './components/SearchSection';
+import EventSection from './components/EventSection';
+import PopularDestinations from './components/PopularDestinations';
+import AccommodationSection from './components/AccommodationSection';
+import Footer from './components/Footer';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS import
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <div>
+                            <Navbar />
+                            <SearchSection />
+                            <EventSection />
+                            <PopularDestinations />
+                            <AccommodationSection />
+                            <Footer />
+                        </div>
+                    }
+                />
+                <Route
+                    path="/signIn"
+                    element={
+                      <div>
+                        <Navbar />
+                        <SignIn />
+                      </div>
+                    }
+                />
+            </Routes>
+        </Router>
+    );
+};
 
 export default App;
