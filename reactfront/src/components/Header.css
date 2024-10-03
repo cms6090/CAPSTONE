@@ -4,6 +4,7 @@
   align-items: center;
   padding: 1% 10%;
   background-color: #f8f9fa; /* 상단 배경색 */
+  border-bottom: 1px solid rgb(231, 231, 231);
 }
 
 .logo img {

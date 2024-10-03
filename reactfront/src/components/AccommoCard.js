@@ -1,8 +1,9 @@
 import '../../node_modules/swiper/swiper.css';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './AccommoCard.css'; // CSS 파일 import
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 import
+import { Button3 } from './Button.style'; // Button3 컴포넌트 import
 
 // 이미지 import
 import arrowLeft from '../assets/Arrowleft.svg';
@@ -64,27 +65,59 @@ const swiperList = [
   },
 ];
 
-export default function SwiperCrd() {
+const categories = {
+  전체: swiperList,
+  '호텔·리조트': swiperList.filter(
+    (data) => data.part === '관광호텔' || data.part === '서비스드레지던스' || data.part === '관광단지',
+  ),
+  '모텔·유스호스텔': swiperList.filter(
+    (data) => data.part === '모텔' || data.part === '유스호스텔',
+  ),
+  '게스트하우스': swiperList.filter(
+    (data) => data.part === '게스트하우스' || data.part === '민박' || data.part === '홈스테이',
+  ),
+  '캠핑·펜션': swiperList.filter((data) => data.part === '야영장' || data.part === '펜션'),
+  '전통 숙소': swiperList.filter((data) => data.part === '한옥' || data.part === '관광단지'),
+};
+
+export default function AccommoCard() {
+  const [selectedCategory, setSelectedCategory] = useState('전체'); // 기본값은 '전체'
   const swiperRef = useRef(null); // Swiper 인스턴스를 저장할 ref
   const navigate = useNavigate(); // useNavigate 훅 사용
 
-  // 지역으로 이동하는 함수
   const goToAccommo = (accommoId) => {
-    navigate(`/accommodations?id=${encodeURIComponent(accommoId)}`); // 지역 이름을 쿼리 파라미터로 전달
+    navigate(`/accommodations?id=${encodeURIComponent(accommoId)}`); // 숙소 이름을 쿼리 파라미터로 전달
   };
 
   // 슬라이드 이동 처리
   const handleSlideChange = (direction) => {
     const newIndex = swiperRef.current.activeIndex + direction * 6;
-    const clampedIndex = Math.max(0, Math.min(swiperList.length - 1, newIndex)); // 인덱스 범위 제한
+    const clampedIndex = Math.max(0, Math.min(categories[selectedCategory].length - 1, newIndex)); // 인덱스 범위 제한
     swiperRef.current?.slideTo(clampedIndex); // 안전하게 슬라이드로 이동
   };
 
   return (
     <div className="swiper-card-wrapper">
+      <div className="button-group">
+        {Object.keys(categories).map((category) => (
+          <Button3
+            key={category}
+            onClick={() => setSelectedCategory(category)}
+            style={{
+              backgroundColor: selectedCategory === category ? 'black' : 'transparent', // 선택된 버튼 배경색
+              color: selectedCategory === category ? 'white' : 'black', // 선택된 버튼 글자색
+            }}
+          >
+            {category}
+          </Button3>
+        ))}
+      </div>
+
       <div className="accomo-card-container">
         <Swiper
-          onBeforeInit={(swiper) => { swiperRef.current = swiper; }}
+          onBeforeInit={(swiper) => {
+            swiperRef.current = swiper;
+          }}
           slidesPerView={1}
           breakpoints={{
             400: { slidesPerView: 2 },
@@ -96,7 +129,7 @@ export default function SwiperCrd() {
             1920: { slidesPerView: 4 },
           }}
         >
-          {swiperList.map((data) => (
+          {categories[selectedCategory].map((data) => (
             <SwiperSlide key={data.id}>
               <div className="card-wrap" onClick={() => goToAccommo(data.id)}>
                 <img
@@ -111,7 +144,7 @@ export default function SwiperCrd() {
                   <h4>
                     {data.minfee ? (
                       <>
-                        {parseInt(data.minfee).toLocaleString()} {/* 1000 단위로 콤마 추가 */}
+                        {parseInt(data.minfee).toLocaleString()}
                         <span
                           style={{
                             fontSize: '0.8em',

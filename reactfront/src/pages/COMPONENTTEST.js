@@ -1,20 +1,14 @@
 import React from 'react';
-import ArrowRight from '../components/Arrowright';
-import ArrowLeft from '../components/Arrowleft';
 import Table from '../components/Table';
 import AccommoCard from '../components/AccommoCard';
+import SettingList from '../components/SettingList';
 
-import StyledPickerContainer from '../components/DatePicker';
+import DatePickerValue from '../components/DatePicker';
 import RegionCard from '../components/RegionCard';
 
 function COMPONENTTEST() {
   return (
     <div>
-      <div style={{ display: 'flex' }}>
-        화살표
-        <ArrowLeft />
-        <ArrowRight />
-      </div>
       <div>
         지역 카드
         <RegionCard />
@@ -28,8 +22,11 @@ function COMPONENTTEST() {
         <AccommoCard/>
       </div>
       <div>
-        캘린더
-        {/* <StyledPickerContainer /> */}
+        설정
+        <SettingList/>
+      </div>
+      <div>날짜
+        <DatePickerValue/>
       </div>
     </div>
   );

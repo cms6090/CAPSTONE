@@ -2,8 +2,14 @@
   position: relative;
 }
 
+.button-group {
+  display: flex;
+  gap: 0.3em;
+  margin: 1%;
+}
+
 .accomo-card-container {
-  margin: 0% 0.79%;
+  margin: 0;
 }
 
 .card-wrap {
@@ -39,13 +45,13 @@
 .accommo-addr {
   color: #919090;
   font-weight: 300;
-  height: 2.5em;
+  height: 3em;
 }
 
 .accomo-prev-btn,
 .accomo-next-btn {
   position: absolute;
-  top: 30%;
+  top: 39%;
   transform: translateY(-50%);
   z-index: 10;
   background-color: white; /* 버튼 배경 색상 */
@@ -57,9 +63,9 @@
 }
 
 .accomo-prev-btn {
-  left: 0px; /* 왼쪽 버튼 위치 */
+  left: -1%; /* 왼쪽 버튼 위치 */
 }
 
 .accomo-next-btn {
-  right: 0px; /* 오른쪽 버튼 위치 */
+  right: -1%; /* 오른쪽 버튼 위치 */
 }

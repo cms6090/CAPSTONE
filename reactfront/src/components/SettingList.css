@@ -1,0 +1,42 @@
+.setting-list {
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 정렬 */
+  border: 1px solid rgb(231, 231, 231);
+  border-radius: 15px;
+}
+
+.button-container {
+  display: flex;
+  align-items: center; /* 수직 정렬 */
+  padding: 0.8em; /* 패딩 설정 */
+  cursor: pointer; /* 커서 변경 */
+  transition: background-color 0.3s; /* 부드러운 전환 효과 */
+  color: black;
+  text-decoration: none;
+  border-bottom: 1px solid rgb(231, 231, 231);
+}
+
+/* 마지막 버튼의 border-bottom 제거 */
+.button-container:last-child {
+  border-bottom: none; /* 마지막 버튼의 border-bottom을 없앰 */
+}
+
+.setting-container {
+  margin: 0.5em;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 글자와 화살표 사이의 간격 조정 */
+  width: 100%; /* 전체 너비를 차지하도록 설정 */
+}
+
+.setting-name {
+  font-family: 'pretendard-regular';
+  font-weight: 600;
+  flex-grow: 1; /* 글자가 가능한 만큼 공간을 차지하게 함 */
+  margin-right: 10px; /* 글자와 화살표 사이의 간격 조정 */
+}
+
+.highlight .setting-name {
+  color: #4E8AD9; /* 강조된 텍스트 색상 */
+}

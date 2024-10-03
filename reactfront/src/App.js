@@ -9,6 +9,9 @@ import FAQ from './pages/FAQ';
 import './App.css';
 import COMPONENTTEST from './pages/COMPONENTTEST';
 import Signup from './pages/Signup';
+import ProfileInfo from './pages/ProfileInfo';
+import ProfileReserve from './pages/ProfileReserve';
+import ProfileSetting from './pages/ProfileSetting';
 
 function App() {
   return (
@@ -21,6 +24,9 @@ function App() {
         <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/}
         <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
         <Route path="/componenettest" element={<COMPONENTTEST />} />
+        <Route path="/profile/reservations" element={<ProfileReserve />} />
+        <Route path="/profile/info" element={<ProfileInfo />} />
+        <Route path="/profile/setting" element={<ProfileSetting />} />
         {/* 필요한 다른 라우트 추가 */}
       </Routes>
       <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}
