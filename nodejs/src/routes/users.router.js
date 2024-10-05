@@ -142,6 +142,7 @@ UsersRouter.post('/sign/signup', async (req, res) => {
       에러 처리 미들웨어 구현
 ---------------------------------------------*/
 UsersRouter.post('/sign/signin', async (req, res) => {
+  console.log("ss");
     try {
         const userVal = await SignInSchema.validateAsync(req.body);
   

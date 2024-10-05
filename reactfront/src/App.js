@@ -8,38 +8,41 @@ import EventSection from './components/EventSection';
 import PopularDestinations from './components/PopularDestinations';
 import AccommodationSection from './components/AccommodationSection';
 import Footer from './components/Footer';
+import { AuthProvider } from './context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS import
 
 
 const App = () => {
-    return (
-        <Router>
-            <Routes>
-                <Route
-                    path="/"
-                    element={
+  return (
+      <AuthProvider>  {/* AuthProvider로 전체 앱을 감쌉니다 */}
+          <Router>
+              <Routes>
+                  <Route
+                      path="/"
+                      element={
+                          <div>
+                              <Navbar />
+                              <SearchSection />
+                              <EventSection />
+                              <PopularDestinations />
+                              <AccommodationSection />
+                              <Footer />
+                          </div>
+                      }
+                  />
+                  <Route
+                      path="/signIn"
+                      element={
                         <div>
-                            <Navbar />
-                            <SearchSection />
-                            <EventSection />
-                            <PopularDestinations />
-                            <AccommodationSection />
-                            <Footer />
+                          <Navbar />
+                          <SignIn />
                         </div>
-                    }
-                />
-                <Route
-                    path="/signIn"
-                    element={
-                      <div>
-                        <Navbar />
-                        <SignIn />
-                      </div>
-                    }
-                />
-            </Routes>
-        </Router>
-    );
+                      }
+                  />
+              </Routes>
+          </Router>
+      </AuthProvider>
+  );
 };
 
 export default App;
