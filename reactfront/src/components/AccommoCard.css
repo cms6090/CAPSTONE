@@ -12,10 +12,10 @@
   margin: 0;
 }
 
-.card-wrap {
+.accommo-card-wrap {
   overflow: hidden; /* 이미지가 모서리를 넘지 않도록 */
   padding: 0;
-  margin: 0 5%;
+  margin: 0 3%;
   cursor: pointer; /* 포인터 커서로 변경 */
 }
 
@@ -46,6 +46,7 @@
   color: #919090;
   font-weight: 300;
   height: 3em;
+  font-size: 0.8em;
 }
 
 .accomo-prev-btn,
@@ -68,4 +69,12 @@
 
 .accomo-next-btn {
   right: -1%; /* 오른쪽 버튼 위치 */
+}
+
+.accommo-title {
+  font-size: 1em;
+}
+
+.accommo-price {
+  font-size: 1em;
 }

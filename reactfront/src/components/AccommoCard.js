@@ -131,7 +131,7 @@ export default function AccommoCard() {
         >
           {categories[selectedCategory].map((data) => (
             <SwiperSlide key={data.id}>
-              <div className="card-wrap" onClick={() => goToAccommo(data.id)}>
+              <div className="accommo-card-wrap" onClick={() => goToAccommo(data.id)}>
                 <img
                   src={data.firstimage || 'https://via.placeholder.com/300'} // 기본 이미지 URL
                   alt={data.title}
@@ -139,9 +139,9 @@ export default function AccommoCard() {
                 />
                 <div className="accommo-info">
                   <div className="accommo-part">{data.part}</div>
-                  <h4>{data.title}</h4>
-                  <h5 className="accommo-addr">{data.addr}</h5>
-                  <h4>
+                  <div className='accommo-title'>{data.title}</div>
+                  <div className="accommo-addr">{data.addr}</div>
+                  <div className='accommo-price'>
                     {data.minfee ? (
                       <>
                         {parseInt(data.minfee).toLocaleString()}
@@ -159,7 +159,7 @@ export default function AccommoCard() {
                     ) : (
                       '정보 없음'
                     )}
-                  </h4>
+                  </div>
                 </div>
               </div>
             </SwiperSlide>

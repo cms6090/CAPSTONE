@@ -18,9 +18,11 @@ export const Button2 = styled(Button)(() => ({
   fontSize: '0.8em',
   fontWeight: '800',
   color: 'white',
+  width: '100%',
+  height: '100%',
   padding: '0.8em 1em',
-  border: '1px solid blue',
   borderRadius: '0.7em',
+  backgroundColor: '#097ce6',
 }));
 
 export const Button3 = styled(Button)(() => ({

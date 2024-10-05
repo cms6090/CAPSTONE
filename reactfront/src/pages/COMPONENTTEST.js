@@ -5,6 +5,8 @@ import SettingList from '../components/SettingList';
 
 import DatePickerValue from '../components/DatePicker';
 import RegionCard from '../components/RegionCard';
+import Map from '../components/Map';
+import SearchSection from '../components/SearchSection';
 
 function COMPONENTTEST() {
   return (
@@ -18,15 +20,16 @@ function COMPONENTTEST() {
         <Table />
       </div>
       <div>
-        숙소 카드
-        <AccommoCard/>
+        날짜
+        <DatePickerValue />
       </div>
       <div>
-        설정
-        <SettingList/>
+        지도
+        <Map />
       </div>
-      <div>날짜
-        <DatePickerValue/>
+      <div>
+        검색 창
+        <SearchSection />
       </div>
     </div>
   );

@@ -10,8 +10,9 @@ import './App.css';
 import COMPONENTTEST from './pages/COMPONENTTEST';
 import Signup from './pages/Signup';
 import ProfileInfo from './pages/ProfileInfo';
-import ProfileReserve from './pages/ProfileReserve';
+import ProfileReserve from './pages/ProfileReserve';  
 import ProfileSetting from './pages/ProfileSetting';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
