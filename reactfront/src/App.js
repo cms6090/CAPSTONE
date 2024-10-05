@@ -10,7 +10,7 @@ import './App.css';
 import COMPONENTTEST from './pages/COMPONENTTEST';
 import Signup from './pages/Signup';
 import ProfileInfo from './pages/ProfileInfo';
-import ProfileReserve from './pages/ProfileReserve';  
+import ProfileReserve from './pages/ProfileReserve';
 import ProfileSetting from './pages/ProfileSetting';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -24,10 +24,10 @@ function App() {
         <Route path="/signup" element={<Signup />} /> {/*회원가입 페이지 */}
         <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/}
         <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
-        <Route path="/componenettest" element={<COMPONENTTEST />} />
-        <Route path="/profile/reservations" element={<ProfileReserve />} />
-        <Route path="/profile/info" element={<ProfileInfo />} />
-        <Route path="/profile/setting" element={<ProfileSetting />} />
+        <Route path="/componenettest" element={<COMPONENTTEST />} /> {/* 컴포넌트 테스트 페이지 */}
+        <Route path="/profile/reservations" element={<ProfileReserve />} />{/* 사용자 예약내역 페이지 */}
+        <Route path="/profile/info" element={<ProfileInfo />} />{/* 사용자 정보 페이지 */}
+        <Route path="/profile/setting" element={<ProfileSetting />} />{/* 사용자 설정 페이지 */}
         {/* 필요한 다른 라우트 추가 */}
       </Routes>
       <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}
