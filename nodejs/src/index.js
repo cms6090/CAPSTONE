@@ -1,13 +1,16 @@
-const express = require('express');
+import express from 'express';
+import dotenv from 'dotenv';
+import usersRouter from './routes/users.router.js';
+
 const app = express();
 const PORT = 3000;
 
-// 기본 라우트 설정
-app.get('/', (req, res) => {
-  res.send('node.js 서버가 3000번 포트에서 실행 중입니다!');
-});
+dotenv.config();
 
-// 서버 시작
+app.use(express.json());
+
+app.use('/api', [usersRouter]);
+
 app.listen(PORT, () => {
-  console.log(`nodejs 서버가 ${PORT} 포트에서 실행 중입니다.`);
+  console.log(PORT, '포트로 서버가 열렸어요!');
 });

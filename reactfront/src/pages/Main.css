@@ -1,0 +1,41 @@
+.Main {
+  padding: 0; /* 패딩 제거 */
+  overflow: hidden; /* 자식 요소가 부모를 벗어나지 않도록 설정 */
+}
+
+.Main-Header {
+  background-image: url('https://static.yeogi.com/_next/static/media/05_Kv_PC_Light.3deeaa46.webp');
+  background-size: cover;
+  padding: 1% 10%; /* 콘텐츠에 패딩 추가 */
+  display: flex;
+  align-items: flex-end;
+}
+
+.main-image {
+  width: 100vw; /* 화면 너비의 100%로 설정 */
+  height: auto; /* 높이를 자동으로 설정하여 비율 유지 */
+  position: relative; /* 이미지의 상대적 위치 설정 */
+  left: 50%; /* 왼쪽으로 50% 이동 */
+  transform: translateX(-50%); /* 중앙 정렬을 위해 이동 */
+}
+
+.SearchSection {
+  position: absolute; /* 절대 위치 설정 */
+  top: 50%; /* 이미지의 중앙에 위치 */
+  left: 50%; /* 중앙 정렬 */
+  transform: translate(-50%, -50%); /* 수직 및 수평 중앙 정렬 */
+  width: 100%; /* 너비 100%로 설정 */
+  z-index: 1; /* 이미지 위에 위치하도록 설정 */
+}
+
+.content {
+  position: relative; /* 콘텐츠의 위치 설정 */
+  padding: 1% 10%; /* 콘텐츠에 패딩 추가 */
+  background-color: #f8f9fa; /* 상단 배경색 */
+  z-index: 1; /* 이미지 위에 콘텐츠가 오도록 설정 */
+}
+
+.main-content {
+  margin: 1% 0;
+  padding-left: 1%;
+}
