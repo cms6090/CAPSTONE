@@ -10,8 +10,11 @@ import './App.css';
 import COMPONENTTEST from './pages/COMPONENTTEST';
 import Signup from './pages/Signup';
 import ProfileInfo from './pages/ProfileInfo';
-import ProfileReserve from './pages/ProfileReserve';  
+import ProfileReserve from './pages/ProfileReserve';
 import ProfileSetting from './pages/ProfileSetting';
+import Accommodations from './pages/Accommodations';
+import Accommodation from './pages/Accommodation';
+import Room from './pages/Room';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -24,6 +27,9 @@ function App() {
         <Route path="/signup" element={<Signup />} /> {/*회원가입 페이지 */}
         <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/}
         <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
+        <Route path="/accommodations" element={<Accommodations />} />
+        <Route path="/accommodations/:id" element={<Accommodation />} />
+        <Route path="/room" element={<Room />} />
         <Route path="/componenettest" element={<COMPONENTTEST />} />
         <Route path="/profile/reservations" element={<ProfileReserve />} />
         <Route path="/profile/info" element={<ProfileInfo />} />
