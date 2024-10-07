@@ -7,6 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model accommodations {
+  id           BigInt   @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  name         String   @db.VarChar(255)
+  area_id      BigInt?  @db.UnsignedBigInt
+  sigungu_id   Int?
+  addr         String   @db.VarChar(255)
+  description  String?  @db.Text
+  type         String?  @db.VarChar(50)
+  price        Decimal? @db.Decimal(10, 2)
+  maxOccupancy Int?
+  rating       Decimal? @db.Decimal(3, 2)
+  reviews      Int?
+  imageUrls    String?  @db.Text
+  areas        areas?   @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "accAreaId")
+
+  @@index([area_id], map: "accAreaId")
+}
+
+model areas {
+  id             BigInt           @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  area_name      String           @db.VarChar(255)
+  accommodations accommodations[]
+}
+
+model sigungu {
+  id            BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
+  sigungu_name  String    @db.VarChar(255)
+  area_id       BigInt?   @db.UnsignedBigInt
+  sigungu       sigungu?  @relation("sigunguTosigungu", fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sugunguAreaId")
+  other_sigungu sigungu[] @relation("sigunguTosigungu")
+
+  @@index([area_id], map: "sugunguAreaId")
+}
+
 model users {
   id            Int       @id @default(autoincrement())
   email         String    @unique(map: "UNIQUE") @db.VarChar(70)
