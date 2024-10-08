@@ -77,7 +77,7 @@ const categories = {
     (data) => data.part === '게스트하우스' || data.part === '민박' || data.part === '홈스테이',
   ),
   '캠핑·펜션': swiperList.filter((data) => data.part === '야영장' || data.part === '펜션'),
-  '전통 숙소': swiperList.filter((data) => data.part === '한옥' || data.part === '관광단지'),
+  '전통 숙소': swiperList.filter((data) => data.part === '한옥'),
 };
 
 export default function AccommoCard() {

@@ -1,59 +1,13 @@
 import React, { useEffect } from 'react';
+import ReactDOMServer from 'react-dom/server';
+import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
 
-export default function Map() {
+export default function Map({ locations }) {
+  // locations props 추가
   useEffect(() => {
     const { naver } = window;
 
     if (naver) {
-      // 데이터 배열
-      const locations = [
-        {
-          id: 129067,
-          title: '죽도마을',
-          part: '민박',
-          area: '전북특별자치도',
-          sigungu: '고창군',
-          addr: '전북특별자치도 고창군 부안면 봉암리 683',
-          minfee: '40000',
-        },
-        {
-          id: 129068,
-          title: '해리마을',
-          part: '민박',
-          area: '전북특별자치도',
-          sigungu: '고창군',
-          addr: '전북특별자치도 고창군 해리면 동호리',
-          minfee: '30000',
-        },
-        {
-          id: 129104,
-          title: '장촌마을',
-          part: '민박',
-          area: '전라남도',
-          sigungu: '여수시',
-          addr: '전라남도 여수시 삼산면 서도리',
-          minfee: '20000',
-        },
-        {
-          id: 136039,
-          title: '서울올림픽파크텔',
-          part: '유스호스텔',
-          area: '서울특별시',
-          sigungu: '송파구',
-          addr: '서울특별시 송파구 올림픽로 448',
-          minfee: '50000',
-        },
-        {
-          id: 136060,
-          title: '소노휴 양평',
-          part: '',
-          area: '경기도',
-          sigungu: '양평군',
-          addr: '경기도 양평군 개군면 신내길7번길 55',
-          minfee: '100000',
-        },
-      ];
-
       // 주소를 좌표로 변환하는 함수
       const geocodeAddress = (address) => {
         return new Promise((resolve, reject) => {
@@ -73,6 +27,11 @@ export default function Map() {
       // 초기 맵 설정
       const map = new naver.maps.Map('map', {
         zoom: 7, // 초기 줌 레벨
+        zoomControl: true,
+        zoomControlOptions: {
+          style: naver.maps.ZoomControlStyle.SMALL,
+          position: naver.maps.Position.TOP_RIGHT,
+        },
       });
 
       // 모든 마커의 위치를 기반으로 초기 중심 위치 설정
@@ -82,7 +41,6 @@ export default function Map() {
       const createPriceMarkers = async () => {
         for (const location of locations) {
           const address = location.addr;
-          const formattedPrice = Number(location.minfee).toLocaleString() + '원';
 
           try {
             console.log('주소를 변환 중:', address); // 주소 변환 전 확인
@@ -97,46 +55,120 @@ export default function Map() {
               icon: {
                 content: `
                   <div style="position: relative; background-color: white; padding: 10px; border: 1px solid lightgray; border-radius: 10px; font-size: 0.8em; font-weight: 500; width: 100px; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
-                    <span class="price" style="cursor: pointer;">${formattedPrice}</span>
+                    <span class="price" style="cursor: pointer; background-color: white;">${location.minfee}</span>
                     <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
                       border-left: 3px solid lightgray; 
                       border-right: 3px solid lightgray; 
                       border-top: 10px solid white;"></div>
                   </div>`,
-                size: new naver.maps.Size(100, 50),
                 anchor: new naver.maps.Point(50, 50),
               },
             });
+            const defaultImage = 'https://via.placeholder.com/151'; // 대체 이미지 URL
 
-            // hover 이벤트 등록
-            const contentString = `
-              <div style="padding: 10px; background-color: white; border-radius: 15px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);">
-                <h4 style="margin: 0; color: #333;">${location.title}</h4>
-                <p style="margin: 5px 0; color: #666;">주소: ${address}</p>
-                <p style="margin: 5px 0; color: #666;">요금: <strong>${formattedPrice}</strong></p>
-                <p style="margin: 5px 0; color: #666;">구역: ${location.area}</p>
-                <p style="margin: 5px 0; color: #666;">유형: ${location.part || "정보 없음"}</p>
-                <button style="padding: 5px 10px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">자세히 보기</button>
-              </div>
-            `;
+            // JSX 형식으로 카드 내용 정의
+            const cardContent = (
+              <a href={`/accommodations/${location.contentid}`} style={{textDecoration:'none'}}>
+                <div
+                  key={location.contentid}
+                  style={{
+                    display: 'flex',
+                    padding: '2%',
+                    backgroundColor: 'white',
+                    borderRadius: '15px',
+                  }}
+                >
+                  <img
+                    src={location.firstimage || defaultImage}
+                    style={{ width: '20%', borderRadius: '15px' }}
+                    alt={location.title}
+                  />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ flex: '1 0 auto', padding: '10px' }}>
+                      <h6 style={{ margin: 0 }}>{location.title}</h6>
+                      <p style={{ margin: '5px 0', color: 'gray', fontSize: '0.7em' }}>
+                        {location.part}
+                      </p>
+                      <p
+                        style={{
+                          margin: '5px 0',
+                          color: 'gray',
+                          fontSize: '0.8em',
+                          fontWeight: '700',
+                        }}
+                      >
+                        {location.addr}
+                      </p>
+                      <p
+                        style={{ margin: '5px 0', color: 'gray', fontSize: '0.8em' }}
+                      >{`${location.minfee}`}</p>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            );
+
+            // JSX를 HTML 문자열로 변환
+            const contentString = ReactDOMServer.renderToString(cardContent);
 
             const infoWindow = new naver.maps.InfoWindow({
               content: contentString,
-              backgroundColor: 'rgba(255,255,255,0)',
+              backgroundColor: 'transparent',
+              borderColor: 'none',
               borderWidth: 0,
               anchorSize: new naver.maps.Size(0, 0),
+              pixelOffset: new naver.maps.Point(0, -10),
             });
 
+            let isInfoWindowOpen = false; // InfoWindow 열림 상태
+
             naver.maps.Event.addListener(overlay, 'mouseover', () => {
-              const offsetPosition = new naver.maps.LatLng(position._lat + 0.5, position._lng);
-              infoWindow.open(map, offsetPosition);
+              if (!isInfoWindowOpen) {
+                infoWindow.open(map, overlay);
+              }
             });
 
             naver.maps.Event.addListener(overlay, 'mouseout', () => {
-              infoWindow.close();
+              if (!isInfoWindowOpen) {
+                infoWindow.close();
+              }
             });
 
-            console.log('금액 표시:', overlay); // 금액 표시 확인
+            naver.maps.Event.addListener(overlay, 'click', () => {
+              if (isInfoWindowOpen) {
+                infoWindow.close();
+                isInfoWindowOpen = false;
+
+                overlay.setIcon({
+                  content: `
+                    <div style="position: relative; background-color: white; padding: 10px; border: 1px solid lightgray; border-radius: 10px; font-size: 0.8em; font-weight: 500; width: 100px; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+                      <span class="price" style="cursor: pointer; background-color: white;">${location.minfee}</span>
+                      <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
+                        border-left: 3px solid lightgray; 
+                        border-right: 3px solid lightgray; 
+                        border-top: 10px solid white;"></div>
+                    </div>`,
+                  size: new naver.maps.Size(100, 50),
+                  anchor: new naver.maps.Point(50, 50),
+                });
+              } else {
+                infoWindow.open(map, overlay);
+                isInfoWindowOpen = true;
+
+                overlay.setIcon({
+                  content: `
+                    <div style="position: relative; background-color: #097ce6; padding: 10px; border: none; border-radius: 10px; font-size: 0.8em; font-weight: 500; width: 100px; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+                      <span class="price" style="cursor: pointer; color: white;">${location.minfee}</span>
+                      <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
+                        border-left: 3px solid lightgray; 
+                        border-right: 3px solid lightgray; 
+                        border-top: 10px solid white;"></div>
+                    </div>`,
+                  size: new naver.maps.Size(100, 50),
+                  anchor: new naver.maps.Point(50, 50),
+                });
+              }
+            });
           } catch (error) {
             console.error('Error creating marker for', address, error);
           }
@@ -150,7 +182,7 @@ export default function Map() {
     } else {
       console.error('Naver Maps API가 로드되지 않았습니다.');
     }
-  }, []);
+  }, [locations]); // locations props가 변경될 때마다 useEffect 실행
 
   return <div id="map" style={{ width: '100%', height: '400px' }}></div>;
 }
