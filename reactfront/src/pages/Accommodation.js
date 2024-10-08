@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './Accommodation.css';
 import JustMap from '../components/JustMap';
-import Modal from '../components/Modal'; // 모달 컴포넌트 임포트
+import MapModal from '../components/MapModal'; // 모달 컴포넌트 임포트
 import { Button2 } from '../components/Button.style';
-import Map from '../assets/Map.svg';
+import RoomModal from '../components/RoomModal';
 
 export default function Accommodation() {
   const { id } = useParams(); // URL에서 ID 가져오기
-  const [isModalOpen, setModalOpen] = useState(false); // 모달 상태 관리
+  const [isMapModalOpen, setMapModalOpen] = useState(false); // 지도 모달 상태 관리
+  const [isRoomModalOpen, setRoomModalOpen] = useState(false); // 객실 상세 모달 상태 관리
+  const [selectedRoom, setSelectedRoom] = useState(null); // 선택된 객실 정보
 
   // 데이터를 가져오는 로직
   const data = [
@@ -147,26 +149,26 @@ export default function Accommodation() {
       offseasonmaxnfee: 86300,
       peakseasonminfee: 64300,
       peakseasonmaxfee: 70300,
-      roombathfacility: 'Y',
-      roombath: 'Y',
-      roomhometheater: 'Y',
-      roomaircondition: 'Y',
-      roomtv: 'Y',
-      roompc: '',
-      roomcable: 'Y',
-      roominternet: 'Y',
-      roomrefrigerator: 'Y',
-      roomtoiletries: 'Y',
-      roomsofa: '',
-      roomcook: 'Y',
-      roomtable: 'Y',
-      roomhairdryer: '',
-      rooming1: '',
-      rooming1_alt: '',
-      rooming2: '',
-      rooming2_alt: '',
-      rooming3: '',
-      rooming3_alt: '',
+      bathfacility: 1,
+      bath: 1,
+      hometheater: 1,
+      aircondition: 1,
+      roomtv: 1,
+      pc: 0,
+      cable: 1,
+      internet: 1,
+      refrigerator: 1,
+      toiletries: 1,
+      sofa: 0,
+      cook: 1,
+      table: 1,
+      hairdryer: 0,
+      rooming1: 0,
+      rooming1_alt: 0,
+      rooming2: 0,
+      rooming2_alt: 0,
+      rooming3: 0,
+      rooming3_alt: 0,
     },
     {
       contentid: 136039,
@@ -180,26 +182,26 @@ export default function Accommodation() {
       offseasonmaxnfee: 102300,
       peakseasonminfee: 105300,
       peakseasonmaxfee: 129300,
-      roombathfacility: 'Y',
-      roombath: 'Y',
-      roomhometheater: '',
-      roomaircondition: 'Y',
-      roomtv: 'Y',
-      roompc: '',
-      roomcable: 'Y',
-      roominternet: 'Y',
-      roomrefrigerator: 'Y',
-      roomtoiletries: 'Y',
-      roomsofa: '',
-      roomcook: 'Y',
-      roomtable: 'Y',
-      roomhairdryer: '',
-      rooming1: '',
-      rooming1_alt: '',
-      rooming2: '',
-      rooming2_alt: '',
-      rooming3: '',
-      rooming3_alt: '',
+      bathfacility: 1,
+      bath: 1,
+      hometheater: 0,
+      aircondition: 1,
+      tv: 1,
+      pc: 0,
+      cable: 1,
+      internet: 1,
+      refrigerator: 1,
+      toiletries: 1,
+      sofa: 0,
+      cook: 1,
+      table: 1,
+      hairdryer: 0,
+      rooming1: 0,
+      rooming1_alt: 0,
+      rooming2: 0,
+      rooming2_alt: 0,
+      rooming3: 0,
+      rooming3_alt: 0,
     },
     {
       contentid: 136039,
@@ -213,26 +215,26 @@ export default function Accommodation() {
       offseasonmaxnfee: 129400,
       peakseasonminfee: 138400,
       peakseasonmaxfee: 156400,
-      roombathfacility: 'Y',
-      roombath: 'Y',
-      roomhometheater: '',
-      roomaircondition: 'Y',
-      roomtv: 'Y',
-      roompc: '',
-      roomcable: 'Y',
-      roominternet: 'Y',
-      roomrefrigerator: 'Y',
-      roomtoiletries: 'Y',
-      roomsofa: '',
-      roomcook: 'Y',
-      roomtable: 'Y',
-      roomhairdryer: '',
-      rooming1: '',
-      rooming1_alt: '',
-      rooming2: '',
-      rooming2_alt: '',
-      rooming3: '',
-      rooming3_alt: '',
+      bathfacility: 1,
+      bath: 1,
+      hometheater: 0,
+      aircondition: 1,
+      roomtv: 1,
+      pc: 0,
+      cable: 1,
+      internet: 1,
+      refrigerator: 1,
+      toiletries: 1,
+      sofa: 0,
+      cook: 1,
+      table: 1,
+      hairdryer: 0,
+      rooming1: 0,
+      rooming1_alt: 0,
+      rooming2: 0,
+      rooming2_alt: 0,
+      rooming3: 0,
+      rooming3_alt: 0,
     },
     {
       contentid: 136039,
@@ -246,26 +248,26 @@ export default function Accommodation() {
       offseasonmaxnfee: 124300,
       peakseasonminfee: 101300,
       peakseasonmaxfee: 140300,
-      roombathfacility: 'Y',
-      roombath: 'Y',
-      roomhometheater: '',
-      roomaircondition: 'Y',
-      roomtv: 'Y',
-      roompc: '',
-      roomcable: 'Y',
-      roominternet: 'Y',
-      roomrefrigerator: 'Y',
-      roomtoiletries: 'Y',
-      roomsofa: '',
-      roomcook: 'Y',
-      roomtable: 'Y',
-      roomhairdryer: '',
-      rooming1: '',
-      rooming1_alt: '',
-      rooming2: '',
-      rooming2_alt: '',
-      rooming3: '',
-      rooming3_alt: '',
+      bathfacility: 1,
+      bath: 1,
+      hometheater: 0,
+      aircondition: 1,
+      roomtv: 1,
+      pc: 0,
+      cable: 1,
+      internet: 1,
+      refrigerator: 1,
+      toiletries: 1,
+      sofa: 0,
+      cook: 1,
+      table: 1,
+      hairdryer: 0,
+      rooming1: 0,
+      rooming1_alt: 0,
+      rooming2: 0,
+      rooming2_alt: 0,
+      rooming3: 0,
+      rooming3_alt: 0,
     },
     {
       contentid: 136039,
@@ -279,26 +281,26 @@ export default function Accommodation() {
       offseasonmaxnfee: 80800,
       peakseasonminfee: 83800,
       peakseasonmaxfee: 110800,
-      roombathfacility: 'Y',
-      roombath: 'Y',
-      roomhometheater: '',
-      roomaircondition: 'Y',
-      roomtv: 'Y',
-      roompc: '',
-      roomcable: 'Y',
-      roominternet: 'Y',
-      roomrefrigerator: 'Y',
-      roomtoiletries: 'Y',
-      roomsofa: '',
-      roomcook: 'Y',
-      roomtable: 'Y',
-      roomhairdryer: '',
-      rooming1: '',
-      rooming1_alt: '',
-      rooming2: '',
-      rooming2_alt: '',
-      rooming3: '',
-      rooming3_alt: '',
+      bathfacility: 1,
+      bath: 1,
+      hometheater: 0,
+      aircondition: 1,
+      roomtv: 1,
+      pc: 0,
+      cable: 1,
+      internet: 1,
+      refrigerator: 1,
+      toiletries: 1,
+      sofa: 0,
+      cook: 1,
+      table: 1,
+      hairdryer: 0,
+      rooming1: 0,
+      rooming1_alt: 0,
+      rooming2: 0,
+      rooming2_alt: 0,
+      rooming3: 0,
+      rooming3_alt: 0,
     },
     {
       contentid: 136039,
@@ -312,26 +314,26 @@ export default function Accommodation() {
       offseasonmaxnfee: 80200,
       peakseasonminfee: 92200,
       peakseasonmaxfee: 102200,
-      roombathfacility: 'Y',
-      roombath: 'Y',
-      roomhometheater: '',
-      roomaircondition: 'Y',
-      roomtv: 'Y',
-      roompc: '',
-      roomcable: 'Y',
-      roominternet: 'Y',
-      roomrefrigerator: 'Y',
-      roomtoiletries: 'Y',
-      roomsofa: '',
-      roomcook: 'Y',
-      roomtable: 'Y',
-      roomhairdryer: '',
-      rooming1: '',
-      rooming1_alt: '',
-      rooming2: '',
-      rooming2_alt: '',
-      rooming3: '',
-      rooming3_alt: '',
+      bathfacility: 1,
+      bath: 1,
+      hometheater: 0,
+      aircondition: 1,
+      roomtv: 1,
+      pc: 0,
+      cable: 1,
+      internet: 1,
+      refrigerator: 1,
+      toiletries: 1,
+      sofa: 0,
+      cook: 1,
+      table: 1,
+      hairdryer: 0,
+      rooming1: 0,
+      rooming1_alt: 0,
+      rooming2: 0,
+      rooming2_alt: 0,
+      rooming3: 0,
+      rooming3_alt: 0,
     },
   ];
 
@@ -345,8 +347,18 @@ export default function Accommodation() {
   // 랜덤 이미지 URL
   const defaultImage = 'https://via.placeholder.com/300';
 
-  const toggleModal = () => {
-    setModalOpen(!isModalOpen);
+  const toggleMapModal = () => {
+    setMapModalOpen(!isMapModalOpen);
+  };
+
+  const openRoomDetails = (room) => {
+    setSelectedRoom(room);
+    setRoomModalOpen(true);
+  };
+
+  const closeRoomModal = () => {
+    setRoomModalOpen(false);
+    setSelectedRoom(null); // 선택된 객실 정보 초기화
   };
 
   return (
@@ -411,26 +423,81 @@ export default function Accommodation() {
                 </div>
               </div>
               <div className="hotel-info-map-detail">
-                <Button2 onClick={toggleModal}>지도보기</Button2> {/* 모달 열기 */}
+                <Button2 onClick={toggleMapModal}>지도보기</Button2> {/* 모달 열기 */}
               </div>
             </div>
-            {/* 모달 컴포넌트 */}
-            <Modal isOpen={isModalOpen} onClose={toggleModal}>
-              <JustMap locations={accommodation.addr} />
-              {/* 필터링된 데이터 전달 */}
-            </Modal>
+            {/* 지도 모달 */}
+            {isMapModalOpen && (
+              <MapModal isOpen={isMapModalOpen} onClose={toggleMapModal}>
+                <JustMap locations={accommodation.addr} />
+              </MapModal>
+            )}
           </div>
         </div>
       </section>
       <section className="hotel-room">
-        <div style={{ fontSize: '1.1em', marginBottom:'1%' }}>객실 정보</div>
+        <div style={{ fontSize: '1.1em', marginBottom: '1%' }}>객실 정보</div>
         <div className="hotel-room-card">
-          <div className='hotel-room-card-container'>
-            <div></div>
-            <div></div>
-          </div>
+          {rooms.map((room) => (
+            <div className="hotel-room-card-container" key={room.roomcode}>
+              <div className="hotel-room-card-img">
+                <img src={room.roomimage || defaultImage} alt="객실 이미지" />
+              </div>
+              <div className="hotel-room-card-content-container">
+                <div style={{ fontSize: '1.3em' }}>{room.roomtitle}</div>
+                <div
+                  style={{
+                    color: '#097ce6',
+                    fontSize: '0.9em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                  }}
+                  className='hotem-room-card-detail-modal'
+                  onClick={() => openRoomDetails(room)} // 클릭 시 객실 상세 모달 열기
+                >
+                  <div>상세정보</div>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ fontSize: 'inherit', marginLeft: '4px' }}
+                  >
+                    arrow_forward_ios
+                  </span>
+                </div>
+                <div className="hotel-room-card-content">
+                  <div className="hotel-room-card-details">
+                    <div className="hotel-room-card-time">
+                      <div style={{ borderRight: '1px solid lightgray' }}>
+                        <div style={{ fontSize: '1.1em' }}>체크인</div>
+                        <div style={{ fontFamily: 'pretendard-regular' }}>14:00</div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '1.1em' }}>체크아웃</div>
+                        <div style={{ fontFamily: 'pretendard-regular' }}>10:00</div>
+                      </div>
+                    </div>
+                    <div className="hotel-room-card-end">
+                      <div style={{ fontFamily: 'pretendard-regular' }}>
+                        기준 {room.base_person}인 · 최대 {room.max_person}인
+                      </div>
+                      <Button2>예약하기</Button2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
+
+      {/* 모달 컴포넌트 - 객실 상세 정보 */}
+      {isRoomModalOpen && selectedRoom && (
+        <RoomModal
+          isOpen={isRoomModalOpen}
+          onClose={closeRoomModal}
+          room={selectedRoom} // 선택된 객실 정보 전달
+        />
+      )}
     </div>
   );
 }

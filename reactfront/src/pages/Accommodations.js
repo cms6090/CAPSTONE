@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Accommodations.css';
 import { Box, Pagination } from '@mui/material';
 import Map from '../assets/Map.svg';
-import Modal from '../components/Modal'; // 모달 컴포넌트 임포트
+import MapModal from '../components/MapModal'; // 모달 컴포넌트 임포트
 import MapComponent from '../components/Map'; // Map 컴포넌트 임포트
 import { Button2 } from '../components/Button.style';
 import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
@@ -241,7 +241,7 @@ export default function Accommodations() {
           </div>
 
           {/* 모달 컴포넌트 */}
-          <Modal isOpen={isModalOpen} onClose={toggleModal}>
+          <MapModal isOpen={isModalOpen} onClose={toggleModal}>
             <MapComponent
               locations={filteredData.map((item) => ({
                 ...item,
@@ -249,7 +249,7 @@ export default function Accommodations() {
               }))}
             />
             {/* 필터링된 데이터 전달 */}
-          </Modal>
+          </MapModal>
         </div>
       </div>
       <div className="accommo-right">

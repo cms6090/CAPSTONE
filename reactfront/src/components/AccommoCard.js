@@ -86,7 +86,7 @@ export default function AccommoCard() {
   const navigate = useNavigate(); // useNavigate 훅 사용
 
   const goToAccommo = (accommoId) => {
-    navigate(`/accommodations?id=${encodeURIComponent(accommoId)}`); // 숙소 이름을 쿼리 파라미터로 전달
+    navigate(`/accommodations/${encodeURIComponent(accommoId)}`); // 숙소 이름을 쿼리 파라미터로 전달
   };
 
   // 슬라이드 이동 처리

@@ -1,49 +1,109 @@
 .verification-container {
   max-width: 35%;
-  margin: auto; /* 페이지 중앙 정렬 */
+  margin: 3% auto; /* 페이지 중앙 정렬 */
   padding: 20px;
   background-color: #fff; /* 배경색 */
-  border-radius: 8px; /* 모서리 둥글게 */
-  height: 500px;
 }
 
-
-p {
-  margin-bottom: 20px;
-  font-weight: 700;
-  font-family:'pretendard';
-  color: rgb(156, 154, 154)
+.verification-container {
+  /* 기존 스타일 유지 */
 }
 
-.input-group {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.input-group input {
+.email input,
+.password input,
+.user-name input,
+.telno input,
+.gender select {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 2%;
+  border-radius: 10px;
+  border: none;
+  font-size: 1em;
+  font-family: 'pretendard-light';
+  background-color: rgba(222, 222, 222, 0.4);
+}
+
+.email,
+.password,
+.user-name,
+.telno,
+.gender {
+  margin: 1% 0%;
 }
 
 .send-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007BFF;
+  /* 기본 버튼 스타일 */
+  background-color: #007bff; /* 활성화된 버튼 색상 */
   color: white;
+  padding: 10px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
 }
 
-.send-button:hover {
-  background-color: #0056b3;
+.send-button.disabled {
+  background-color: gray; /* 비활성화된 버튼 색상 */
+  cursor: not-allowed; /* 비활성화 시 커서 스타일 */
+}
+
+.signup-form {
+  margin-bottom: 5%;
+  font-family: 'pretendard-regular';
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.gender-container {
+  margin: 1% 5%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5%;
+  font-size: 1.1em;
+}
+
+.gender-container label {
+  display: flex;
+  align-items: center;
+}
+
+.gender-select {
+  margin-right: 5%;
+  /* 기본 스타일을 숨기고 사용자 정의 스타일 추가 */
+  -webkit-appearance: none; /* 기본 스타일 제거 (Chrome) */
+  -moz-appearance: none; /* 기본 스타일 제거 (Firefox) */
+  appearance: none; /* 기본 스타일 제거 (기타 브라우저) */
+  width: 1em; /* 동그라미 크기 */
+  height: 1em; /* 동그라미 크기 */
+  border: 0.5px solid #ccc; /* 테두리 색상 */
+  border-radius: 50%; /* 동그라미 형태 */
+  outline: none; /* 포커스 스타일 제거 */
+  cursor: pointer; /* 커서 스타일 */
+  position: relative; /* 위치 설정 */
+}
+
+.gender-select:checked {
+  background-color: #007bff; /* 체크된 상태 색상 */
+  border: 0.5px solid #007bff; /* 체크된 상태 테두리 색상 */
+}
+
+label {
+  font-family: 'pretendard-light';
+  font-size: 0.9em;
+}
+
+.birth-detail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5%;
+}
+
+.birth-detail select {
+  width: 100%;
+  padding: 2%;
+  border-radius: 10px;
+  border: none;
+  font-size: 1em;
+  font-family: 'pretendard-light';
+  background-color: rgba(222, 222, 222, 0.4);
 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import './Modal.css'; // 모달 스타일을 위한 CSS 파일
+import './MapModal.css'; // 모달 스타일을 위한 CSS 파일
 
-export default function Modal({ isOpen, onClose, children }) {
+export default function MapModal({ isOpen, onClose, children }) {
   if (!isOpen) return null;
 
   return (
