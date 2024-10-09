@@ -7,49 +7,112 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model accommodations {
-  id           BigInt   @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
-  name         String   @db.VarChar(255)
-  area_id      BigInt?  @db.UnsignedBigInt
-  sigungu_id   Int?
-  addr         String   @db.VarChar(255)
-  description  String?  @db.Text
-  type         String?  @db.VarChar(50)
-  price        Decimal? @db.Decimal(10, 2)
-  maxOccupancy Int?
-  rating       Decimal? @db.Decimal(3, 2)
-  reviews      Int?
-  imageUrls    String?  @db.Text
-  areas        areas?   @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "accAreaId")
-
-  @@index([area_id], map: "accAreaId")
-}
-
-model areas {
-  id             BigInt           @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
-  area_name      String           @db.VarChar(255)
-  accommodations accommodations[]
-}
-
-model sigungu {
-  id            BigInt    @id @unique(map: "id") @default(autoincrement()) @db.UnsignedBigInt
-  sigungu_name  String    @db.VarChar(255)
-  area_id       BigInt?   @db.UnsignedBigInt
-  sigungu       sigungu?  @relation("sigunguTosigungu", fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "sugunguAreaId")
-  other_sigungu sigungu[] @relation("sigunguTosigungu")
-
-  @@index([area_id], map: "sugunguAreaId")
-}
-
 model users {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique(map: "UNIQUE") @db.VarChar(70)
-  password      String    @db.Char(60)
-  user_name     String    @db.VarChar(15)
-  telno         String    @db.VarChar(15)
-  birth         DateTime  @db.Date
-  gender        String    @db.Char(2)
-  permission    String    @db.VarChar(5)
-  created_date  DateTime  @default(now())
-  updaated_date DateTime? @db.DateTime(0)
+  user_id      Int            @id @default(autoincrement())
+  user_name    String         @db.VarChar(255)
+  email        String         @unique(map: "email") @db.Char(60)
+  password     String         @db.VarChar(255)
+  phone_number String         @db.VarChar(20)
+  created_at   DateTime?      @default(now()) @db.DateTime(0)
+  updated_at   DateTime?      @default(now()) @db.DateTime(0)
+  permission   String         @db.VarChar(5)
+  birth        DateTime       @db.Date
+  gender       String         @db.VarChar(2)
+  reservations reservations[]
+  reviews      reviews[]
+}
+
+model facilities {
+  facility_id          Int      @id @default(autoincrement())
+  room_id              Int?
+  has_bathfacility     Boolean?
+  has_bath             Int?     @db.TinyInt
+  has_home_theater     Boolean?
+  has_air_conditioning Boolean?
+  has_tv               Boolean?
+  has_pc               Boolean?
+  cable                Boolean?
+  has_internet         Boolean?
+  has_refrigerator     Boolean?
+  has_toiletries       Boolean?
+  has_sofa             Boolean?
+  has_cook             Boolean?
+  has_table            Boolean?
+  hairdryer            Boolean?
+  rooms                rooms?   @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "facilities_ibfk_1")
+
+  @@index([room_id], map: "room_id")
+}
+
+model lodgings {
+  lodging_id Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  part       String    @db.VarChar(50)
+  area       String    @db.VarChar(100)
+  sigungu    String?   @db.VarChar(100)
+  address    String    @db.VarChar(500)
+  rating     Decimal?  @db.Decimal(2, 1)
+  tel        String?   @db.VarChar(20)
+  main_image String?   @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.DateTime(0)
+  updated_at DateTime? @default(now()) @db.DateTime(0)
+  reviews    reviews[]
+  rooms      rooms[]
+}
+
+model reservations {
+  reservation_id Int       @id @default(autoincrement())
+  user_id        Int?
+  room_id        Int?
+  check_in_date  DateTime  @db.Date
+  check_out_date DateTime  @db.Date
+  person_num     Int
+  total_price    Decimal   @db.Decimal(10, 2)
+  status         String    @db.VarChar(50)
+  created_at     DateTime? @default(now()) @db.DateTime(0)
+  updated_at     DateTime? @default(now()) @db.DateTime(0)
+  users          users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_ibfk_1")
+  rooms          rooms?    @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_ibfk_2")
+
+  @@index([room_id], map: "room_id")
+  @@index([user_id], map: "user_id")
+}
+
+model reviews {
+  review_id  Int       @id @default(autoincrement())
+  lodging_id Int?
+  user_id    Int?
+  rating     Int
+  comment    String?   @db.Text
+  created_at DateTime? @default(now()) @db.DateTime(0)
+  lodgings   lodgings? @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
+  users      users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_2")
+
+  @@index([lodging_id], map: "lodging_id")
+  @@index([user_id], map: "user_id")
+}
+
+model room_photos {
+  photo_id  Int    @id @default(autoincrement())
+  room_id   Int?
+  photo_url String @db.VarChar(500)
+  rooms     rooms? @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "room_photos_ibfk_1")
+
+  @@index([room_id], map: "room_id")
+}
+
+model rooms {
+  room_id         Int            @id @default(autoincrement())
+  lodging_id      Int?
+  room_name       String         @db.VarChar(255)
+  room_count      Int
+  price_per_night Decimal        @db.Decimal(10, 2)
+  min_occupancy   Int
+  max_occupancy   Int
+  facilities      facilities[]
+  reservations    reservations[]
+  room_photos     room_photos[]
+  lodgings        lodgings?      @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_ibfk_1")
+
+  @@index([lodging_id], map: "lodging_id")
 }

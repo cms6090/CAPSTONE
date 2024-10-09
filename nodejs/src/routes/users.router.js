@@ -15,7 +15,7 @@ const UsersRouter = express.Router();
 UsersRouter.post('/sign/signup', async (req, res, next) => {
   try {
     const userVal = await SignUpSchema.validateAsync(req.body);
-    const { email, password, user_name, telno, birth, gender } = userVal;
+    const { email, password, user_name, phone_number, birth, gender } = userVal;
 
     const existingUser = await prisma.users.findUnique({
       where: { email },
@@ -31,7 +31,7 @@ UsersRouter.post('/sign/signup', async (req, res, next) => {
         email,
         password: hashedPassword,
         user_name,
-        phone_number: telno,
+        phone_number,
         birth,
         gender,
         permission: "유저"
