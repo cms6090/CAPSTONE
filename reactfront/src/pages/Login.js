@@ -68,7 +68,7 @@ function Login() {
               checked={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
             />
-            <h5 style={{marginBottom:'0px', fontFamily:'pretendard-light'}}>로그인 유지</h5>
+            <h6 style={{marginBottom:'0px', color:'rgba(0,0,0,0.7)'}}>로그인 유지</h6>
           </label>
           <a href="#" className="forgot-password">비밀번호 재설정</a>
         </div>

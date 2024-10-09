@@ -43,9 +43,7 @@ export default function Map({ locations }) {
           const address = location.addr;
 
           try {
-            console.log('주소를 변환 중:', address); // 주소 변환 전 확인
             const position = await geocodeAddress(address); // 주소를 좌표로 변환
-            console.log('변환된 위치:', position); // 변환된 위치 확인
             bounds.extend(position); // 마커의 위치를 경계에 추가
 
             const overlay = new naver.maps.Marker({

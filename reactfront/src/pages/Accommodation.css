@@ -44,8 +44,15 @@
   border-radius: 15px; /* 모서리 둥글게 */
 }
 
-.hotel-title-content {
+.hotel-title-container {
   margin: 0 0 1% 0;
+}
+
+.hotel-title-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.3em;
+ color: rgba(0,0,0,1);
 }
 
 .hotel-info {
@@ -85,16 +92,69 @@
 
 .hotel-room-card {
   border: none;
-  background-color: #f0f1f2;
-  border-radius: 15px;
   width: 100%;
-  height: 15em;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3%;
+  margin-bottom: 5%;
 }
 
 .hotel-room-card-container {
-  overflow: hidden;
-
+  background-color: #f5f7fa;
+  border-radius: 15px;
+  padding: 3%;
+  height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: 3%;
+}
+
+.hotel-room-card-img {
+  width: 100%;
+  object-fit: cover;
+  overflow: hidden;
+  border-radius: 15px;
+  aspect-ratio: 1 / 1; /* 비율 유지 */
+}
+
+.hotel-room-card-img img {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.hotel-room-card-content {
+  background: white;
+  border-radius: 15px;
+  padding: 5%;
+}
+
+.hotel-room-card-content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hotel-room-card-details {
+  font-size: 0.9em;
+  color: rgb(156, 154, 154);
+}
+
+.hotel-room-card-time {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3%;
+  margin-bottom: 8%;
+}
+
+.hotel-room-card-end {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 3fr 1fr;
+}
+
+.hotem-room-card-detail-modal:hover {
+  cursor: pointer;
 }
