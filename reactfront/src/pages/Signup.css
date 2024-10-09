@@ -127,7 +127,7 @@ label {
 }
 
 .birth-detail select:disabled {
-  background-color: rgba(222, 222, 222, 0.3); /* 비활성화된 드롭다운 배경색 */
+  background-color: rgba(222, 222, 222, 0.2); /* 비활성화된 드롭다운 배경색 */
   color: rgba(0, 0, 0, 0.5); /* 비활성화된 텍스트 색상 */
   cursor: not-allowed; /* 클릭할 수 없음을 표시하는 커서 스타일 */
   border: none;
