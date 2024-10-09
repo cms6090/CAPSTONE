@@ -37,7 +37,7 @@ export default function RegionCard() {
 
   // 지역으로 이동하는 함수
   const goToRegion = (regionName) => {
-    navigate(`/accommodations?region=${encodeURIComponent(regionName)}`); // 지역 이름을 쿼리 파라미터로 전달
+    navigate(`/accommodations?keyword=${encodeURIComponent(regionName)}`); // 지역 이름을 쿼리 파라미터로 전달
   };
 
   // 슬라이드 이동 처리
