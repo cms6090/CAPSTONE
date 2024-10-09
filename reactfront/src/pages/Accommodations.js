@@ -1,145 +1,55 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Accommodations.css';
 import { Box, Pagination } from '@mui/material';
 import Map from '../assets/Map.svg';
-import MapModal from '../components/MapModal'; // 모달 컴포넌트 임포트
-import MapComponent from '../components/Map'; // Map 컴포넌트 임포트
+import Modal from '../components/Modal';
+import MapComponent from '../components/Map';
 import { Button2 } from '../components/Button.style';
-import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
+import { useNavigate } from 'react-router-dom';
 
 export default function Accommodations() {
+  const [data, setData] = useState([]);
   const [selectedOption, setSelectedOption] = useState('전체');
-  const [isModalOpen, setModalOpen] = useState(false); // 모달 상태 관리
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
-  const [filteredData, setFilteredData] = useState([]); // 필터링된 데이터 상태
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filteredData, setFilteredData] = useState([]);
 
-  const data = [
-    {
-      contentid: 129067,
-      title: '죽도마을',
-      part: '민박',
-      area: '전북특별자치도',
-      sigungu: '고창군',
-      addr: '전북특별자치도 고창군 부안면 봉암리 683',
-      tel: '',
-      firstimage: '',
-      firstimage2: '',
-      minfee: null,
-    },
-    {
-      contentid: 129068,
-      title: '해리마을',
-      part: '민박',
-      area: '전북특별자치도',
-      sigungu: '고창군',
-      addr: '전북특별자치도 고창군 해리면 동호리',
-      tel: '',
-      firstimage: '',
-      firstimage2: '',
-      minfee: null,
-    },
-    {
-      contentid: 129104,
-      title: '장촌마을',
-      part: '민박',
-      area: '전라남도',
-      sigungu: '여수시',
-      addr: '전라남도 여수시 삼산면 서도리',
-      tel: '',
-      firstimage: '',
-      firstimage2: '',
-      minfee: null,
-    },
-    {
-      contentid: 136039,
-      title: '서울올림픽파크텔',
-      part: '유스호스텔',
-      area: '서울특별시',
-      sigungu: '송파구',
-      addr: '서울특별시 송파구 올림픽로 448',
-      tel: '02-410-2114',
-      firstimage: '',
-      firstimage2: '',
-      minfee: '35800',
-    },
-    {
-      contentid: 136060,
-      title: '소노휴 양평',
-      part: '관광단지',
-      area: '경기도',
-      sigungu: '양평군',
-      addr: '경기도 양평군 개군면 신내길7번길 55',
-      tel: '1588-4888',
-      firstimage: '',
-      firstimage2: '',
-      minfee: '290000',
-    },
-    {
-      contentid: 136062,
-      title: '한화리조트 양평',
-      part: '관광단지',
-      area: '경기도',
-      sigungu: '양평군',
-      addr: '경기도 양평군 옥천면 신촌길 188',
-      tel: '031-772-3811',
-      firstimage: '',
-      firstimage2: '',
-      minfee: '41900',
-    },
-    {
-      contentid: 136063,
-      title: '한화리조트 용인 베잔송',
-      part: '관광단지',
-      area: '경기도',
-      sigungu: '용인시',
-      addr: '경기도 용인시 처인구 남사읍 봉무로153번길 79',
-      tel: '031-332-1122',
-      firstimage: '',
-      firstimage2: '',
-      minfee: '74000',
-    },
-    {
-      contentid: 136077,
-      title: '더케이설악산가족호텔',
-      part: '콘도미니엄',
-      area: '강원특별자치도',
-      sigungu: '속초시',
-      addr: '강원특별자치도 속초시 설악산로 470-7',
-      tel: '033-639-8100',
-      firstimage: '',
-      firstimage2: '',
-      minfee: '50300',
-    },
-    {
-      contentid: 136082,
-      title: '설악포유리조트',
-      part: '관광단지',
-      area: '강원특별자치도',
-      sigungu: '고성군',
-      addr: '강원특별자치도 고성군 토성면 잼버리동로 97',
-      tel: '033-633-9100',
-      firstimage: '',
-      firstimage2: '',
-      minfee: '220000',
-    },
-    {
-      contentid: 136084,
-      title: '오색그린야드호텔',
-      part: '관광호텔',
-      area: '강원특별자치도',
-      sigungu: '양양군',
-      addr: '강원특별자치도 양양군 서면 대청봉길 34',
-      tel: '033-670-1004',
-      firstimage: '',
-      firstimage2: '',
-      minfee: '270000',
-    },
-  ];
+  const location = useLocation(); // 현재 URL 정보를 가져옵니다.
+  const defaultImage = 'https://via.placeholder.com/151';
+  const itemsPerPage = 5;
 
-  const defaultImage = 'https://via.placeholder.com/151'; // 대체 이미지 URL
-  const itemsPerPage = 5; // 페이지당 아이템 수
+  // 데이터 가져오기
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const keyword = query.get('keyword');
 
-  // 필터링 함수
+    let url = 'http://localhost:3000/api/accommodations';
+    if (keyword) {
+      url += `?keyword=${keyword}`;
+    }
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((fetchedData) => {
+        setData(fetchedData);
+      })
+      .catch((error) => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
+  }, [location.search]);
+
+  useEffect(() => {
+    const newFilteredData = filterData();
+    setFilteredData(newFilteredData);
+    setCurrentPage(1);
+  }, [selectedOption, data]);
+
   const filterData = () => {
     if (selectedOption === '전체') {
       return data;
@@ -154,19 +64,11 @@ export default function Accommodations() {
     return data.filter((item) => filterMap[selectedOption].includes(item.part));
   };
 
-  // 필터링된 데이터 상태 업데이트
-  useEffect(() => {
-    const newFilteredData = filterData();
-    setFilteredData(newFilteredData);
-    setCurrentPage(1); // 필터 변경 시 페이지를 1로 초기화
-  }, [selectedOption]);
-
-  // 페이지에 표시할 데이터 계산
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
+    currentPage * itemsPerPage
   );
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage); // 전체 페이지 수
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -180,15 +82,14 @@ export default function Accommodations() {
     setModalOpen(!isModalOpen);
   };
 
-  // minfee를 포맷팅하는 함수
   const formatMinFee = (minfee) => {
     return minfee ? Number(minfee).toLocaleString() + '원' : '정보 없음';
   };
 
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const navigate = useNavigate();
 
   const handleCardClick = (contentid) => {
-    navigate(`/accommodations/${contentid}`); // 카드 클릭 시 /room/:id로 이동
+    navigate(`/accommodations/${contentid}`);
   };
 
   return (
@@ -198,7 +99,7 @@ export default function Accommodations() {
           <div className="map">
             <img src={Map} style={{ borderRadius: '15px', width: '100%' }} alt="Map" />
             <div className="map-title">
-              <Button2 onClick={toggleModal}>지도보기</Button2> {/* 모달 열기 */}
+              <Button2 onClick={toggleModal}>지도보기</Button2>
             </div>
           </div>
           <div className="filter">
@@ -240,16 +141,14 @@ export default function Accommodations() {
             </div>
           </div>
 
-          {/* 모달 컴포넌트 */}
-          <MapModal isOpen={isModalOpen} onClose={toggleModal}>
+          <Modal isOpen={isModalOpen} onClose={toggleModal}>
             <MapComponent
               locations={filteredData.map((item) => ({
                 ...item,
-                minfee: formatMinFee(item.minfee), // 포맷된 minfee 추가
+                minfee: formatMinFee(item.minfee),
               }))}
             />
-            {/* 필터링된 데이터 전달 */}
-          </MapModal>
+          </Modal>
         </div>
       </div>
       <div className="accommo-right">
@@ -271,23 +170,24 @@ export default function Accommodations() {
                   borderBottom: '1px solid rgb(231,231,231)',
                   cursor: 'pointer',
                 }}
-                onClick={() => handleCardClick(item.contentid)} // 카드 클릭 핸들러
+                onClick={() => handleCardClick(item.contentid)}
               >
                 <img
-                  src={item.firstimage || defaultImage}
+                  src={item.main_image || defaultImage}
                   style={{ width: '20%', borderRadius: '15px' }}
                   alt={item.title}
                 />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ flex: '1 0 auto', padding: '10px' }}>
-                    <h6 style={{ margin: 0 }}>{item.title}</h6>
-                    <p style={{ margin: '5px 0', color: '#666' }}>{item.part}</p>
-                    <p
-                      style={{ margin: '5px 0', color: '#666' }}
-                    >{`${item.area} ${item.sigungu}`}</p>
-                    <p style={{ margin: '5px 0', color: '#666' }}>{item.addr}</p>
-                    <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.minfee)}</p>
-                  </div>
+                <div style={{ flex: '1 0 auto', padding: '10px' }}>
+                  <p style={{ margin: '5px 0', color: '#666', fontSize: '0.9em' }}>
+                    {`${item.lodging_type}`} 
+                  </p>
+                  <h6 style={{ margin: 0, fontSize: '1.3em', fontWeight: 'bold' }}>{item.name}</h6> {/* 숙소 이름 */}
+                  <p style={{ margin: '5px 0', color: '#666' }}>
+                    {`${item.area} ${item.sigungu}`}
+                  </p>
+                  <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.minfee)}</p> {/* 최소 요금 */}
+                </div>
                 </div>
               </div>
             ))
@@ -295,10 +195,10 @@ export default function Accommodations() {
 
           <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
             <Pagination
-              count={totalPages} // 전체 페이지 수
-              page={currentPage} // 현재 페이지
-              onChange={handlePageChange} // 페이지 변경 핸들러
-              color="primary" // 색상 설정
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
             />
           </Box>
         </div>

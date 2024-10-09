@@ -15,7 +15,7 @@ export default function MainBottom() {
         <div className="region-grid">
           {regions.map((region) => (
             <div className="region-part" key={region}>
-              <a href={`/accommodations?region=${region}`} className="region-link">
+              <a href={`/accommodations?keyword=${region}`} className="region-link">
                 <span>{region}</span>
               </a>
             </div>
