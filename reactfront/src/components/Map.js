@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
 
 export default function Map({ locations }) {
   // locations props 추가
