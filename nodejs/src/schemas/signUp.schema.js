@@ -33,7 +33,7 @@ export const SignUpSchema = Joi.object({
             'string.max': '이름은 최대 15자 이하여야 합니다.',
             'any.required': '이름은 필수입니다.'
         }),
-    telno: Joi.string()
+    phone_number: Joi.string()
         .pattern(/^[0-9]{10,15}$/)
         .required()
         .messages({
