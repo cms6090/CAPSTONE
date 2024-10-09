@@ -1,5 +1,28 @@
 import React from 'react';
 import './RoomModal.css'; // 모달 스타일을 위한 CSS 파일
+import { PiHairDryerFill } from 'react-icons/pi';
+import { FaShower, FaBath, FaTv, FaDesktop, FaWifi } from 'react-icons/fa';
+import { MdTheaters, MdOutlineCleanHands } from 'react-icons/md';
+import { TbAirConditioning } from 'react-icons/tb';
+import { LuCable, LuSofa } from 'react-icons/lu';
+import { CgSmartHomeRefrigerator } from 'react-icons/cg';
+import { PiCookingPotBold } from 'react-icons/pi';
+
+const amenities = [
+  { key: 'bathfacility', icon: <FaShower />, label: '목욕시설' },
+  { key: 'bath', icon: <FaBath />, label: '욕조' },
+  { key: 'hometheater', icon: <MdTheaters />, label: '홈시어터' },
+  { key: 'aircondition', icon: <TbAirConditioning />, label: '에어컨' },
+  { key: 'tv', icon: <FaTv />, label: 'TV' },
+  { key: 'pc', icon: <FaDesktop />, label: 'PC' },
+  { key: 'cable', icon: <LuCable />, label: '케이블' },
+  { key: 'internet', icon: <FaWifi />, label: '인터넷' },
+  { key: 'refrigerator', icon: <CgSmartHomeRefrigerator />, label: '냉장고' },
+  { key: 'toiletries', icon: <MdOutlineCleanHands />, label: '세면용품' },
+  { key: 'sofa', icon: <LuSofa />, label: '소파' },
+  { key: 'cook', icon: <PiCookingPotBold />, label: '취사용품' },
+  { key: 'hairdryer', icon: <PiHairDryerFill />, label: '헤어드라이어' },
+];
 
 export default function RoomModal({ isOpen, onClose, room }) {
   if (!isOpen) return null;
@@ -11,48 +34,17 @@ export default function RoomModal({ isOpen, onClose, room }) {
           <span className="close-button" onClick={onClose}>
             &times;
           </span>
-          <div style={{ fontSize: '1.1em', margin: '0% 1%' }}>{room.roomtitle}의 상세정보</div>
+          <div style={{ fontSize: '1em', margin: '0% 1%' }}>{room.roomtitle}</div>
         </div>
         <div className="modal-body">
-          <div className="room-amenities">
-            {room.bathfacility === 1 && (
-              <span className="material-symbols-outlined">shower</span> // 목욕시설
-            )}
-            {room.bath === 1 && (
-              <span className="material-symbols-outlined">bathtub</span> // 욕조
-            )}
-            {room.hometheater === 1 && (
-              <span className="material-symbols-outlined">theaters</span> // 홈시어터
-            )}
-            {room.aircondition === 1 && (
-              <span className="material-symbols-outlined">mode_fan</span> // 에어컨
-            )}
-            {room.tv === 1 && (
-              <span className="material-symbols-outlined">tv</span> // TV
-            )}
-            {room.pc === 1 && (
-              <span className="material-symbols-outlined">desktop_windows</span> // PC
-            )}
-            {room.cable === 1 && (
-              <span className="material-symbols-outlined">cable</span> // 케이블
-            )}
-            {room.internet === 1 && (
-              <span className="material-symbols-outlined">wifi</span> // 인터넷
-            )}
-            {room.refrigerator === 1 && (
-              <span className="material-symbols-outlined">kitchen</span> // 냉장고
-            )}
-            {room.toiletries === 1 && (
-              <span className="material-symbols-outlined">clean_hands</span> // 세면용품
-            )}
-            {room.sofa === 1 && (
-              <span className="material-symbols-outlined">chair</span> // 소파
-            )}
-            {room.cook === 1 && (
-              <span className="material-symbols-outlined">cooking</span> // 취사용품
-            )}
-            {room.hairdryer === 1 && (
-              <img src='../components/hairdryer.svg' alt='헤어 드라이기' /> // 헤어 드라이기
+          <div className="amenities-container">
+            {amenities.map(({ key, icon, label }) => 
+              room[key] === 1 ? (
+                <div key={key} style={{ display: 'flex', alignItems: 'center', margin: '5px 0' }}>
+                  {icon}
+                  <span style={{ marginLeft: '8px' }}>{label}</span>
+                </div>
+              ) : null
             )}
           </div>
         </div>

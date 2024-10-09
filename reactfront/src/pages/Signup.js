@@ -13,6 +13,7 @@ function Signup() {
   const [birthMonth, setBirthMonth] = useState(''); // 생년월일 월 초기값
   const [birthDate, setBirthDate] = useState(''); // 생년월일 일 초기값
   const [gender, setGender] = useState(''); // 성별 초기값 설정
+  const [isBirthdayDisabled, setIsBirthdayDisabled] = useState(false); // 생년월일 비활성화 상태
 
   // 일 수 계산
   const getDaysInMonth = (year, month) => {
@@ -34,6 +35,15 @@ function Signup() {
     }
   }, [birthYear, birthMonth]);
 
+  // 생년월일 비활성화 상태 업데이트
+  useEffect(() => {
+    if (!birthYear || !birthMonth) {
+      setIsBirthdayDisabled(true);
+    } else {
+      setIsBirthdayDisabled(false);
+    }
+  }, [birthYear, birthMonth]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // 전송 로직 구현
@@ -51,7 +61,9 @@ function Signup() {
 
   // 가입 버튼 활성화 조건
   const isFormValid = () => {
-    return email && password && userName && phoneNumber && birthYear && birthMonth && birthDate && gender;
+    return (
+      email && password && userName && phoneNumber && birthYear && birthMonth && birthDate && gender
+    );
   };
 
   return (
@@ -114,7 +126,9 @@ function Signup() {
           />
         </div>
         <div className="birth">
-          <label>생년월일<span style={{ color: 'red' }}>*</span></label>
+          <label>
+            생년월일<span style={{ color: 'red' }}>*</span>
+          </label>
           <div className="birth-detail">
             <select
               name="year"
@@ -124,9 +138,10 @@ function Signup() {
                 setBirthMonth(''); // 연도 변경 시 월 초기화
                 setBirthDate(''); // 연도 변경 시 일 초기화
               }}
+              className={isBirthdayDisabled ? 'disabled' : ''}
             >
-              <option value="" disabled hidden style={{color:'gray'}}>
-                년
+              <option value="" disabled hidden>
+                년도
               </option>
               {Array.from({ length: currentYear - 1900 + 1 }, (_, i) => (
                 <option key={i} value={currentYear - i}>
@@ -142,6 +157,7 @@ function Signup() {
                 setBirthDate(''); // 월 변경 시 일 초기화
               }}
               disabled={!birthYear}
+              className={isBirthdayDisabled ? 'disabled' : ''}
             >
               <option value="" disabled hidden>
                 월
@@ -157,6 +173,7 @@ function Signup() {
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
               disabled={!birthMonth}
+              className={isBirthdayDisabled ? 'disabled' : ''}
             >
               <option value="" disabled hidden>
                 일
@@ -170,11 +187,13 @@ function Signup() {
           </div>
         </div>
         <div className="gender">
-          <label>성별<span style={{ color: 'red' }}>*</span></label>
-          <div className='gender-container'>
+          <label>
+            성별<span style={{ color: 'red' }}>*</span>
+          </label>
+          <div className="gender-container">
             <label>
               <input
-                className='gender-select'
+                className="gender-select"
                 type="radio"
                 value="male"
                 checked={gender === 'male'}
@@ -184,7 +203,7 @@ function Signup() {
             </label>
             <label>
               <input
-                className='gender-select'
+                className="gender-select"
                 type="radio"
                 value="female"
                 checked={gender === 'female'}

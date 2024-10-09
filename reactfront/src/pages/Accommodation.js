@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // useHistory 대신 useNavigate 사용
 import './Accommodation.css';
 import JustMap from '../components/JustMap';
 import MapModal from '../components/MapModal'; // 모달 컴포넌트 임포트
@@ -8,6 +8,7 @@ import RoomModal from '../components/RoomModal';
 
 export default function Accommodation() {
   const { id } = useParams(); // URL에서 ID 가져오기
+  const navigate = useNavigate(); // useNavigate 훅 사용
   const [isMapModalOpen, setMapModalOpen] = useState(false); // 지도 모달 상태 관리
   const [isRoomModalOpen, setRoomModalOpen] = useState(false); // 객실 상세 모달 상태 관리
   const [selectedRoom, setSelectedRoom] = useState(null); // 선택된 객실 정보
@@ -162,7 +163,7 @@ export default function Accommodation() {
       sofa: 0,
       cook: 1,
       table: 1,
-      hairdryer: 0,
+      hairdryer: 1,
       rooming1: 0,
       rooming1_alt: 0,
       rooming2: 0,
@@ -195,7 +196,7 @@ export default function Accommodation() {
       sofa: 0,
       cook: 1,
       table: 1,
-      hairdryer: 0,
+      hairdryer: 1,
       rooming1: 0,
       rooming1_alt: 0,
       rooming2: 0,
@@ -228,7 +229,7 @@ export default function Accommodation() {
       sofa: 0,
       cook: 1,
       table: 1,
-      hairdryer: 0,
+      hairdryer: 1,
       rooming1: 0,
       rooming1_alt: 0,
       rooming2: 0,
@@ -261,7 +262,7 @@ export default function Accommodation() {
       sofa: 0,
       cook: 1,
       table: 1,
-      hairdryer: 0,
+      hairdryer: 1,
       rooming1: 0,
       rooming1_alt: 0,
       rooming2: 0,
@@ -294,7 +295,7 @@ export default function Accommodation() {
       sofa: 0,
       cook: 1,
       table: 1,
-      hairdryer: 0,
+      hairdryer: 1,
       rooming1: 0,
       rooming1_alt: 0,
       rooming2: 0,
@@ -327,7 +328,7 @@ export default function Accommodation() {
       sofa: 0,
       cook: 1,
       table: 1,
-      hairdryer: 0,
+      hairdryer: 1,
       rooming1: 0,
       rooming1_alt: 0,
       rooming2: 0,
@@ -359,6 +360,16 @@ export default function Accommodation() {
   const closeRoomModal = () => {
     setRoomModalOpen(false);
     setSelectedRoom(null); // 선택된 객실 정보 초기화
+  };
+
+  const handleReserve = (room) => {
+    navigate('/reserve', {
+      state: {
+        contentid: accommodation.contentid,
+        title: accommodation.title,
+        roomcode: room.roomcode,
+      },
+    });
   };
 
   return (
@@ -393,9 +404,18 @@ export default function Accommodation() {
         </ul>
       </section>
       <section className="hotel-title">
-        <div className="hotel-title-content">
-          <div style={{ fontSize: '0.9em', color: 'rgba(0,0,0,0.8)' }}>{accommodation.part}</div>
-          <div style={{ fontSize: '1.2em', color: 'rgba(0,0,0,1)' }}>{accommodation.title}</div>
+        <div className="hotel-title-container">
+          <div className="hotel-title-content">
+            <div style={{ fontSize: '0.9em', color: 'rgba(0,0,0,0.8)' }}>{accommodation.part}</div>
+            <div className="hotel-title-detail">
+              <div>{accommodation.title}</div>
+              <div>
+                {accommodation.minfee && (
+                  <div>{new Intl.NumberFormat().format(accommodation.minfee)}원 ~</div>
+                )}
+              </div>{' '}
+            </div>
+          </div>
         </div>
         <div className="hotel-info">
           <div className="hotel-info-amenity">
@@ -444,7 +464,7 @@ export default function Accommodation() {
                 <img src={room.roomimage || defaultImage} alt="객실 이미지" />
               </div>
               <div className="hotel-room-card-content-container">
-                <div style={{ fontSize: '1.3em' }}>{room.roomtitle}</div>
+                <div style={{ fontSize: '1.1em' }}>{room.roomtitle}</div>
                 <div
                   style={{
                     color: '#097ce6',
@@ -453,7 +473,7 @@ export default function Accommodation() {
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                   }}
-                  className='hotem-room-card-detail-modal'
+                  className="hotem-room-card-detail-modal"
                   onClick={() => openRoomDetails(room)} // 클릭 시 객실 상세 모달 열기
                 >
                   <div>상세정보</div>
@@ -468,11 +488,11 @@ export default function Accommodation() {
                   <div className="hotel-room-card-details">
                     <div className="hotel-room-card-time">
                       <div style={{ borderRight: '1px solid lightgray' }}>
-                        <div style={{ fontSize: '1.1em' }}>체크인</div>
+                        <div style={{ fontSize: '1em' }}>체크인</div>
                         <div style={{ fontFamily: 'pretendard-regular' }}>14:00</div>
                       </div>
                       <div>
-                        <div style={{ fontSize: '1.1em' }}>체크아웃</div>
+                        <div style={{ fontSize: '1em' }}>체크아웃</div>
                         <div style={{ fontFamily: 'pretendard-regular' }}>10:00</div>
                       </div>
                     </div>
@@ -480,7 +500,8 @@ export default function Accommodation() {
                       <div style={{ fontFamily: 'pretendard-regular' }}>
                         기준 {room.base_person}인 · 최대 {room.max_person}인
                       </div>
-                      <Button2>예약하기</Button2>
+                      <Button2 onClick={() => handleReserve(room)}>예약하기</Button2>{' '}
+                      {/* 예약하기 버튼 */}
                     </div>
                   </div>
                 </div>

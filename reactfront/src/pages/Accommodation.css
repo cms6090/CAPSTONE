@@ -44,8 +44,15 @@
   border-radius: 15px; /* 모서리 둥글게 */
 }
 
-.hotel-title-content {
+.hotel-title-container {
   margin: 0 0 1% 0;
+}
+
+.hotel-title-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.3em;
+ color: rgba(0,0,0,1);
 }
 
 .hotel-info {

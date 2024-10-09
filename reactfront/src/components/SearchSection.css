@@ -15,7 +15,7 @@
   display: flex;
   align-items: center; /* 수직 중앙 정렬 */
   border-radius: 15px; /* 둥근 모서리 */
-  padding: 10px; /* 패딩 */
+  padding: 2%; /* 패딩 */
   cursor: pointer; /* 커서 모양 변경 */
   overflow: hidden; /* 자식 요소가 부모를 벗어나지 않도록 설정 */
 }
