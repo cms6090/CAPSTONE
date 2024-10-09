@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import './Signup.css'; // CSS 파일 추가
+import './Signup.css';
 import { Button2 } from '../components/Button.style';
+import { useNavigate } from 'react-router-dom'; // useNavigate import 추가
 
 function Signup() {
-  const currentYear = dayjs().year(); // 현재 연도
+  const currentYear = dayjs().year();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userName, setUserName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [birthYear, setBirthYear] = useState(''); // 생년월일 연도 초기값
-  const [birthMonth, setBirthMonth] = useState(''); // 생년월일 월 초기값
-  const [birthDate, setBirthDate] = useState(''); // 생년월일 일 초기값
-  const [gender, setGender] = useState(''); // 성별 초기값 설정
-  const [isBirthdayDisabled, setIsBirthdayDisabled] = useState(false); // 생년월일 비활성화 상태
+  const [birthYear, setBirthYear] = useState('');
+  const [birthMonth, setBirthMonth] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [gender, setGender] = useState('');
+  const [isBirthdayDisabled, setIsBirthdayDisabled] = useState(false);
 
   // 일 수 계산
   const getDaysInMonth = (year, month) => {
@@ -28,10 +29,10 @@ function Signup() {
       const days = getDaysInMonth(birthYear, birthMonth);
       setDaysInMonth(days);
       if (birthDate > days) {
-        setBirthDate(days); // 일수를 초과할 경우 마지막 날로 설정
+        setBirthDate(days);
       }
     } else {
-      setDaysInMonth(0); // 연도와 월이 없을 경우 일 수를 0으로 설정
+      setDaysInMonth(0);
     }
   }, [birthYear, birthMonth]);
 
@@ -47,7 +48,6 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // birthYear, birthMonth, birthDate를 결합하여 하나의 birth로 만듭니다.
     const birth = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDate.padStart(2, '0')}`;
   
     const signupData = {
@@ -55,7 +55,7 @@ function Signup() {
       password,
       user_name: userName,
       phone_number: phoneNumber,
-      birth, // 결합된 생년월일
+      birth,
       gender,
     };
   
@@ -72,6 +72,7 @@ function Signup() {
         const result = await response.json();
         console.log('Signup successful:', result);
         alert('회원가입에 성공했습니다.');
+        window.location.href = '/'; // 메인 홈페이지로 이동
       } else {
         const errorData = await response.json();
         console.error('Signup failed:', errorData);
@@ -82,9 +83,7 @@ function Signup() {
       alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
-  
 
-  // 가입 버튼 활성화 조건
   const isFormValid = () => {
     return (
       email && password && userName && phoneNumber && birthYear && birthMonth && birthDate && gender

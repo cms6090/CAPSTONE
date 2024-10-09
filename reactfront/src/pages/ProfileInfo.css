@@ -31,6 +31,7 @@
   border: none;
   border-radius: 5px;
   background-color: rgb(239, 239, 239);
+  color: rgba(0, 0, 0, 0.4);
   padding: 3%;
 }
 

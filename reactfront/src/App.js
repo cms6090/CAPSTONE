@@ -15,8 +15,8 @@ import ProfileSetting from './pages/ProfileSetting';
 import Accommodations from './pages/Accommodations';
 import Accommodation from './pages/Accommodation';
 import Room from './pages/Room';
-import Reserve from './pages/Reserve';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Reserve from './pages/Reserve';
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
         <Route path="/profile/reservations" element={<ProfileReserve />} />
         <Route path="/profile/info" element={<ProfileInfo />} />
         <Route path="/profile/setting" element={<ProfileSetting />} />
-        <Route path="/reserve" element={<Reserve/>}/>
+        <Route path="/reserve" element={<Reserve />} />
         {/* 필요한 다른 라우트 추가 */}
       </Routes>
       <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}

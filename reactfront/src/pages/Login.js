@@ -41,12 +41,19 @@ function Login() {
         body: JSON.stringify(loginData),
       });
 
+      // 로그인 성공 시
       if (response.ok) {
-        // 요청이 성공한 경우
         const result = await response.json();
+        const accessToken = response.headers.get('Authorization').replace('Bearer ', '');
+        
         console.log('Login successful:', result);
         alert('로그인에 성공했습니다.');
-        // 추가적인 행동 (예: 페이지 이동) 등을 수행할 수 있습니다.
+
+        // JWT Access 토큰 세션 스토리지에 저장
+        sessionStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('userEmail', email); // 이메일도 세션 스토리지에 저장
+
+        window.location.href = '/'; // 메인 홈페이지로 이동
       } else {
         // 요청이 실패한 경우
         const errorData = await response.json();
@@ -66,7 +73,9 @@ function Login() {
       </div>
       <form onSubmit={handleLogin}>
         <div className="input-group">
-          <label htmlFor="email">이메일<span style={{ color: 'red' }}>*</span></label>
+          <label htmlFor="email">
+            이메일<span style={{ color: 'red' }}>*</span>
+          </label>
           <input
             type="email"
             id="email"
@@ -79,7 +88,9 @@ function Login() {
           {errors.email && <div className="error-message">{errors.email}</div>}
         </div>
         <div className="input-group">
-          <label htmlFor="password">비밀번호<span style={{ color: 'red' }}>*</span></label>
+          <label htmlFor="password">
+            비밀번호<span style={{ color: 'red' }}>*</span>
+          </label>
           <input
             type="password"
             id="password"
@@ -98,15 +109,21 @@ function Login() {
               //checked={rememberMe}
               //onChange={() => setRememberMe(!rememberMe)}
             />
-            <h6 style={{marginBottom:'0px', color:'rgba(0,0,0,0.7)'}}>로그인 유지</h6>
+            <h6 style={{ marginBottom: '0px', color: 'rgba(0,0,0,0.7)' }}>로그인 유지</h6>
           </label>
-          <a href="#" className="forgot-password">비밀번호 재설정</a>
+          <a href="#" className="forgot-password">
+            비밀번호 재설정
+          </a>
         </div>
-        <button type="submit" className="login-button">로그인</button>
+        <button type="submit" className="login-button">
+          로그인
+        </button>
       </form>
       <div className="signup-link">
         <p style={{ fontSize: '0.8em', marginBottom: '1.1em' }}>계정이 없으신가요?</p>
-        <a href="./signup" style={{ fontSize: '0.9em' }}>이메일로 회원가입</a>
+        <a href="./signup" style={{ fontSize: '0.9em' }}>
+          이메일로 회원가입
+        </a>
       </div>
     </div>
   );
