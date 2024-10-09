@@ -4,8 +4,7 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../utils/prisma/prisma.js';
 import { SignInSchema } from '../schemas/signIn.schema.js';
 import { SignUpSchema } from '../schemas/signUp.schema.js';
-
-import { StatusCodes } from 'http-status-codes'; // 상태 코드 상수 불러오기
+import { StatusCodes } from 'http-status-codes';
 import StatusError from '../errors/status.error.js';
 
 const UsersRouter = express.Router();
@@ -18,11 +17,11 @@ UsersRouter.post('/sign/signup', async (req, res, next) => {
     const userVal = await SignUpSchema.validateAsync(req.body);
     const { email, password, user_name, telno, birth, gender } = userVal;
 
-    const isExistEmail = await prisma.users.findUnique({
+    const existingUser = await prisma.users.findUnique({
       where: { email },
     });
 
-    if (isExistEmail) {
+    if (existingUser) {
       throw new StatusError('이미 존재하는 이메일입니다.', StatusCodes.CONFLICT);
     }
 
@@ -32,14 +31,14 @@ UsersRouter.post('/sign/signup', async (req, res, next) => {
         email,
         password: hashedPassword,
         user_name,
-        telno,
+        phone_number: telno,
         birth,
         gender,
         permission: "유저"
       },
     });
 
-    return res.status(StatusCodes.OK).json({
+    return res.status(StatusCodes.CREATED).json({
       message: `이메일: ${createUser.email}, 닉네임: ${createUser.user_name} 회원가입 완료`,
     });
   } catch (error) {
@@ -69,13 +68,13 @@ UsersRouter.post('/sign/signin', async (req, res, next) => {
     }
 
     const accessToken = jwt.sign(
-      { id: loginUser.id },
+      { id: loginUser.user_id }, // user_id 사용
       process.env.ACCESS_SECRET_KEY,
       { expiresIn: '1h' }
     );
 
     const refreshToken = jwt.sign(
-      { id: loginUser.id },
+      { id: loginUser.user_id }, // user_id 사용
       process.env.REFRESH_SECRET_KEY,
       { expiresIn: '7d' }
     );
