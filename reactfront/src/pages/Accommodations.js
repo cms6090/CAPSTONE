@@ -17,7 +17,7 @@ export default function Accommodations() {
 
   const location = useLocation();
   const defaultImage = 'https://via.placeholder.com/151';
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -71,6 +71,7 @@ export default function Accommodations() {
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+    window.scrollTo(0, 0); // 페이지가 변경될 때 스크롤을 맨 위로 이동
   };
 
   const handleOptionChange = (event) => {
@@ -169,7 +170,6 @@ export default function Accommodations() {
                 key={item.contentid}
                 style={{
                   display: 'flex',
-                  marginBottom: '16px',
                   padding: '2% 0%',
                   backgroundColor: 'transparent',
                   boxShadow: 'none',
@@ -180,7 +180,7 @@ export default function Accommodations() {
               >
                 <img
                   src={item.main_image || defaultImage}
-                  style={{ width: '20%', borderRadius: '15px' }}
+                  style={{ width: '40%', borderRadius: '15px', aspectRatio:'1.5/1',objectFit:'cover' }}
                   alt={item.title}
                 />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
