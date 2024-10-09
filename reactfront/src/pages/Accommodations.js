@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import './Accommodations.css';
 import { Box, Pagination } from '@mui/material';
 import Map from '../assets/Map.svg';
-import Modal from '../components/Modal';
+import Modal from '../components/MapModal';
 import MapComponent from '../components/Map';
 import { Button2 } from '../components/Button.style';
 import { useNavigate } from 'react-router-dom';
