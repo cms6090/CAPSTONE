@@ -180,7 +180,7 @@ export default function Accommodations() {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ flex: '1 0 auto', padding: '10px' }}>
                   <p style={{ margin: '5px 0', color: '#666', fontSize: '0.9em' }}>
-                    {`${item.lodging_type}`} 
+                    {`${item.part}`} 
                   </p>
                   <h6 style={{ margin: 0, fontSize: '1.3em', fontWeight: 'bold' }}>{item.name}</h6> {/* 숙소 이름 */}
                   <p style={{ margin: '5px 0', color: '#666' }}>

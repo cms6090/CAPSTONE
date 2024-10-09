@@ -22,12 +22,12 @@ AccommodationsRouter.get('/accommodations/', async (req, res, next) => {
       SELECT 
         lodging_id, 
         name, 
+        part,
         area, 
         sigungu, 
         rating, 
         tel, 
-        main_image, 
-        lodging_type
+        main_image
       FROM 
         lodgings
       WHERE 
