@@ -1,0 +1,30 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-header {
+  justify-content: space-between;
+}
+
+.modal-content {
+  background-color: white !important; /* 강제로 적용 */
+  border-radius: 8px !important;
+  padding: 0% 1% 1% 1%;
+  max-width: 50%;
+  position: relative;
+}
+
+.close-button {
+  top: 5%;
+  right: 3%;
+  font-size: 24px;
+  cursor: pointer;
+}

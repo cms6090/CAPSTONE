@@ -1,0 +1,77 @@
+.Accommodation {
+  display: grid;
+  grid-template-columns: 1fr 4fr; /* 두 개의 컬럼 설정 */
+  grid-template-rows: auto; /* 자동 높이 설정 */
+  gap: 5%; /* 컬럼 사이의 간격 */
+  padding: 3% 10%; /* 패딩 설정 */
+  background-color: #f8f9fa; /* 상단 배경색 */
+  justify-content: space-between; /* 정렬 */
+}
+
+.accommo-left, .accommo-right {
+  width: 100%; /* 100% 너비 설정 */
+}
+
+.map {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  position: relative; /* 자식 요소의 절대 위치 설정을 위해 */
+  margin-bottom: 10%;
+}
+
+.map-title {
+  position: absolute; /* 절대 위치로 설정 */
+  top: 50%; /* 세로 중앙 */
+  left: 50%; /* 가로 중앙 */
+  transform: translate(-50%, -50%); /* 중앙으로 이동 */
+  margin: 0; /* 기본 여백 제거 */
+  width: 50%;
+}
+
+.map-title:hover {
+  opacity: 0.9;
+}
+
+.filter-item {
+  margin-bottom: 10%;
+}
+
+.filter-item label {
+  width: 100%;
+}
+
+.filter-item input {
+  margin-right: 5%;
+  /* 기본 스타일을 숨기고 사용자 정의 스타일 추가 */
+  -webkit-appearance: none; /* 기본 스타일 제거 (Chrome) */
+  -moz-appearance: none; /* 기본 스타일 제거 (Firefox) */
+  appearance: none; /* 기본 스타일 제거 (기타 브라우저) */
+  width: 1em; /* 동그라미 크기 */
+  height: 1em; /* 동그라미 크기 */
+  border: 0.5px solid #ccc; /* 테두리 색상 */
+  border-radius: 50%; /* 동그라미 형태 */
+  outline: none; /* 포커스 스타일 제거 */
+  cursor: pointer; /* 커서 스타일 */
+  position: relative; /* 위치 설정 */
+}
+
+.filter-item input:checked {
+  background-color: #097ce6; /* 체크된 상태의 배경색 */
+  border: none;
+}
+
+.filter-item input:checked::after {
+  content: '';
+  position: absolute;
+}
+
+.filter-item span {
+  font-family: 'pretendard-extralight';
+  color: black;
+}
+
+.accommo-component {
+  background-color: none;
+  margin-bottom: 0;
+}
