@@ -1,10 +1,45 @@
-import React from 'react';
-import './Header.css'; // CSS 파일을 통해 스타일링을 적용합니다.
-import { Link } from 'react-router-dom';
-import logo from '../assets/logo.svg'; // 경로 수정
-import { Button1, Button2, Button3 } from './Button.style'; // Button1과 Button2 불러오기
+import React, { useEffect, useState } from 'react';
+import './Header.css';
+import { Link, useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.svg';
+import { Button1 } from './Button.style';
+import { Menu } from '@mui/icons-material';
+import { IconButton, Menu as MenuComponent, MenuItem, Divider, ListItemText } from '@mui/material';
 
 function Header() {
+  const [userEmail, setUserEmail] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 세션 저장소에서 사용자 이메일을 가져와 설정
+    const storedUserEmail = sessionStorage.getItem('userEmail');
+    if (storedUserEmail && storedUserEmail !== 'undefined') {
+      setUserEmail(storedUserEmail);
+    }
+  }, []); // 페이지 로드 시 한 번 실행
+
+  const handleLogout = () => {
+    // 로그아웃 처리 (세션 저장소에서 사용자 정보 삭제)
+    sessionStorage.removeItem('userEmail');
+    sessionStorage.removeItem('accessToken');
+    setUserEmail('');
+    window.location.href = '/'; // 로그아웃 후 메인 페이지로 이동
+  };
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleNavigation = (path) => {
+    handleMenuClose();
+    navigate(path);
+  };
+
   return (
     <header className="header">
       <div className="logo">
@@ -13,11 +48,59 @@ function Header() {
         </Link>
       </div>
       <div>
-        <Link to="/login">
-          <Button1 variant="outlined" disableFocusRipple="true" style={{ marginRight: '10px' }}>
-            로그인/회원가입
-          </Button1>
-        </Link>
+        {userEmail ? (
+          // 로그인된 경우 사용자 이메일과 햄버거 메뉴 표시
+          <div className="user-info" style={{ display: 'flex', alignItems: 'center' }}>
+            <Button1 onClick={handleMenuClick} style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontWeight: 'bold', marginRight: '10px' }}>{userEmail}</span>
+              <IconButton
+                aria-label="menu"
+                onClick={handleMenuClick}
+                style={{ padding: 0 }}
+              >
+                <Menu />
+              </IconButton>
+            </Button1>
+
+            <MenuComponent
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              PaperProps={{
+                style: {
+                  width: '250px',
+                  padding: '10px',
+                },
+              }}
+            >
+              <MenuItem onClick={() => handleNavigation('/profile/reservations')}>
+                <ListItemText primary="예약 내역" />
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={() => handleNavigation('/profile/info')}>
+                <ListItemText primary="사용자 정보" />
+              </MenuItem>
+              <MenuItem onClick={() => handleNavigation('/profile/setting')}>
+                <ListItemText primary="설정" />
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  handleLogout();
+                }}
+              >
+                <ListItemText primary="로그아웃" />
+              </MenuItem>
+            </MenuComponent>
+          </div>
+        ) : (
+          // 로그인되지 않은 경우 로그인/회원가입 버튼 표시
+          <Link to="/login">
+            <Button1 variant="outlined" disableFocusRipple="true">
+              로그인/회원가입
+            </Button1>
+          </Link>
+        )}
       </div>
     </header>
   );
