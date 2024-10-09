@@ -14,6 +14,7 @@ const UsersRouter = express.Router();
 ---------------------------------------------*/
 UsersRouter.post('/sign/signup', async (req, res, next) => {
   try {
+    console.log(req.body)
     const userVal = await SignUpSchema.validateAsync(req.body);
     const { email, password, user_name, phone_number, birth, gender } = userVal;
 
