@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import './Accommodations.css';
 import { Box, Pagination } from '@mui/material';
 import Map from '../assets/Map.svg';
-import Modal from '../components/Modal';
+import MapModal from '../components/MapModal';
 import MapComponent from '../components/Map';
 import { Button2 } from '../components/Button.style';
 import { useNavigate } from 'react-router-dom';
@@ -11,15 +11,14 @@ import { useNavigate } from 'react-router-dom';
 export default function Accommodations() {
   const [data, setData] = useState([]);
   const [selectedOption, setSelectedOption] = useState('전체');
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isMapModalOpen, setMapModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
 
-  const location = useLocation(); // 현재 URL 정보를 가져옵니다.
+  const location = useLocation();
   const defaultImage = 'https://via.placeholder.com/151';
   const itemsPerPage = 5;
 
-  // 데이터 가져오기
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const keyword = query.get('keyword');
@@ -55,7 +54,7 @@ export default function Accommodations() {
       return data;
     }
     const filterMap = {
-      '호텔·리조트': ['호텔', '서비스드레지던스', '관광단지'],
+      '호텔·리조트': ['관광호텔', '서비스드레지던스', '관광단지'],
       '모텔·유스호스텔': ['모텔', '유스호스텔'],
       게스트하우스: ['게스트하우스', '민박', '홈스테이'],
       '캠핑·펜션': ['야영장', '펜션'],
@@ -66,7 +65,7 @@ export default function Accommodations() {
 
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
@@ -78,8 +77,8 @@ export default function Accommodations() {
     setSelectedOption(event.target.value);
   };
 
-  const toggleModal = () => {
-    setModalOpen(!isModalOpen);
+  const toggleMapModal = () => {
+    setMapModalOpen(!isMapModalOpen);
   };
 
   const formatMinFee = (minfee) => {
@@ -92,6 +91,8 @@ export default function Accommodations() {
     navigate(`/accommodations/${contentid}`);
   };
 
+  console.log(filteredData);
+
   return (
     <div className="Accommodation">
       <div className="accommo-left">
@@ -99,7 +100,7 @@ export default function Accommodations() {
           <div className="map">
             <img src={Map} style={{ borderRadius: '15px', width: '100%' }} alt="Map" />
             <div className="map-title">
-              <Button2 onClick={toggleModal}>지도보기</Button2>
+              <Button2 onClick={toggleMapModal}>지도보기</Button2>
             </div>
           </div>
           <div className="filter">
@@ -141,14 +142,19 @@ export default function Accommodations() {
             </div>
           </div>
 
-          <Modal isOpen={isModalOpen} onClose={toggleModal}>
+          <MapModal isOpen={isMapModalOpen} onClose={toggleMapModal}>
             <MapComponent
               locations={filteredData.map((item) => ({
-                ...item,
+                addr: item.address,
+                area: item.area,
+                contentid: item.lodging_id,
+                firstimage: item.main_image,
+                title: item.name,
+                part: item.part,
                 minfee: formatMinFee(item.minfee),
               }))}
             />
-          </Modal>
+          </MapModal>
         </div>
       </div>
       <div className="accommo-right">
@@ -170,7 +176,7 @@ export default function Accommodations() {
                   borderBottom: '1px solid rgb(231,231,231)',
                   cursor: 'pointer',
                 }}
-                onClick={() => handleCardClick(item.contentid)}
+                onClick={() => handleCardClick(item.lodging_id)}
               >
                 <img
                   src={item.main_image || defaultImage}
@@ -178,16 +184,18 @@ export default function Accommodations() {
                   alt={item.title}
                 />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div style={{ flex: '1 0 auto', padding: '10px' }}>
-                  <p style={{ margin: '5px 0', color: '#666', fontSize: '0.9em' }}>
-                    {`${item.part}`} 
-                  </p>
-                  <h6 style={{ margin: 0, fontSize: '1.3em', fontWeight: 'bold' }}>{item.name}</h6> {/* 숙소 이름 */}
-                  <p style={{ margin: '5px 0', color: '#666' }}>
-                    {`${item.area} ${item.sigungu}`}
-                  </p>
-                  <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.minfee)}</p> {/* 최소 요금 */}
-                </div>
+                  <div style={{ flex: '1 0 auto', padding: '10px' }}>
+                    <p style={{ margin: '5px 0', color: '#666', fontSize: '0.9em' }}>
+                      {`${item.part}`}
+                    </p>
+                    <h6 style={{ margin: 0, fontSize: '1.3em', fontWeight: 'bold' }}>
+                      {item.name}
+                    </h6>
+                    <p style={{ margin: '5px 0', color: '#666' }}>
+                      {`${item.area} ${item.sigungu}`}
+                    </p>
+                    <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.minfee)}</p>
+                  </div>
                 </div>
               </div>
             ))

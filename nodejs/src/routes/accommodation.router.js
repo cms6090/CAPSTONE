@@ -26,7 +26,8 @@ AccommodationsRouter.get('/accommodations/', async (req, res, next) => {
         area, 
         sigungu, 
         rating, 
-        tel, 
+        tel,
+        address,
         main_image
       FROM 
         lodgings
