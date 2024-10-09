@@ -5,7 +5,7 @@ import logo from '../assets/logo.svg'; // 로고 이미지 경로
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
+  //const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({ email: '', password: '' });
 
   const handleChange = (setter) => (e) => {
@@ -13,7 +13,7 @@ function Login() {
     setErrors({ ...errors, [e.target.name]: '' }); // 에러 메시지 초기화
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const newErrors = { email: '', password: '' };
 
@@ -25,8 +25,38 @@ function Login() {
       return;
     }
 
-    // 로그인 로직 구현
-    console.log('Logging in with:', { email, password, rememberMe });
+    // 로그인 로직 구현 (POST 요청 보내기)
+    const loginData = {
+      email,
+      password,
+      // remember_me: rememberMe,
+    };
+
+    try {
+      const response = await fetch('http://localhost:3000/api/sign/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+
+      if (response.ok) {
+        // 요청이 성공한 경우
+        const result = await response.json();
+        console.log('Login successful:', result);
+        alert('로그인에 성공했습니다.');
+        // 추가적인 행동 (예: 페이지 이동) 등을 수행할 수 있습니다.
+      } else {
+        // 요청이 실패한 경우
+        const errorData = await response.json();
+        console.error('Login failed:', errorData);
+        alert('로그인에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (
@@ -65,8 +95,8 @@ function Login() {
           <label className="remember-me-label">
             <input
               type="checkbox"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
+              //checked={rememberMe}
+              //onChange={() => setRememberMe(!rememberMe)}
             />
             <h6 style={{marginBottom:'0px', color:'rgba(0,0,0,0.7)'}}>로그인 유지</h6>
           </label>

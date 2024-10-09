@@ -44,20 +44,45 @@ function Signup() {
     }
   }, [birthYear, birthMonth]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 전송 로직 구현
-    console.log('Sending details:', {
+    
+    // birthYear, birthMonth, birthDate를 결합하여 하나의 birth로 만듭니다.
+    const birth = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDate.padStart(2, '0')}`;
+  
+    const signupData = {
       email,
       password,
-      userName,
-      phoneNumber,
-      birthYear,
-      birthMonth,
-      birthDate,
+      user_name: userName,
+      phone_number: phoneNumber,
+      birth, // 결합된 생년월일
       gender,
-    });
+    };
+  
+    try {
+      const response = await fetch('http://localhost:3000/api/sign/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(signupData),
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Signup successful:', result);
+        alert('회원가입에 성공했습니다.');
+      } else {
+        const errorData = await response.json();
+        console.error('Signup failed:', errorData);
+        alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+    }
   };
+  
 
   // 가입 버튼 활성화 조건
   const isFormValid = () => {
@@ -195,8 +220,8 @@ function Signup() {
               <input
                 className="gender-select"
                 type="radio"
-                value="male"
-                checked={gender === 'male'}
+                value="남성"
+                checked={gender === '남성'}
                 onChange={(e) => setGender(e.target.value)}
               />
               남성
@@ -205,8 +230,8 @@ function Signup() {
               <input
                 className="gender-select"
                 type="radio"
-                value="female"
-                checked={gender === 'female'}
+                value="여성"
+                checked={gender === '여성'}
                 onChange={(e) => setGender(e.target.value)}
               />
               여성
