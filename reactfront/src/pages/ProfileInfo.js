@@ -146,10 +146,8 @@ export default function ProfileInfo() {
               </select>
             </div>
             <div className="info-item">
-              <div className="info-title" style={{ visibility: 'hidden' }}>
-                수정
-              </div>
-              <Button1 onClick={handleEditClick}>{isEditable ? '완료' : '변경하기'}</Button1>
+              <div className='info-title'>수정</div>
+              <Button1 onClick={handleEditClick} >{isEditable ? '완료' : '변경하기'}</Button1>
             </div>
           </div>
         </div>
