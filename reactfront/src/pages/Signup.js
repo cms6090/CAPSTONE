@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import './Signup.css';
 import { Button2 } from '../components/Button.style';
-import { useNavigate } from 'react-router-dom'; // useNavigate import 추가
 
 function Signup() {
   const currentYear = dayjs().year();

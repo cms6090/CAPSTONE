@@ -1,5 +1,4 @@
 import { styled, Button } from '@mui/material';
-import React from 'react';
 
 // styled 버튼 컴포넌트 생성
 export const Button1 = styled(Button)(() => ({

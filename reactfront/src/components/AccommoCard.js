@@ -1,5 +1,5 @@
 import '../../node_modules/swiper/swiper.css';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './AccommoCard.css'; // CSS 파일 import
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 import
@@ -9,89 +9,52 @@ import { Button3 } from './Button.style'; // Button3 컴포넌트 import
 import arrowLeft from '../assets/Arrowleft.svg';
 import arrowRight from '../assets/Arrowright.svg';
 
-const swiperList = [
-  {
-    id: 129067,
-    title: '죽도마을',
-    part: '민박',
-    area: '전북특별자치도',
-    sigungu: '고창군',
-    addr: '전북특별자치도 고창군 부안면 봉암리 683',
-    tel: '',
-    firstimage: '',
-    minfee: '40000',
-  },
-  {
-    id: 129068,
-    title: '해리마을',
-    part: '민박',
-    area: '전북특별자치도',
-    sigungu: '고창군',
-    addr: '전북특별자치도 고창군 해리면 동호리',
-    tel: '',
-    firstimage: 'http://tong.visitkorea.or.kr/cms/resource/10/3358010_image2_1.JPG',
-    minfee: '58000',
-  },
-  {
-    id: 129104,
-    title: '장촌마을',
-    part: '민박',
-    area: '전라남도',
-    sigungu: '여수시',
-    addr: '전라남도 여수시 삼산면 서도리',
-    tel: '',
-    firstimage: '',
-    minfee: '36000',
-  },
-  {
-    id: 136039,
-    title: '서울올림픽파크텔',
-    part: '유스호스텔',
-    area: '서울특별시',
-    sigungu: '송파구',
-    addr: '서울특별시 송파구 올림픽로 448',
-    tel: '02-410-2114',
-    minfee: '80000',
-  },
-  {
-    id: 136060,
-    title: '소노휴 양평',
-    part: '리조트',
-    area: '경기도',
-    sigungu: '양평군',
-    addr: '경기도 양평군 개군면 신내길7번길 55',
-    tel: '1588-4888',
-    minfee: '102000',
-  },
-];
-
-const categories = {
-  전체: swiperList,
-  '호텔·리조트': swiperList.filter(
-    (data) => data.part === '관광호텔' || data.part === '서비스드레지던스' || data.part === '관광단지',
-  ),
-  '모텔·유스호스텔': swiperList.filter(
-    (data) => data.part === '모텔' || data.part === '유스호스텔',
-  ),
-  '게스트하우스': swiperList.filter(
-    (data) => data.part === '게스트하우스' || data.part === '민박' || data.part === '홈스테이',
-  ),
-  '캠핑·펜션': swiperList.filter((data) => data.part === '야영장' || data.part === '펜션'),
-  '전통 숙소': swiperList.filter((data) => data.part === '한옥'),
-};
-
 export default function AccommoCard() {
+  const [accommodations, setAccommodations] = useState([]); // 숙박 데이터 상태 관리
   const [selectedCategory, setSelectedCategory] = useState('전체'); // 기본값은 '전체'
   const swiperRef = useRef(null); // Swiper 인스턴스를 저장할 ref
   const navigate = useNavigate(); // useNavigate 훅 사용
 
+  // API를 통해 숙소 데이터를 가져오는 함수
+  useEffect(() => {
+    const fetchAccommodations = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/accommodations/`);
+        if (!response.ok) {
+          throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
+        }
+        const data = await response.json();
+        setAccommodations(data);
+      } catch (error) {
+        console.error('Error fetching accommodations:', error);
+      }
+    };
+
+    fetchAccommodations();
+  }, []);
+
+  const categories = {
+    전체: accommodations,
+    '호텔·리조트': accommodations.filter(
+      (data) => data.part === '관광호텔' || data.part === '서비스드레지던스' || data.part === '관광단지',
+    ),
+    '모텔·유스호스텔': accommodations.filter(
+      (data) => data.part === '모텔' || data.part === '유스호스텔',
+    ),
+    '게스트하우스': accommodations.filter(
+      (data) => data.part === '게스트하우스' || data.part === '민박' || data.part === '홈스테이',
+    ),
+    '캠핑·펜션': accommodations.filter((data) => data.part === '야영장' || data.part === '펜션'),
+    '전통 숙소': accommodations.filter((data) => data.part === '한옥'),
+  };
+
   const goToAccommo = (accommoId) => {
-    navigate(`/accommodations/${encodeURIComponent(accommoId)}`); // 숙소 이름을 쿼리 파라미터로 전달
+    navigate(`/accommodations/${encodeURIComponent(accommoId)}`); // 숙소 ID를 쿼리 파라미터로 전달
   };
 
   // 슬라이드 이동 처리
   const handleSlideChange = (direction) => {
-    const newIndex = swiperRef.current.activeIndex + direction * 6;
+    const newIndex = swiperRef.current.activeIndex + direction * 3;
     const clampedIndex = Math.max(0, Math.min(categories[selectedCategory].length - 1, newIndex)); // 인덱스 범위 제한
     swiperRef.current?.slideTo(clampedIndex); // 안전하게 슬라이드로 이동
   };
@@ -129,18 +92,18 @@ export default function AccommoCard() {
             1920: { slidesPerView: 4 },
           }}
         >
-          {categories[selectedCategory].map((data) => (
-            <SwiperSlide key={data.id}>
-              <div className="accommo-card-wrap" onClick={() => goToAccommo(data.id)}>
+          {categories[selectedCategory].slice(0, 10).map((data) => (
+            <SwiperSlide key={data.lodging_id}>
+              <div className="accommo-card-wrap" onClick={() => goToAccommo(data.lodging_id)}>
                 <img
-                  src={data.firstimage || 'https://via.placeholder.com/300'} // 기본 이미지 URL
-                  alt={data.title}
+                  src={data.main_image || 'https://via.placeholder.com/300'} // 기본 이미지 URL
+                  alt={data.name}
                   className="accommo-image"
                 />
                 <div className="accommo-info">
                   <div className="accommo-part">{data.part}</div>
-                  <div className='accommo-title'>{data.title}</div>
-                  <div className="accommo-addr">{data.addr}</div>
+                  <div className='accommo-title'>{data.name}</div>
+                  <div className="accommo-addr">{data.address}</div>
                   <div className='accommo-price'>
                     {data.minfee ? (
                       <>
