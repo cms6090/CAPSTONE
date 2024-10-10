@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css';
-import logo from '../assets/logo.svg'; // 로고 이미지 경로
+import logo from '../assets/logo.svg';
 
 function Login() {
   const [email, setEmail] = useState('');
