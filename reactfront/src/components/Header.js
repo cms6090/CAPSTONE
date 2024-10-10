@@ -96,7 +96,7 @@ function Header() {
         ) : (
           // 로그인되지 않은 경우 로그인/회원가입 버튼 표시
           <Link to="/login">
-            <Button1 variant="outlined" disableFocusRipple="true">
+            <Button1 variant="outlined" disableFocusRipple>
               로그인/회원가입
             </Button1>
           </Link>

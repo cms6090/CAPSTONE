@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // useHistory 대신 useNavigate 사용
+import { useParams, useNavigate } from 'react-router-dom';
 import './Accommodation.css';
 import JustMap from '../components/JustMap';
-import MapModal from '../components/MapModal'; // 모달 컴포넌트 임포트
+import MapModal from '../components/MapModal';
 import { Button2 } from '../components/Button.style';
 import RoomModal from '../components/RoomModal';
+import { BsFillImageFill } from 'react-icons/bs';
 
 export default function Accommodation() {
-  const { id } = useParams(); // URL에서 ID 가져오기
-  const navigate = useNavigate(); // useNavigate 훅 사용
-  const [isMapModalOpen, setMapModalOpen] = useState(false); // 지도 모달 상태 관리
-  const [isRoomModalOpen, setRoomModalOpen] = useState(false); // 객실 상세 모달 상태 관리
-  const [selectedRoom, setSelectedRoom] = useState(null); // 선택된 객실 정보
-  const [accommodation, setAccommodation] = useState(null); // 숙소 상세 정보 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태 관리
-  const [error, setError] = useState(null); // 오류 상태 관리
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [isMapModalOpen, setMapModalOpen] = useState(false);
+  const [isRoomModalOpen, setRoomModalOpen] = useState(false);
+  const [isMorePhotosModalOpen, setMorePhotosModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [accommodation, setAccommodation] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 데이터 가져오기
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
       try {
@@ -25,8 +26,6 @@ export default function Accommodation() {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
         }
         const data = await response.json();
-        console.log(data.rooms[0].room_photos);
-        
         setAccommodation(data);
       } catch (error) {
         console.error('Error fetching accommodation details:', error);
@@ -51,7 +50,6 @@ export default function Accommodation() {
     return <h2>숙소를 찾을 수 없습니다.</h2>;
   }
 
-  // 랜덤 이미지 URL
   const defaultImage = 'https://via.placeholder.com/300';
 
   const toggleMapModal = () => {
@@ -65,7 +63,7 @@ export default function Accommodation() {
 
   const closeRoomModal = () => {
     setRoomModalOpen(false);
-    setSelectedRoom(null); // 선택된 객실 정보 초기화
+    setSelectedRoom(null);
   };
 
   const handleReserve = (room) => {
@@ -78,19 +76,35 @@ export default function Accommodation() {
     });
   };
 
+  const roomPhotos = accommodation.rooms.flatMap((room) => room.room_photos || []);
+  const displayedPhotos = roomPhotos.slice(0, 4);
+
   return (
     <div className="hotel">
       <section className="hotel-image">
         <ul className="hotel-image-content">
-          {accommodation.rooms[0]?.room_photos?.map((photo, index) => (
-            <ol key={index}>
+          <ol className="large-image">
+            <div className="hotel-image-contents">
+              <img src={accommodation.main_image || defaultImage} alt="숙소 이미지" />
+            </div>
+          </ol>
+
+          {displayedPhotos.map((photo, index) => (
+            <ol key={index} className="small-image">
               <div className="hotel-image-contents">
-                <img src={accommodation.main_image || defaultImage} alt="숙소 이미지" />
+                <img src={photo || defaultImage} alt={`객실 이미지 ${index + 1}`} />
+                {/* "더보기" 버튼 추가 */}
+                {index === 3 && roomPhotos.length > 4 && (
+                  <div className="more-photos-overlay" onClick={() => setMorePhotosModalOpen(true)}>
+                    <BsFillImageFill style={{marginRight:'3%'}}/> {roomPhotos.length - 4} +
+                  </div>
+                )}
               </div>
             </ol>
           ))}
         </ul>
       </section>
+
       <section className="hotel-title">
         <div className="hotel-title-container">
           <div className="hotel-title-content">
@@ -103,7 +117,7 @@ export default function Accommodation() {
                     {new Intl.NumberFormat().format(accommodation.rooms[0].price_per_night)}원 ~
                   </div>
                 )}
-              </div>{' '}
+              </div>
             </div>
           </div>
         </div>
@@ -115,7 +129,7 @@ export default function Accommodation() {
                 <div
                   style={{
                     display: 'flex',
-                    alignItems: 'center', // 세로 중앙 정렬
+                    alignItems: 'center',
                     fontSize: '0.8em',
                     color: 'rgba(0,0,0,0.8)',
                   }}
@@ -127,10 +141,9 @@ export default function Accommodation() {
                 </div>
               </div>
               <div className="hotel-info-map-detail">
-                <Button2 onClick={toggleMapModal}>지도보기</Button2> {/* 모달 열기 */}
+                <Button2 onClick={toggleMapModal}>지도보기</Button2>
               </div>
             </div>
-            {/* 지도 모달 */}
             {isMapModalOpen && (
               <MapModal isOpen={isMapModalOpen} onClose={toggleMapModal}>
                 <JustMap locations={accommodation.address} />
@@ -139,34 +152,35 @@ export default function Accommodation() {
           </div>
         </div>
       </section>
+
       <section className="hotel-room">
         <div style={{ fontSize: '1.1em', marginBottom: '1%' }}>객실 정보</div>
         <div className="hotel-room-card">
           {accommodation.rooms.map((room) => (
             <div className="hotel-room-card-container" key={room.room_id}>
               <div className="hotel-room-card-img">
-                <img src={room.room_photos[0] || defaultImage} alt="객실 이미지" />
+                <img
+                  src={room.room_photos && room.room_photos[0] ? room.room_photos[0] : defaultImage}
+                  alt="객실 이미지"
+                />
               </div>
               <div className="hotel-room-card-content-container">
-                <div style={{ fontSize: '1.1em' }}>{room.room_name}</div>
                 <div
-                  style={{
-                    color: '#097ce6',
-                    fontSize: '0.9em',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                  }}
-                  className="hotem-room-card-detail-modal"
-                  onClick={() => openRoomDetails(room)} // 클릭 시 객실 상세 모달 열기
+                  style={{ fontSize: '1.1em', display: 'flex', justifyContent: 'space-between' }}
                 >
-                  <div>상세정보</div>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: 'inherit', marginLeft: '4px' }}
+                  <div>{room.room_name}</div>
+                  <div
+                    className="hotel-room-card-detail-modal"
+                    onClick={() => openRoomDetails(room)}
                   >
-                    arrow_forward_ios
-                  </span>
+                    <div>상세정보</div>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 'inherit', marginLeft: '4px' }}
+                    >
+                      arrow_forward_ios
+                    </span>
+                  </div>
                 </div>
                 <div className="hotel-room-card-content">
                   <div className="hotel-room-card-details">
@@ -185,14 +199,20 @@ export default function Accommodation() {
                         기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
                       </div>
 
-                      <div style={{ fontFamily: 'pretendard-regular', fontSize: '1.5em', fontWeight: 'bold', color: '#333' }}>
-                        {room.price_per_night}원
+                      <div
+                        style={{
+                          fontFamily: 'pretendard-regular',
+                          fontSize: '1.2em',
+                          fontWeight: 'bold',
+                          color: '#333',
+                        }}
+                      >
+                        {new Intl.NumberFormat().format(room.price_per_night)} 원
                       </div>
-                      <Button2 onClick={() => handleReserve(room)} style={{ width: 'auto'}}>
-                        예약하기
-                      </Button2>
-                      {/* 예약하기 버튼 */}
                     </div>
+                    <Button2 onClick={() => handleReserve(room)} style={{ width: '100%' }}>
+                      예약하기
+                    </Button2>
                   </div>
                 </div>
               </div>
@@ -201,13 +221,23 @@ export default function Accommodation() {
         </div>
       </section>
 
-      {/* 모달 컴포넌트 - 객실 상세 정보 */}
       {isRoomModalOpen && selectedRoom && (
-        <RoomModal
-          isOpen={isRoomModalOpen}
-          onClose={closeRoomModal}
-          room={selectedRoom} // 선택된 객실 정보 전달
-        />
+        <RoomModal isOpen={isRoomModalOpen} onClose={closeRoomModal} room={selectedRoom} />
+      )}
+
+      {isMorePhotosModalOpen && (
+        <MapModal isOpen={isMorePhotosModalOpen} onClose={() => setMorePhotosModalOpen(false)}>
+          <div className="more-photos-modal">
+            {roomPhotos.map((photo, index) => (
+              <img
+                key={index}
+                src={photo || defaultImage}
+                alt={`전체 객실 이미지 ${index + 1}`}
+                className="more-photos-image"
+              />
+            ))}
+          </div>
+        </MapModal>
       )}
     </div>
   );
