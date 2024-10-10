@@ -1,7 +1,7 @@
 .login-container {
   max-width: 35%;
   margin: auto; /* 페이지 중앙 정렬 */
-  padding:  5% 20px;
+  padding: 5% 20px;
   background-color: #fff; /* 배경색 */
 }
 
@@ -67,7 +67,7 @@ input::placeholder {
 .login-button {
   width: 100%;
   padding: 10px;
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   border: none;
   cursor: pointer;
