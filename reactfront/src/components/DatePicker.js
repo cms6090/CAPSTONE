@@ -1,6 +1,5 @@
 // DatePickerComponent.js
 import React from 'react';
-import dayjs from 'dayjs';
 import 'dayjs/locale/ko'; // 한글 로케일 추가
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';

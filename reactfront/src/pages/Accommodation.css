@@ -123,7 +123,6 @@
 .hotel-room-card-container {
   background-color: #f5f7fa;
   border-radius: 15px;
-  margin-top: 2%;
   padding: 3%;
   height: 100%;
   display: grid;
@@ -159,6 +158,10 @@
 .hotel-room-card-details {
   font-size: 0.9em;
   color: rgb(156, 154, 154);
+  background-color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 5%;
 }
 
 .hotel-room-card-time {
