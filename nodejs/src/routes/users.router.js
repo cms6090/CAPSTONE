@@ -95,7 +95,7 @@ UsersRouter.post('/sign/signin', async (req, res, next) => {
 /*---------------------------------------------
     [사용자 정보 조회]
 ---------------------------------------------*/
-UsersRouter.get('/me', async (req, res, next) => {
+UsersRouter.get('/inquiry', async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {

@@ -21,7 +21,7 @@ export default function ProfileInfo() {
       // 서버에서 사용자 정보를 가져오기
       const fetchUserInfo = async () => {
         try {
-          const response = await fetch(`http://localhost:3000/api/users/me`, {
+          const response = await fetch(`http://localhost:3000/api/users/inquiry`, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
             },
