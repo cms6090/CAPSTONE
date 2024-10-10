@@ -45,7 +45,7 @@ function Login() {
       if (response.ok) {
         const result = await response.json();
         const accessToken = response.headers.get('Authorization').replace('Bearer ', '');
-        
+
         console.log('Login successful:', result);
         alert('로그인에 성공했습니다.');
 
@@ -84,6 +84,7 @@ function Login() {
             onChange={handleChange(setEmail)}
             required
             placeholder="abc@gccompany.co.kr"
+            style={{ border: '15px' }}
           />
           {errors.email && <div className="error-message">{errors.email}</div>}
         </div>
@@ -98,6 +99,7 @@ function Login() {
             value={password}
             onChange={handleChange(setPassword)}
             required
+            style={{ border: '15px' }}
             placeholder="비밀번호를 입력하세요."
           />
           {errors.password && <div className="error-message">{errors.password}</div>}
