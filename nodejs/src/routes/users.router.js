@@ -34,7 +34,7 @@ UsersRouter.post('/sign/signup', async (req, res, next) => {
         phone_number,
         birth,
         gender,
-        permission: "유저"
+        permission: '유저',
       },
     });
 
@@ -70,13 +70,13 @@ UsersRouter.post('/sign/signin', async (req, res, next) => {
     const accessToken = jwt.sign(
       { id: loginUser.user_id }, // user_id 사용
       process.env.ACCESS_SECRET_KEY,
-      { expiresIn: '1h' }
+      { expiresIn: '1h' },
     );
 
     const refreshToken = jwt.sign(
       { id: loginUser.user_id }, // user_id 사용
       process.env.REFRESH_SECRET_KEY,
-      { expiresIn: '7d' }
+      { expiresIn: '7d' },
     );
 
     res.setHeader('Authorization', `Bearer ${accessToken}`);
@@ -87,6 +87,95 @@ UsersRouter.post('/sign/signin', async (req, res, next) => {
     });
 
     return res.status(StatusCodes.OK).json({ message: '로그인 성공' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*---------------------------------------------
+    [사용자 정보 조회]
+---------------------------------------------*/
+UsersRouter.get('/me', async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
+    }
+
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY);
+    const user = await prisma.users.findUnique({
+      where: { user_id: decoded.id },
+      select: {
+        user_name: true,
+        email: true,
+        phone_number: true,
+        birth: true,
+        gender: true,
+        user_id: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
+    }
+
+    res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*---------------------------------------------
+    [사용자 정보 수정]
+---------------------------------------------*/
+UsersRouter.put('/modify', async (req, res, next) => {
+  try {
+    console.log('Received data:', req.body);
+
+    // Retrieve the JWT token from the Authorization header
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
+    }
+
+    // Verify the JWT token
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY);
+
+    // Extract the user data from the request body
+    const { user_name, phone_number, gender, birth } = req.body;
+
+    // Check if the user exists
+    const user = await prisma.users.findUnique({
+      where: { user_id: decoded.id },
+    });
+
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
+    }
+
+    // Update the user's information in the database and set updated_at to current time
+    const updatedUser = await prisma.users.update({
+      where: { user_id: decoded.id },
+      data: {
+        user_name: user_name || user.user_name,
+        phone_number: phone_number || user.phone_number,
+        gender: gender || user.gender, // Update gender if provided
+        birth: birth || user.birth, // Update birth date if provided
+        updated_at: new Date(), // Update the updated_at field to current time
+      },
+    });
+
+    // Send a response with the updated user information
+    return res.status(StatusCodes.OK).json({
+      message: 'User information updated successfully',
+      user: {
+        user_name: updatedUser.user_name,
+        email: updatedUser.email,
+        phone_number: updatedUser.phone_number,
+        gender: updatedUser.gender,
+        birth: updatedUser.birth,
+      },
+    });
   } catch (error) {
     next(error);
   }

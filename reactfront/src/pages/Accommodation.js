@@ -17,6 +17,7 @@ export default function Accommodation() {
   const [accommodation, setAccommodation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 추가
 
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
@@ -34,6 +35,9 @@ export default function Accommodation() {
         setLoading(false);
       }
     };
+
+    const loggedIn = sessionStorage.getItem('userEmail');
+    setIsLoggedIn(!!loggedIn);
 
     fetchAccommodationDetails();
   }, [id]);
@@ -67,11 +71,16 @@ export default function Accommodation() {
   };
 
   const handleReserve = (room) => {
+    if (!isLoggedIn) {
+      alert('예약을 하려면 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+      navigate('/login');
+      return;
+    }
+
     navigate('/reserve', {
       state: {
-        contentid: accommodation.lodging_id,
-        title: accommodation.name,
-        roomcode: room.room_id,
+        accommodation: accommodation,
+        room: room, // 객실 정보를 전체 전달
       },
     });
   };
@@ -83,24 +92,23 @@ export default function Accommodation() {
     <div className="hotel">
       <section className="hotel-image">
         <ul className="hotel-image-content">
-          <ol className="large-image">
+          <li className="large-image">
             <div className="hotel-image-contents">
               <img src={accommodation.main_image || defaultImage} alt="숙소 이미지" />
             </div>
-          </ol>
+          </li>
 
           {displayedPhotos.map((photo, index) => (
-            <ol key={index} className="small-image">
+            <li key={index} className="small-image">
               <div className="hotel-image-contents">
                 <img src={photo || defaultImage} alt={`객실 이미지 ${index + 1}`} />
-                {/* "더보기" 버튼 추가 */}
                 {index === 3 && roomPhotos.length > 4 && (
                   <div className="more-photos-overlay" onClick={() => setMorePhotosModalOpen(true)}>
-                    <BsFillImageFill style={{marginRight:'3%'}}/> {roomPhotos.length - 4} +
+                    <BsFillImageFill style={{ marginRight: '3%' }} /> {roomPhotos.length - 4} +
                   </div>
                 )}
               </div>
-            </ol>
+            </li>
           ))}
         </ul>
       </section>
@@ -123,17 +131,10 @@ export default function Accommodation() {
         </div>
         <div className="hotel-info">
           <div className="hotel-info-map-container">
-            <div className="hotel-info-map" style={{ margin: '0', height: '50%' }}>
+            <div className="hotel-info-map">
               <div className="hotel-info-map-detail">
                 <h6>지도</h6>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: '0.8em',
-                    color: 'rgba(0,0,0,0.8)',
-                  }}
-                >
+                <div className="hotel-address">
                   <span className="material-symbols-outlined" style={{ marginRight: '4px' }}>
                     location_on
                   </span>
@@ -165,19 +166,14 @@ export default function Accommodation() {
                 />
               </div>
               <div className="hotel-room-card-content-container">
-                <div
-                  style={{ fontSize: '1.1em', display: 'flex', justifyContent: 'space-between' }}
-                >
+                <div className="hotel-room-card-header">
                   <div>{room.room_name}</div>
                   <div
                     className="hotel-room-card-detail-modal"
                     onClick={() => openRoomDetails(room)}
                   >
                     <div>상세정보</div>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: 'inherit', marginLeft: '4px' }}
-                    >
+                    <span className="material-symbols-outlined" style={{ fontSize: 'inherit', marginLeft: '4px' }}>
                       arrow_forward_ios
                     </span>
                   </div>
@@ -185,28 +181,20 @@ export default function Accommodation() {
                 <div className="hotel-room-card-content">
                   <div className="hotel-room-card-details">
                     <div className="hotel-room-card-time">
-                      <div style={{ borderRight: '1px solid lightgray' }}>
-                        <div style={{ fontSize: '1em' }}>체크인</div>
-                        <div style={{ fontFamily: 'pretendard-regular' }}>14:00</div>
+                      <div className="check-in-out">
+                        <div className="check-label">체크인</div>
+                        <div className="check-time">14:00</div>
                       </div>
-                      <div>
-                        <div style={{ fontSize: '1em' }}>체크아웃</div>
-                        <div style={{ fontFamily: 'pretendard-regular' }}>10:00</div>
+                      <div className="check-in-out">
+                        <div className="check-label">체크아웃</div>
+                        <div className="check-time">10:00</div>
                       </div>
                     </div>
                     <div className="hotel-room-card-end">
-                      <div style={{ fontFamily: 'pretendard-regular' }}>
+                      <div className="occupancy-info">
                         기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
                       </div>
-
-                      <div
-                        style={{
-                          fontFamily: 'pretendard-regular',
-                          fontSize: '1.2em',
-                          fontWeight: 'bold',
-                          color: '#333',
-                        }}
-                      >
+                      <div className="price-info">
                         {new Intl.NumberFormat().format(room.price_per_night)} 원
                       </div>
                     </div>
