@@ -33,7 +33,7 @@ function Login() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/sign/signin', {
+      const response = await fetch('http://localhost:3000/api/users/sign/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -9,7 +9,9 @@ const AccommodationsRouter = express.Router();
 /*---------------------------------------------
     [숙박 업소 조회]
 ---------------------------------------------*/
-AccommodationsRouter.get('/accommodations/', async (req, res, next) => {
+AccommodationsRouter.get('/', async (req, res, next) => {
+  console.log('Request query:', req.query);
+
   try {
     let { keyword, checkIn, checkOut, personal = '2' } = req.query;
 
@@ -50,9 +52,8 @@ AccommodationsRouter.get('/accommodations/', async (req, res, next) => {
 /*---------------------------------------------
     [숙박 업소 상세 조회]
 ---------------------------------------------*/
-AccommodationsRouter.get('/accommodations/:lodgingId', async (req, res, next) => {
-  console.log("called");
-  console.log("lodgingId:", req.params.lodgingId); // 추가된 로그
+AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
+  console.log('called');
   try {
     const { lodgingId } = req.params;
     const query = `
@@ -116,14 +117,15 @@ AccommodationsRouter.get('/accommodations/:lodgingId', async (req, res, next) =>
     const lodgingDetails = await prisma.$queryRawUnsafe(query, parseInt(lodgingId));
 
     if (!lodgingDetails.length) {
-      console.log("dd");
+      console.log('dd');
       return res.status(404).json({ message: 'Lodging not found' });
     }
-    console.log("dl");
+    console.log('dl');
     res.status(200).json(lodgingDetails[0]);
   } catch (error) {
     console.error('Error fetching lodging details:', error);
     next(error);
   }
 });
+
 export default AccommodationsRouter;

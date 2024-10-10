@@ -14,8 +14,15 @@ function Header() {
   useEffect(() => {
     // 세션 저장소에서 사용자 이메일을 가져와 설정
     const storedUserEmail = sessionStorage.getItem('userEmail');
-    if (storedUserEmail && storedUserEmail !== 'undefined') {
+    const accessToken = sessionStorage.getItem('accessToken');
+
+    // 로그인된 이메일을 콘솔에 표시
+    console.log('Logged in user email:', storedUserEmail);
+
+    if (storedUserEmail && storedUserEmail !== 'undefined' && accessToken) {
       setUserEmail(storedUserEmail);
+    } else {
+      setUserEmail('');
     }
   }, []); // 페이지 로드 시 한 번 실행
 
@@ -51,16 +58,15 @@ function Header() {
         {userEmail ? (
           // 로그인된 경우 사용자 이메일과 햄버거 메뉴 표시
           <div className="user-info" style={{ display: 'flex', alignItems: 'center' }}>
-            <Button1 onClick={handleMenuClick} style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+              onClick={handleMenuClick}
+              className='user-set'
+            >
               <span style={{ fontWeight: 'bold', marginRight: '10px' }}>{userEmail}</span>
-              <IconButton
-                aria-label="menu"
-                onClick={handleMenuClick}
-                style={{ padding: 0 }}
-              >
+              <IconButton aria-label="menu" style={{ padding: 0 }}>
                 <Menu />
               </IconButton>
-            </Button1>
+            </div>
 
             <MenuComponent
               anchorEl={anchorEl}

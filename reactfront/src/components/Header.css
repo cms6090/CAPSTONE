@@ -8,6 +8,22 @@
   margin-bottom: 0;
 }
 
+.user-set {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-weight: 800;
+  color: black;
+  padding: 0.8em 1em;
+  border: 1px solid lightgray;
+  border-radius: 0.7em;
+}
+
+.user-set:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 .logo img {
   height: 40px; /* 로고의 높이 */
 }

@@ -25,7 +25,7 @@ export default function Accommodations() {
 
     let url = 'http://localhost:3000/api/accommodations';
     if (keyword) {
-      url += `?keyword=${keyword}`;
+      url += `?keyword=${encodeURIComponent(keyword)}`; // URL 인코딩 적용
     }
 
     fetch(url)
