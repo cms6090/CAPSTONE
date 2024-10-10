@@ -45,7 +45,7 @@ export default function SearchSection() {
   return (
     <div className="search-section">
       <div className='input-container'>
-        <span class="material-symbols-outlined">search</span>
+        <span className="material-symbols-outlined">search</span>
         <input className="input-container" placeholder="여행지나 숙소를 검색해보세요" />
       </div>
       <div

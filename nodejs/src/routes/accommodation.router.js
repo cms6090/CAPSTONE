@@ -51,7 +51,8 @@ AccommodationsRouter.get('/accommodations/', async (req, res, next) => {
     [숙박 업소 상세 조회]
 ---------------------------------------------*/
 AccommodationsRouter.get('/accommodations/:lodgingId', async (req, res, next) => {
-  console.log("called")
+  console.log("called");
+  console.log("lodgingId:", req.params.lodgingId); // 추가된 로그
   try {
     const { lodgingId } = req.params;
     const query = `

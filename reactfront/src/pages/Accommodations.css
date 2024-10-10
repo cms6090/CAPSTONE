@@ -1,6 +1,6 @@
 .Accommodation {
   display: grid;
-  grid-template-columns: 1fr 4fr; /* 두 개의 컬럼 설정 */
+  grid-template-columns: 1fr 3fr; /* 두 개의 컬럼 설정 */
   grid-template-rows: auto; /* 자동 높이 설정 */
   gap: 5%; /* 컬럼 사이의 간격 */
   padding: 3% 10%; /* 패딩 설정 */

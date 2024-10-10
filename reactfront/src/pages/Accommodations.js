@@ -145,15 +145,19 @@ export default function Accommodations() {
 
           <MapModal isOpen={isMapModalOpen} onClose={toggleMapModal}>
             <MapComponent
-              locations={filteredData.map((item) => ({
-                addr: item.address,
-                area: item.area,
-                contentid: item.lodging_id,
-                firstimage: item.main_image,
-                title: item.name,
-                part: item.part,
-                minfee: formatMinFee(item.minfee),
-              }))}
+              locations={
+                filteredData && filteredData.length > 0
+                  ? filteredData.map((item) => ({
+                      addr: item.address,
+                      area: item.area,
+                      contentid: item.lodging_id,
+                      firstimage: item.main_image,
+                      title: item.name,
+                      part: item.part,
+                      minfee: formatMinFee(item.minfee),
+                    }))
+                  : []
+              }
             />
           </MapModal>
         </div>
@@ -167,7 +171,7 @@ export default function Accommodations() {
           ) : (
             paginatedData.map((item) => (
               <div
-                key={item.contentid}
+                key={item.lodging_id}
                 style={{
                   display: 'flex',
                   padding: '2% 0%',
@@ -180,7 +184,12 @@ export default function Accommodations() {
               >
                 <img
                   src={item.main_image || defaultImage}
-                  style={{ width: '40%', borderRadius: '15px', aspectRatio:'1.5/1',objectFit:'cover' }}
+                  style={{
+                    width: '40%',
+                    borderRadius: '15px',
+                    aspectRatio: '1.5/1',
+                    objectFit: 'cover',
+                  }}
                   alt={item.title}
                 />
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
