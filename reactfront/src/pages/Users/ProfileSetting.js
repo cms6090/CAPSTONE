@@ -1,5 +1,5 @@
 import React from 'react';
-import SettingList from '../components/SettingList';
+import SettingList from '../../components/SettingList';
 import './ProfileSetting.css';
 
 export default function ProfileSetting() {

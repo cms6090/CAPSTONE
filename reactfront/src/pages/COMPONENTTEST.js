@@ -1,7 +1,5 @@
 import React from 'react';
 import Table from '../components/Table';
-import AccommoCard from '../components/AccommoCard';
-import SettingList from '../components/SettingList';
 
 import DatePickerValue from '../components/DatePicker';
 import RegionCard from '../components/RegionCard';
