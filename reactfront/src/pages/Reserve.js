@@ -22,7 +22,7 @@ export default function Reserve() {
           throw new Error('로그인이 필요합니다.');
         }
 
-        const response = await fetch('http://localhost:3000/api/users/me', {
+        const response = await fetch('http://localhost:3000/api/users/inquiry', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

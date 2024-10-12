@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import './Signup.css';
-import { Button2 } from '../components/Button.style';
+import { Button2 } from '../../components/Button.style';
 
 function Signup() {
   const currentYear = dayjs().year();

@@ -23,7 +23,7 @@ export default function Accommodations() {
     const query = new URLSearchParams(location.search);
     const keyword = query.get('keyword');
 
-    let url = 'http://localhost:3000/api/accommodations';
+    let url = 'http://localhost:3000/api/accommodations/';
     if (keyword) {
       url += `?keyword=${encodeURIComponent(keyword)}`; // URL 인코딩 적용
     }

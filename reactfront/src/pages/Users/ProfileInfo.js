@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import SettingList from '../components/SettingList';
+import SettingList from '../../components/SettingList';
 import './ProfileInfo.css';
-import { Button1 } from '../components/Button.style';
+import { Button1 } from '../../components/Button.style';
 import dayjs from 'dayjs';
-import DatePickerComponent from '../components/DatePicker'; // DatePickerComponent 가져오기
+import DatePickerComponent from '../../components/DatePicker'; // DatePickerComponent 가져오기
 
 export default function ProfileInfo() {
   const [isEditable, setIsEditable] = useState(false); // 입력 가능 여부 상태 관리
