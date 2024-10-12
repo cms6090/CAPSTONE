@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminLodgings.css';
 import AdminSettingList from '../../components/AdminSettingList';
-import Table from '../../components/Table';
 
 export default function AdminLodgings() {
   const navigate = useNavigate();
@@ -34,7 +33,6 @@ export default function AdminLodgings() {
         <AdminSettingList />
       </div>
       <div className="admin-users">
-        <Table />
       </div>
     </div>
   );
