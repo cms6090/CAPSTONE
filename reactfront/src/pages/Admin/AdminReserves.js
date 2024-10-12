@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminReserves.css';
 import AdminSettingList from '../../components/AdminSettingList';
-import Table from '../../components/Table';
 
 export default function AdminReserves() {
   const navigate = useNavigate();
@@ -34,7 +33,6 @@ export default function AdminReserves() {
         <AdminSettingList />
       </div>
       <div className="admin-users">
-        <Table />
       </div>
     </div>
   );

@@ -1,28 +1,28 @@
 .admin {
-  display: flex; /* Flexbox로 배치 */
-  padding: 3% 2%;
+  display: flex;
   background-color: #f8f9fa; /* 상단 배경색 */
   justify-content: space-between;
   box-sizing: border-box; /* 모든 요소에 대해 패딩과 테두리를 포함 */
 }
 
 .admin-setting-container {
-  width: 12%; /* SettingList의 너비 */
+  width: 10%; /* SettingList의 너비 */
 }
 
 .admin-users {
-  width: 87%;
+  width: 90%;
+  padding: 1% 3%;
   border: none;
 }
 
 #filter-text-box {
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 1%;
+  border: 1px solid rgb(231, 231, 231);
   border-radius: 10px;
-  padding: 0.5em;
-  margin-bottom: 1%;
 }
 
-.ag-theme-quartz {
-  font-family: 'pretendard-light' !important;
-  color: rgba(0, 0, 0, 0.5);
+.admin-table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1%;
 }

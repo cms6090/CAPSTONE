@@ -1,0 +1,38 @@
+.admin-setting-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #333;
+  position: relative;
+}
+
+.sidebar-item:hover {
+  background-color: #f5f5f5;
+}
+
+.sidebar-icon {
+  font-size: 24px;
+  text-align: center;
+  width: 100%;
+}
+
+.highlighted {
+  background-color: #e6f7ff;
+  font-weight: bold;
+}
+
+.active-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background-color: #1890ff;
+}

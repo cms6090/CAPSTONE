@@ -59,7 +59,7 @@ function Signup() {
     };
   
     try {
-      const response = await fetch('http://localhost:3000/api/sign/signup', {
+      const response = await fetch('http://localhost:3000/api/users/sign/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminRooms.css';
 import AdminSettingList from '../../components/AdminSettingList';
-import Table from '../../components/Table';
 
 export default function AdminRooms() {
   const navigate = useNavigate();
@@ -34,7 +33,24 @@ export default function AdminRooms() {
         <AdminSettingList />
       </div>
       <div className="admin-users">
-        <Table />
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
+        <div>dkssd</div>
       </div>
     </div>
   );
