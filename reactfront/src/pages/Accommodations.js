@@ -82,8 +82,8 @@ export default function Accommodations() {
     setMapModalOpen(!isMapModalOpen);
   };
 
-  const formatMinFee = (minfee) => {
-    return minfee ? Number(minfee).toLocaleString() + '원' : '정보 없음';
+  const formatMinFee = (min_price_per_night) => {
+    return min_price_per_night ? Number(min_price_per_night).toLocaleString() + '원 ~' : '정보 없음';
   };
 
   const navigate = useNavigate();
@@ -154,7 +154,7 @@ export default function Accommodations() {
                       firstimage: item.main_image,
                       title: item.name,
                       part: item.part,
-                      minfee: formatMinFee(item.minfee),
+                      min_price_per_night: formatMinFee(item.min_price_per_night),
                     }))
                   : []
               }
@@ -172,14 +172,7 @@ export default function Accommodations() {
             paginatedData.map((item) => (
               <div
                 key={item.lodging_id}
-                style={{
-                  display: 'flex',
-                  padding: '2% 0%',
-                  backgroundColor: 'transparent',
-                  boxShadow: 'none',
-                  borderBottom: '1px solid rgb(231,231,231)',
-                  cursor: 'pointer',
-                }}
+                className='accommo-component-item'
                 onClick={() => handleCardClick(item.lodging_id)}
               >
                 <img
@@ -203,7 +196,7 @@ export default function Accommodations() {
                     <p style={{ margin: '5px 0', color: '#666' }}>
                       {`${item.area} ${item.sigungu}`}
                     </p>
-                    <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.minfee)}</p>
+                    <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.min_price_per_night)}</p>
                   </div>
                 </div>
               </div>

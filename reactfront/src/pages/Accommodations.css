@@ -75,3 +75,16 @@
   background-color: none;
   margin-bottom: 0;
 }
+
+.accommo-component-item {
+    display: flex;
+    padding: 2% 0%;
+    background-color: transparent;
+    box-shadow: none;
+    border-bottom: 1px solid rgb(231,231,231);
+    cursor: pointer;
+}
+
+.accommo-component-item:first-child {
+  padding-top: 0;
+}

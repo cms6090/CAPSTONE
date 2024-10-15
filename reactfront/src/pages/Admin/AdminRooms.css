@@ -1,7 +1,6 @@
 .admin {
   display: flex;
   background-color: #f8f9fa; /* 상단 배경색 */
-  justify-content: space-between;
   box-sizing: border-box; /* 모든 요소에 대해 패딩과 테두리를 포함 */
 }
 
