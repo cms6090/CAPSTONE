@@ -319,10 +319,21 @@ AdminRouter.delete('/lodgings/:id', verifyAdmin, async (req, res, next) => {
   ---------------------------------------------*/
 AdminRouter.get('/rooms', verifyAdmin, async (req, res, next) => {
   try {
-    const rooms = await prisma.rooms.findMany(); // 모든 객실 정보를 조회
-    return res.status(StatusCodes.OK).json(rooms); // 객실 정보 반환
+    // Fetch all rooms and include the related lodging name
+    const rooms = await prisma.rooms.findMany({
+      include: {
+        lodgings: {
+          select: {
+            name: true, // Include lodging name
+          },
+        },
+      },
+    });
+    console.log('Total rooms fetched:', rooms.length); // Log total number of rooms fetched
+    return res.status(StatusCodes.OK).json(rooms); // Return rooms correctly
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    console.error('Error fetching rooms data:', error); // Log output when an error occurs
+    next(new StatusError('Failed to fetch rooms data', StatusCodes.INTERNAL_SERVER_ERROR)); // Pass to error handling middleware
   }
 });
 
@@ -332,21 +343,68 @@ AdminRouter.get('/rooms', verifyAdmin, async (req, res, next) => {
 AdminRouter.put('/rooms/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 객실 ID 추출
-    const { name, type, price } = req.body; // 업데이트할 객실 정보 추출
+    console.log('Received ID for Update:', id); // Log the received ID for debugging
+
+    const { room_name, room_count, price_per_night, min_occupancy, max_occupancy } = req.body; // 업데이트할 객실 정보 추출
+
+    // Log request data for debugging purposes
+    console.log('요청된 업데이트 데이터:', req.body); // Log full request body
+
+    // Validate that required fields are provided
+    if (!room_name || !room_count || !price_per_night || !min_occupancy || !max_occupancy) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message:
+          '필수 필드를 모두 입력해야 합니다. (room_name, room_count, price_per_night, min_occupancy, max_occupancy)',
+      });
+    }
+
+    // Check if the record exists before updating
+    const existingRooms = await prisma.rooms.findUnique({
+      where: { room_id: Number(id) },
+    });
+
+    if (!existingRooms) {
+      console.log(`No lodging found with ID: ${id}`); // Log if no record found
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: '숙소를 찾을 수 없습니다.',
+      });
+    }
+
     const updatedRoom = await prisma.rooms.update({
       where: { room_id: Number(id) },
       data: {
-        name,
-        type,
-        price,
-        updated_at: new Date(), // 수정 시간 갱신
+        room_name,
+        room_count,
+        price_per_night,
+        min_occupancy,
+        max_occupancy,
       },
     });
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: '객실 정보 업데이트 성공', room: updatedRoom });
+
+    // Log the updated lodging data for debugging
+    console.log('업데이트된 숙소:', updatedRoom);
+
+    // Respond with success message
+    return res.status(StatusCodes.OK).json({
+      message: '객실 정보 업데이트 성공',
+      lodging: updatedRoom,
+    });
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    if (error.code === 'P2025') {
+      // Prisma specific error: Record to update not found
+      console.error('Prisma Error - Record Not Found:', error);
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: '객실을 찾을 수 없습니다.',
+      });
+    } else {
+      console.error('객실 업데이트 오류:', error);
+      return next(
+        new StatusError(
+          '객실 정보를 업데이트하는 중 오류가 발생했습니다.',
+          StatusCodes.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    }
   }
 });
 
@@ -356,12 +414,30 @@ AdminRouter.put('/rooms/:id', verifyAdmin, async (req, res, next) => {
 AdminRouter.delete('/rooms/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 객실 ID 추출
-    await prisma.rooms.delete({
+
+    // ID가 유효한 숫자인지 확인
+    if (isNaN(id)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Invalid room ID provided.' });
+    }
+
+    // 숙소 삭제 시도
+    const deletedRoom = await prisma.rooms.delete({
       where: { room_id: Number(id) },
     });
-    return res.status(StatusCodes.OK).json({ message: '객실 삭제 성공' });
+
+    // 삭제 성공 시 메시지 반환
+    return res.status(StatusCodes.OK).json({ message: '객실 삭제 성공', room: deletedRoom });
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    if (error.code === 'P2025') {
+      // Prisma 특정 오류: 삭제할 레코드를 찾을 수 없음
+      return res.status(StatusCodes.NOT_FOUND).json({ message: '객실을 찾을 수 없습니다.' });
+    }
+
+    // 오류를 로그로 출력하고 다음 미들웨어로 전달
+    console.error('Error deleting room:', error);
+    next(
+      new StatusError('객실을 삭제하는 중 오류가 발생했습니다.', StatusCodes.INTERNAL_SERVER_ERROR),
+    );
   }
 });
 
