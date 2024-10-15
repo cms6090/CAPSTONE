@@ -39,7 +39,7 @@ model facilities {
   has_cook             Boolean?
   has_table            Boolean?
   hairdryer            Boolean?
-  rooms                rooms?   @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "facilities_ibfk_1")
+  rooms                rooms?   @relation(fields: [room_id], references: [room_id], onDelete: Cascade, map: "facilities_ibfk_1")
 
   @@index([room_id], map: "room_id")
 }
@@ -71,11 +71,11 @@ model reservations {
   status         String    @db.VarChar(50)
   created_at     DateTime? @default(now()) @db.DateTime(0)
   updated_at     DateTime? @default(now()) @db.DateTime(0)
-  users          users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_ibfk_1")
-  rooms          rooms?    @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "reservations_ibfk_2")
+  users          users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, map: "reservations_ibfk_1")
+  rooms          rooms?    @relation(fields: [room_id], references: [room_id], onDelete: NoAction, map: "reservations_ibfk_2")
 
-  @@index([room_id], map: "room_id")
-  @@index([user_id], map: "user_id")
+  @@index([user_id], map: "reservations_ibfk_1")
+  @@index([room_id], map: "reservations_ibfk_2")
 }
 
 model reviews {
@@ -85,20 +85,20 @@ model reviews {
   rating     Int
   comment    String?   @db.Text
   created_at DateTime? @default(now()) @db.DateTime(0)
-  lodgings   lodgings? @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
-  users      users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_2")
+  lodgings   lodgings? @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, map: "reviews_ibfk_1")
+  users      users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, map: "reviews_ibfk_2")
 
-  @@index([lodging_id], map: "lodging_id")
-  @@index([user_id], map: "user_id")
+  @@index([lodging_id], map: "reviews_ibfk_1")
+  @@index([user_id], map: "reviews_ibfk_2")
 }
 
 model room_photos {
   photo_id  Int    @id @default(autoincrement())
   room_id   Int?
   photo_url String @db.VarChar(500)
-  rooms     rooms? @relation(fields: [room_id], references: [room_id], onDelete: NoAction, onUpdate: NoAction, map: "room_photos_ibfk_1")
+  rooms     rooms? @relation(fields: [room_id], references: [room_id], onDelete: Cascade, map: "room_photos_ibfk_1")
 
-  @@index([room_id], map: "room_id")
+  @@index([room_id], map: "room_photos_ibfk_1")
 }
 
 model rooms {
@@ -112,7 +112,7 @@ model rooms {
   facilities      facilities[]
   reservations    reservations[]
   room_photos     room_photos[]
-  lodgings        lodgings?      @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_ibfk_1")
+  lodgings        lodgings?      @relation(fields: [lodging_id], references: [lodging_id], onDelete: Cascade, map: "rooms_ibfk_1")
 
-  @@index([lodging_id], map: "lodging_id")
+  @@index([lodging_id], map: "rooms_ibfk_1")
 }

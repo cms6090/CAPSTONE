@@ -116,7 +116,7 @@ export default function Accommodations() {
                 필터
               </div>
               <div>
-                <div style={{ margin: '5% 0% 10% 0%' }}>숙소유형</div>
+                <div style={{ margin: '1.5em 0% 1.5em 0%', fontSize:'1.1em' }}>숙소유형</div>
                 <div>
                   {[
                     '전체',

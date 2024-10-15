@@ -118,20 +118,12 @@ export default function AdminLodgings() {
               justifyContent: 'center',
               alignItems: 'center',
               height: '100%',
+              gap: '1em',
             }}
           >
             <button
               className="actions-icon"
               style={{
-                borderRadius: '50%',
-                height: '95%',
-                border: 'none',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                aspectRatio: '1/1',
-                margin: '1em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
                 cursor: isSaving ? 'not-allowed' : 'pointer',
               }}
               onClick={() => !isSaving && onSave(params)}
@@ -144,6 +136,16 @@ export default function AdminLodgings() {
                   save
                 </span>
               )}
+            </button>
+            <button
+              className="actions-icon"
+              onClick={() =>
+                navigate(`/admin/rooms`, {
+                  state: { lodgingName: params.data.name }, // 상태로 숙소 이름 전달
+                })
+              }
+            >
+              <span className="material-symbols-outlined">bed</span>
             </button>
           </div>
         ),
@@ -248,13 +250,6 @@ export default function AdminLodgings() {
 
   const rowStyle = { color: 'rgba(0,0,0,0.6)' }; // 행 스타일 설정 (텍스트 색상 지정)
 
-  // 선택된 행의 전체 데이터를 가져오는 함수
-  const getRowID = useCallback(() => {
-    const selectedNodes = gridRef.current.api.getSelectedNodes(); // 선택된 행 가져오기
-    const selectedData = selectedNodes.map((node) => node.data); // 선택된 행의 데이터 추출
-    console.log('선택된 행의 데이터:', selectedData); // 선택된 행의 데이터 출력
-  }, []);
-
   // 선택된 행을 제거하는 함수
   const onRemove = useCallback(async () => {
     const selectedNodes = gridRef.current.api.getSelectedNodes(); // 선택된 행 가져오기
@@ -297,13 +292,6 @@ export default function AdminLodgings() {
       alert(`오류: ${error.message}`); // 오류 메시지 알림
     }
   }, [rowData]);
-
-  // 선택된 행을 수정하는 함수 (현재는 선택된 ID만 출력)
-  const onModify = useCallback(() => {
-    const selectedNodes = gridRef.current.api.getSelectedNodes(); // 선택된 행 가져오기
-    const selectedIDs = selectedNodes.map((node) => node.data.lodging_id); // 선택된 행의 ID 추출
-    console.log('선택된 ID:', selectedIDs); // 선택된 ID 출력
-  }, []);
 
   // 저장 버튼 클릭 시 호출되는 함수
   const onSave = useCallback(
@@ -389,8 +377,6 @@ export default function AdminLodgings() {
             placeholder="Filter.."
             onChange={onFilterTextBoxChanged} // 필터 입력값 변경 시 호출
           />
-          <button onClick={getRowID}>getRowID</button> {/* 선택된 행의 ID 가져오기 */}
-          <button onClick={onModify}>Modify</button> {/* 선택된 행 수정 */}
           <Button4 onClick={onRemove}>
             <span className="material-symbols-outlined" style={{ color: 'rgba(255,0,0,0.5)' }}>
               delete
