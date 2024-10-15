@@ -44,9 +44,9 @@
 }
 
 .region-prev-btn {
-  left: -1%; /* 왼쪽 버튼 위치 */
+  left: -0.5%; /* 왼쪽 버튼 위치 */
 }
 
 .region-next-btn {
-  right: -1%; /* 오른쪽 버튼 위치 */
+  right: -0.5%; /* 오른쪽 버튼 위치 */
 }

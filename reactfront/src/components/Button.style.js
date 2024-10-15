@@ -33,3 +33,13 @@ export const Button3 = styled(Button)(() => ({
   border: '1px solid lightgray',
   borderRadius: '15px',
 }));
+
+export const Button4 = styled(Button)(() => ({
+  fontSize: '0.8em',
+  fontFamily: 'pretendard-light',
+  fontWeight: '800',
+  padding: '0.3em 1em',
+  color: 'rgba(255,0,0,0.5)',
+  border: '1px solid rgba(255,0,0,0.5)',
+  borderRadius: '15px',
+}));

@@ -50,7 +50,7 @@ export default function Map({ locations }) {
               icon: {
                 content: `
                   <div style="position: relative; background-color: white; padding: 10px; border: 1px solid lightgray; border-radius: 10px; font-size: 0.8em; font-weight: 500; width: 100px; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
-                    <span class="price" style="cursor: pointer; background-color: white;">${location.minfee}</span>
+                    <span class="price" style="cursor: pointer; background-color: white;">${location.min_price_per_night}</span>
                     <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
                       border-left: 3px solid lightgray; 
                       border-right: 3px solid lightgray; 
@@ -102,7 +102,7 @@ export default function Map({ locations }) {
                       </p>
                       <p
                         style={{ margin: '5px 0', color: 'gray', fontSize: '0.8em' }}
-                      >{`${location.minfee}`}</p>
+                      >{`${location.min_price_per_night}`}</p>
                     </div>
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export default function Map({ locations }) {
                 overlay.setIcon({
                   content: `
                     <div style="position: relative; background-color: white; padding: 10px; border: 1px solid lightgray; border-radius: 10px; font-size: 0.8em; font-weight: 500; width: 100px; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
-                      <span class="price" style="cursor: pointer; background-color: white;">${location.minfee}</span>
+                      <span class="price" style="cursor: pointer; background-color: white;">${location.min_price_per_night}</span>
                       <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
                         border-left: 3px solid lightgray; 
                         border-right: 3px solid lightgray; 
@@ -158,7 +158,7 @@ export default function Map({ locations }) {
                 overlay.setIcon({
                   content: `
                     <div style="position: relative; background-color: #097ce6; padding: 10px; border: none; border-radius: 10px; font-size: 0.8em; font-weight: 500; width: 100px; text-align: center; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
-                      <span class="price" style="cursor: pointer; color: white;">${location.minfee}</span>
+                      <span class="price" style="cursor: pointer; color: white;">${location.min_price_per_night}</span>
                       <div style="position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; 
                         border-left: 3px solid lightgray; 
                         border-right: 3px solid lightgray; 

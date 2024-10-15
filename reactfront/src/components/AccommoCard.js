@@ -16,6 +16,7 @@ export default function AccommoCard() {
   const navigate = useNavigate(); // useNavigate 훅 사용
 
   // API를 통해 숙소 데이터를 가져오는 함수
+  // API를 통해 숙소 데이터를 가져오는 함수
   useEffect(() => {
     const fetchAccommodations = async () => {
       try {
@@ -24,7 +25,7 @@ export default function AccommoCard() {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
         }
         const data = await response.json();
-        setAccommodations(data);
+        setAccommodations(data); // 받아온 숙소 데이터를 상태로 설정
       } catch (error) {
         console.error('Error fetching accommodations:', error);
       }
@@ -36,12 +37,13 @@ export default function AccommoCard() {
   const categories = {
     전체: accommodations,
     '호텔·리조트': accommodations.filter(
-      (data) => data.part === '관광호텔' || data.part === '서비스드레지던스' || data.part === '관광단지',
+      (data) =>
+        data.part === '관광호텔' || data.part === '서비스드레지던스' || data.part === '관광단지',
     ),
     '모텔·유스호스텔': accommodations.filter(
       (data) => data.part === '모텔' || data.part === '유스호스텔',
     ),
-    '게스트하우스': accommodations.filter(
+    게스트하우스: accommodations.filter(
       (data) => data.part === '게스트하우스' || data.part === '민박' || data.part === '홈스테이',
     ),
     '캠핑·펜션': accommodations.filter((data) => data.part === '야영장' || data.part === '펜션'),
@@ -102,12 +104,12 @@ export default function AccommoCard() {
                 />
                 <div className="accommo-info">
                   <div className="accommo-part">{data.part}</div>
-                  <div className='accommo-title'>{data.name}</div>
+                  <div className="accommo-title">{data.name}</div>
                   <div className="accommo-addr">{data.address}</div>
-                  <div className='accommo-price'>
-                    {data.minfee ? (
+                  <div className="accommo-price">
+                    {data.min_price_per_night ? (
                       <>
-                        {parseInt(data.minfee).toLocaleString()}
+                        {parseInt(data.min_price_per_night).toLocaleString()}
                         <span
                           style={{
                             fontSize: '0.8em',
