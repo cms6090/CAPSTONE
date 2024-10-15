@@ -7,7 +7,7 @@ import './AdminUsers.css';
 import AdminSettingList from '../../components/AdminSettingList';
 import dayjs from 'dayjs';
 import { CircularProgress } from '@mui/material';
-import { Button1 } from '../../components/Button.style';
+import { Button4 } from '../../components/Button.style';
 
 // AdminUsers 컴포넌트
 export default function AdminUsers() {
@@ -27,6 +27,7 @@ export default function AdminUsers() {
         field: 'user_name',
         filter: 'agTextColumnFilter',
         editable: true,
+        headerTooltip: '필수 항목',
         flex: 1,
       },
       { headerName: '이메일', field: 'email', filter: 'agTextColumnFilter', flex: 2.5 },
@@ -35,6 +36,7 @@ export default function AdminUsers() {
         field: 'phone_number',
         filter: 'agTextColumnFilter',
         editable: true,
+        headerTooltip: '필수 항목',
         flex: 1.7,
       },
       {
@@ -51,12 +53,14 @@ export default function AdminUsers() {
         flex: 1,
         filter: 'agTextColumnFilter',
         cellEditor: 'agSelectCellEditor',
+        headerTooltip: '필수 항목',
         cellEditorParams: { values: ['남성', '여성'] },
       },
       {
         headerName: '권한',
         field: 'permission',
         editable: true,
+        headerTooltip: '필수 항목',
         flex: 1,
         filter: 'agTextColumnFilter',
         cellEditor: 'agSelectCellEditor',
@@ -77,30 +81,39 @@ export default function AdminUsers() {
       {
         flex: 0.8,
         cellRenderer: (params) => (
-          <button
-            className="actions-icon"
+          <div
             style={{
-              borderRadius: '50%',
-              height: '100%',
-              border: 'none',
-              backgroundColor: '#2196f3',
-              aspectRatio: '1/1',
               display: 'flex',
-              alignItems: 'center',
               justifyContent: 'center',
-              cursor: isSaving ? 'not-allowed' : 'pointer',
+              alignItems: 'center',
+              height: '100%',
             }}
-            onClick={() => !isSaving && onSave(params)}
-            disabled={isSaving}
           >
-            {isSaving ? (
-              <CircularProgress size={20} style={{ color: 'white' }} />
-            ) : (
-              <span className="material-symbols-outlined" style={{ color: 'white' }}>
-                save
-              </span>
-            )}
-          </button>
+            <button
+              className="actions-icon"
+              style={{
+                borderRadius: '50%',
+                height: '100%',
+                border: 'none',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                aspectRatio: '1/1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: isSaving ? 'not-allowed' : 'pointer',
+              }}
+              onClick={() => !isSaving && onSave(params)}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <CircularProgress size={20} style={{ color: 'white' }} />
+              ) : (
+                <span className="material-symbols-outlined" style={{ color: 'white' }}>
+                  save
+                </span>
+              )}
+            </button>
+          </div>
         ),
       },
     ],
@@ -135,6 +148,7 @@ export default function AdminUsers() {
           }
           const data = await response.json();
           setRowData(data); // 사용자 데이터 설정
+          console.log(data);
         } catch (error) {
           console.error('데이터를 가져오는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
         }
@@ -330,7 +344,7 @@ export default function AdminUsers() {
         <AdminSettingList /> {/* 관리자 설정 리스트 컴포넌트 */}
       </div>
       <div className="admin-users">
-        <div className="admin-table-header">
+        <div className="admin-users-table-header">
           <input
             type="text"
             id="filter-text-box"
@@ -339,11 +353,11 @@ export default function AdminUsers() {
           />
           <button onClick={getRowID}>getRowID</button> {/* 선택된 행의 ID 가져오기 */}
           <button onClick={onModify}>Modify</button> {/* 선택된 행 수정 */}
-          <Button1 onClick={onRemove}>
-            <span className="material-symbols-outlined" style={{ color: 'gray' }}>
+          <Button4 onClick={onRemove}>
+            <span className="material-symbols-outlined" style={{ color: 'rgba(255,0,0,0.5)' }}>
               delete
             </span>
-          </Button1>
+          </Button4>
           {/* 선택된 행 제거 */}
         </div>
         <div className="ag-theme-quartz">

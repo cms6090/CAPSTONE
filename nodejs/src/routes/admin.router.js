@@ -37,25 +37,22 @@ const verifyAdmin = async (req, res, next) => {
 };
 
 /*---------------------------------------------
-    [모든 사용자 정보 조회]
----------------------------------------------*/
+      [모든 사용자 정보 조회]
+  ---------------------------------------------*/
 AdminRouter.get('/users', verifyAdmin, async (req, res, next) => {
   try {
-    const { page = 1, limit = 20 } = req.query; // 페이지네이션을 위한 쿼리 파라미터 설정
-    const users = await prisma.users.findMany({
-      skip: (page - 1) * limit, // 페이지에 따라 건너뛸 사용자 수 계산
-      take: parseInt(limit), // 한 페이지에 가져올 사용자 수
-    });
+    const users = await prisma.users.findMany(); // 데이터베이스에서 모든 사용자 가져오기
+    console.log('Total users fetched:', users.length); // lodgings 대신 users 사용
     return res.status(StatusCodes.OK).json(users); // 사용자 목록 반환
   } catch (error) {
-    console.error('Error fetching user data:', error); // 사용자 데이터를 가져오는 중 오류 발생 시 로그 출력
-    next(new StatusError('Failed to fetch user data', StatusCodes.INTERNAL_SERVER_ERROR)); // 오류 발생 시 오류 처리 미들웨어로 전달
+    console.error('Error fetching user data:', error); // 오류 발생 시 로그 출력
+    next(new StatusError('Failed to fetch user data', StatusCodes.INTERNAL_SERVER_ERROR)); // 오류 처리 미들웨어로 전달
   }
 });
 
 /*---------------------------------------------
-    [사용자 업데이트]
----------------------------------------------*/
+      [사용자 업데이트]
+  ---------------------------------------------*/
 AdminRouter.put('/users/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 사용자 ID 추출
@@ -108,8 +105,8 @@ AdminRouter.put('/users/:id', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [사용자 삭제]
----------------------------------------------*/
+      [사용자 삭제]
+  ---------------------------------------------*/
 AdminRouter.delete('/users/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 사용자 ID 추출
@@ -144,8 +141,8 @@ AdminRouter.delete('/users/:id', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [모든 예약 정보 조회]
----------------------------------------------*/
+      [모든 예약 정보 조회]
+  ---------------------------------------------*/
 AdminRouter.get('/reservations', verifyAdmin, async (req, res, next) => {
   try {
     const reservations = await prisma.reservations.findMany(); // 모든 예약 정보를 조회
@@ -156,8 +153,8 @@ AdminRouter.get('/reservations', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [예약 업데이트]
----------------------------------------------*/
+      [예약 업데이트]
+  ---------------------------------------------*/
 AdminRouter.put('/reservations/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 예약 ID 추출
@@ -180,8 +177,8 @@ AdminRouter.put('/reservations/:id', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [예약 삭제]
----------------------------------------------*/
+      [예약 삭제]
+  ---------------------------------------------*/
 AdminRouter.delete('/reservations/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 예약 ID 추출
@@ -195,59 +192,131 @@ AdminRouter.delete('/reservations/:id', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [모든 숙소 정보 조회]
----------------------------------------------*/
-AdminRouter.get('/accommodations', verifyAdmin, async (req, res, next) => {
+      [모든 숙소 정보 조회]
+  ---------------------------------------------*/
+AdminRouter.get('/lodgings', verifyAdmin, async (req, res, next) => {
   try {
-    const accommodations = await prisma.accommodations.findMany(); // 모든 숙소 정보를 조회
-    return res.status(StatusCodes.OK).json(accommodations); // 숙소 정보 반환
+    // Fetch all lodgings without pagination
+    const lodgings = await prisma.lodgings.findMany(); // Fetch all lodgings
+    console.log('Total lodgings fetched:', lodgings.length); // Log total number of lodgings fetched
+    return res.status(StatusCodes.OK).json({ lodgings }); // Send all lodgings as response
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    console.error('Error fetching lodgings data:', error); // Log output when an error occurs
+    next(new StatusError('Failed to fetch lodgings data', StatusCodes.INTERNAL_SERVER_ERROR)); // Passed to error handling middleware
   }
 });
 
 /*---------------------------------------------
-    [숙소 업데이트]
----------------------------------------------*/
-AdminRouter.put('/accommodations/:id', verifyAdmin, async (req, res, next) => {
+      [숙소 업데이트]
+  ---------------------------------------------*/
+AdminRouter.put('/lodgings/:id', verifyAdmin, async (req, res, next) => {
   try {
-    const { id } = req.params; // URL에서 숙소 ID 추출
-    const { name, location, description } = req.body; // 업데이트할 숙소 정보 추출
-    const updatedAccommodation = await prisma.accommodations.update({
-      where: { accommodation_id: Number(id) },
+    const { id } = req.params; // Extract lodging ID from URL
+    console.log('Received ID for Update:', id); // Log the received ID for debugging
+
+    const { name, part, area, sigungu, address, rating, tel, main_image } = req.body; // Extract fields from request body
+
+    // Log request data for debugging purposes
+    console.log('요청된 업데이트 데이터:', req.body); // Log full request body
+
+    // Validate that required fields are provided
+    if (!name || !part || !area || !address) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: '필수 필드를 모두 입력해야 합니다. (name, part, area, address)',
+      });
+    }
+
+    // Check if the record exists before updating
+    const existingLodging = await prisma.lodgings.findUnique({
+      where: { lodging_id: Number(id) },
+    });
+
+    if (!existingLodging) {
+      console.log(`No lodging found with ID: ${id}`); // Log if no record found
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: '숙소를 찾을 수 없습니다.',
+      });
+    }
+
+    // Update the lodging information in the database
+    const updatedLodging = await prisma.lodgings.update({
+      where: { lodging_id: Number(id) },
       data: {
         name,
-        location,
-        description,
-        updated_at: new Date(), // 수정 시간 갱신
+        part,
+        area,
+        sigungu,
+        address,
+        rating,
+        tel,
+        main_image,
+        updated_at: new Date(), // Set the update time explicitly if needed
       },
     });
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: '숙소 정보 업데이트 성공', accommodation: updatedAccommodation });
+
+    // Log the updated lodging data for debugging
+    console.log('업데이트된 숙소:', updatedLodging);
+
+    // Respond with success message
+    return res.status(StatusCodes.OK).json({
+      message: '숙소 정보 업데이트 성공',
+      lodging: updatedLodging,
+    });
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    if (error.code === 'P2025') {
+      // Prisma specific error: Record to update not found
+      console.error('Prisma Error - Record Not Found:', error);
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: '숙소를 찾을 수 없습니다.',
+      });
+    } else {
+      console.error('숙소 업데이트 오류:', error);
+      return next(
+        new StatusError(
+          '숙소 정보를 업데이트하는 중 오류가 발생했습니다.',
+          StatusCodes.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    }
   }
 });
 
 /*---------------------------------------------
-    [숙소 삭제]
----------------------------------------------*/
-AdminRouter.delete('/accommodations/:id', verifyAdmin, async (req, res, next) => {
+      [숙소 삭제]
+  ---------------------------------------------*/
+AdminRouter.delete('/lodgings/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 숙소 ID 추출
-    await prisma.accommodations.delete({
-      where: { accommodation_id: Number(id) },
+
+    // ID가 유효한 숫자인지 확인
+    if (isNaN(id)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Invalid lodging ID provided.' });
+    }
+
+    // 숙소 삭제 시도
+    const deletedLodging = await prisma.lodgings.delete({
+      where: { lodging_id: Number(id) },
     });
-    return res.status(StatusCodes.OK).json({ message: '숙소 삭제 성공' });
+
+    // 삭제 성공 시 메시지 반환
+    return res.status(StatusCodes.OK).json({ message: '숙소 삭제 성공', lodging: deletedLodging });
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    if (error.code === 'P2025') {
+      // Prisma 특정 오류: 삭제할 레코드를 찾을 수 없음
+      return res.status(StatusCodes.NOT_FOUND).json({ message: '숙소를 찾을 수 없습니다.' });
+    }
+
+    // 오류를 로그로 출력하고 다음 미들웨어로 전달
+    console.error('Error deleting lodging:', error);
+    next(
+      new StatusError('숙소를 삭제하는 중 오류가 발생했습니다.', StatusCodes.INTERNAL_SERVER_ERROR),
+    );
   }
 });
 
 /*---------------------------------------------
-    [모든 객실 정보 조회]
----------------------------------------------*/
+      [모든 객실 정보 조회]
+  ---------------------------------------------*/
 AdminRouter.get('/rooms', verifyAdmin, async (req, res, next) => {
   try {
     const rooms = await prisma.rooms.findMany(); // 모든 객실 정보를 조회
@@ -258,8 +327,8 @@ AdminRouter.get('/rooms', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [객실 업데이트]
----------------------------------------------*/
+      [객실 업데이트]
+  ---------------------------------------------*/
 AdminRouter.put('/rooms/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 객실 ID 추출
@@ -282,8 +351,8 @@ AdminRouter.put('/rooms/:id', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [객실 삭제]
----------------------------------------------*/
+      [객실 삭제]
+  ---------------------------------------------*/
 AdminRouter.delete('/rooms/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 객실 ID 추출
@@ -297,8 +366,8 @@ AdminRouter.delete('/rooms/:id', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [모든 리뷰 정보 조회]
----------------------------------------------*/
+      [모든 리뷰 정보 조회]
+  ---------------------------------------------*/
 AdminRouter.get('/reviews', verifyAdmin, async (req, res, next) => {
   try {
     const reviews = await prisma.reviews.findMany(); // 모든 리뷰 정보를 조회
@@ -309,8 +378,8 @@ AdminRouter.get('/reviews', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [리뷰 업데이트]
----------------------------------------------*/
+      [리뷰 업데이트]
+  ---------------------------------------------*/
 AdminRouter.put('/reviews/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 리뷰 ID 추출
@@ -332,8 +401,8 @@ AdminRouter.put('/reviews/:id', verifyAdmin, async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [리뷰 삭제]
----------------------------------------------*/
+      [리뷰 삭제]
+  ---------------------------------------------*/
 AdminRouter.delete('/reviews/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 리뷰 ID 추출
