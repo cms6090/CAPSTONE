@@ -144,4 +144,64 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
   }
 });
 
+/*---------------------------------------------
+    [숙박 업소 검색]
+---------------------------------------------*/
+AccommodationsRouter.post('/search', async (req, res, next) => {
+  console.log('Request body:', req.body); // 요청 바디 로그 출력
+
+  try {
+    let { keyword, checkIn, checkOut, personal = '2' } = req.body; // req.query 대신 req.body
+
+    // 체크인과 체크아웃 날짜 기본값 설정
+    const today = dayjs().format('YYYY-MM-DD'); // 오늘 날짜를 YYYY-MM-DD 형식으로 설정
+    const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD'); // 내일 날짜를 YYYY-MM-DD 형식으로 설정
+
+    // 사용자가 제공하지 않은 경우 기본 체크인/체크아웃 날짜 설정
+    checkIn = checkIn || today;
+    checkOut = checkOut || tomorrow;
+
+    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut); // 체크인과 체크아웃 날짜 로그 출력
+
+    // 숙소 검색 쿼리 실행
+    const rawQuery = `
+      SELECT
+         l.lodging_id,
+         l.name,
+         l.part,
+         l.area,
+         l.sigungu,
+         l.rating,
+         l.tel,
+         l.address,
+         l.main_image,
+         MIN(r.price_per_night) AS min_price_per_night
+      FROM
+         lodgings l
+      LEFT JOIN
+         rooms r ON l.lodging_id = r.lodging_id
+      WHERE
+         1=1
+         ${keyword ? `AND (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%')` : ''}
+      GROUP BY
+         l.lodging_id;
+    `;
+
+    console.log('Raw query:', rawQuery); // 실행할 쿼리 로그 출력
+
+    // Prisma를 사용하여 raw SQL 쿼리 실행
+    const accommodations = await prisma.$queryRawUnsafe(rawQuery);
+
+    console.log('Accommodations result:', accommodations); // 검색 결과 로그 출력
+
+    // 검색 결과를 클라이언트에게 반환
+    return res.status(StatusCodes.OK).json(accommodations);
+  } catch (error) {
+    console.error('Error in accommodations search:', error); // 에러 로그 출력
+    // 에러 발생 시 상태 코드와 에러 메시지를 반환
+    throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
+  }
+});
+
+
 export default AccommodationsRouter;

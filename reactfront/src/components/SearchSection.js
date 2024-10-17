@@ -6,22 +6,27 @@ import 'react-date-range/dist/styles.css'; // 기본 스타일
 import 'react-date-range/dist/theme/default.css'; // 테마 스타일
 import './SearchSection.css'; // CSS 파일을 import
 import { Button2 } from './Button.style';
+import { useNavigate } from 'react-router-dom'; // React Router v6 사용 시
 
 export default function SearchSection() {
   const [showDatePicker, setShowDatePicker] = useState(false); // 날짜 선택기 표시 여부
   const [showNumPicker, setShowNumPicker] = useState(false); // 인원 선택기 표시 여부
   const [dateRange, setDateRange] = useState('날짜 선택하기'); // 날짜 범위 상태
   const [numPeople, setNumPeople] = useState(1); // 기본 인원 수
+  const [selectedDates, setSelectedDates] = useState({ startDate: null, endDate: null }); // 선택된 날짜 상태
+  const [location, setLocation] = useState(''); // 여행지 상태
   const datePickerRef = useRef(null); // 날짜 선택기 참조
   const numPickerRef = useRef(null); // 인원 선택기 참조
   const dateInputRef = useRef(null); // 날짜 선택 input 참조
   const numInputRef = useRef(null); // 인원 선택 input 참조
+  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 사용
 
   // 날짜 선택 후 호출되는 함수
   const handleDateSelect = (startDate, endDate) => {
     setDateRange(
-      `${startDate.toLocaleDateString('ko-KR')} - ${endDate.toLocaleDateString('ko-KR')}`,
+      `${startDate.toLocaleDateString('ko-KR')} - ${endDate.toLocaleDateString('ko-KR')}`
     );
+    setSelectedDates({ startDate, endDate }); // 선택된 날짜 상태 저장
   };
 
   // 외부 클릭 시 날짜 선택기 및 인원 선택기 닫기
@@ -42,11 +47,28 @@ export default function SearchSection() {
     };
   }, [datePickerRef, numPickerRef]);
 
+  // 서버로 데이터를 전송하는 함수
+  const handleSearch = async () => {
+    const { startDate, endDate } = selectedDates;
+    if (!startDate || !endDate || !location) {
+      alert('날짜와 여행지를 입력해주세요.');
+      return;
+    }
+
+    // 검색 결과를 포함한 페이지로 이동 (쿼리 파라미터 포함)
+    navigate(`/accommodations?keyword=${location}&checkIn=${startDate.toISOString()}&checkOut=${endDate.toISOString()}&personal=${numPeople}`);
+  };
+
   return (
     <div className="search-section">
-      <div className='input-container'>
+      <div className="input-container">
         <span className="material-symbols-outlined">search</span>
-        <input className="input-container" placeholder="여행지나 숙소를 검색해보세요" />
+        <input
+          className="input-container"
+          placeholder="여행지나 숙소를 검색해보세요"
+          value={location} // 입력된 여행지 상태를 input 값으로 사용
+          onChange={(e) => setLocation(e.target.value)} // 입력 시 여행지 상태 업데이트
+        />
       </div>
       <div
         className="input-container"
@@ -113,8 +135,8 @@ export default function SearchSection() {
         <NumPicker onNumSelect={setNumPeople} /> {/* 인원 수 선택 후 상태 업데이트 */}
       </div>
 
-      <div >
-        <Button2>검색</Button2>
+      <div>
+        <Button2 onClick={handleSearch}>검색</Button2>
       </div>
     </div>
   );
