@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import SettingList from '../components/SettingList';
+import SettingList from '../../components/SettingList';
 import './ProfileInfo.css';
-import { Button1 } from '../components/Button.style';
+import { Button1 } from '../../components/Button.style';
 import dayjs from 'dayjs';
-import DatePickerComponent from '../components/DatePicker'; // DatePickerComponent 가져오기
+import DatePickerComponent from '../../components/DatePicker'; // DatePickerComponent 가져오기
 
 export default function ProfileInfo() {
   const [isEditable, setIsEditable] = useState(false); // 입력 가능 여부 상태 관리
@@ -21,7 +21,7 @@ export default function ProfileInfo() {
       // 서버에서 사용자 정보를 가져오기
       const fetchUserInfo = async () => {
         try {
-          const response = await fetch(`http://localhost:3000/api/users/me`, {
+          const response = await fetch(`http://localhost:3000/api/users/inquiry`, {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
             },
@@ -146,10 +146,8 @@ export default function ProfileInfo() {
               </select>
             </div>
             <div className="info-item">
-              <div className="info-title" style={{ visibility: 'hidden' }}>
-                수정
-              </div>
-              <Button1 onClick={handleEditClick}>{isEditable ? '완료' : '변경하기'}</Button1>
+              <div className='info-title'>수정</div>
+              <Button1 onClick={handleEditClick} >{isEditable ? '완료' : '변경하기'}</Button1>
             </div>
           </div>
         </div>

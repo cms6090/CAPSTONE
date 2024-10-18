@@ -34,7 +34,8 @@
 }
 
 .filter-item {
-  margin-bottom: 10%;
+  margin-bottom: 1.5em;
+  font-size: 1.1em;
 }
 
 .filter-item label {
@@ -74,4 +75,17 @@
 .accommo-component {
   background-color: none;
   margin-bottom: 0;
+}
+
+.accommo-component-item {
+    display: flex;
+    padding: 2% 0%;
+    background-color: transparent;
+    box-shadow: none;
+    border-bottom: 1px solid rgb(231,231,231);
+    cursor: pointer;
+}
+
+.accommo-component-item:first-child {
+  padding-top: 0;
 }

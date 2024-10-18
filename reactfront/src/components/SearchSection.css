@@ -1,5 +1,3 @@
-/* SearchSection.css */
-
 .search-section {
   position: relative; /* 날짜 선택기와 인원 선택기의 위치를 위해 relative 설정 */
   margin: 0 auto; /* 중앙 정렬 */

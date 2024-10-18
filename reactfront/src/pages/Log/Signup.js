@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import './Signup.css';
-import { Button2 } from '../components/Button.style';
+import { Button2 } from '../../components/Button.style';
 
 function Signup() {
   const currentYear = dayjs().year();
@@ -59,7 +59,7 @@ function Signup() {
     };
   
     try {
-      const response = await fetch('http://localhost:3000/api/sign/signup', {
+      const response = await fetch('http://localhost:3000/api/users/sign/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

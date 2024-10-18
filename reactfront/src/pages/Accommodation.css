@@ -12,6 +12,11 @@
   margin-bottom: 2%;
 }
 
+.hotel-room-card-header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .hotel-image-content {
   margin: 0;
   padding: 0;

@@ -23,7 +23,7 @@ export default function Accommodations() {
     const query = new URLSearchParams(location.search);
     const keyword = query.get('keyword');
 
-    let url = 'http://localhost:3000/api/accommodations';
+    let url = 'http://localhost:3000/api/accommodations/';
     if (keyword) {
       url += `?keyword=${encodeURIComponent(keyword)}`; // URL 인코딩 적용
     }
@@ -82,8 +82,8 @@ export default function Accommodations() {
     setMapModalOpen(!isMapModalOpen);
   };
 
-  const formatMinFee = (minfee) => {
-    return minfee ? Number(minfee).toLocaleString() + '원' : '정보 없음';
+  const formatMinFee = (min_price_per_night) => {
+    return min_price_per_night ? Number(min_price_per_night).toLocaleString() + '원 ~' : '정보 없음';
   };
 
   const navigate = useNavigate();
@@ -116,7 +116,7 @@ export default function Accommodations() {
                 필터
               </div>
               <div>
-                <div style={{ margin: '5% 0% 10% 0%' }}>숙소유형</div>
+                <div style={{ margin: '1.5em 0% 1.5em 0%', fontSize:'1.1em' }}>숙소유형</div>
                 <div>
                   {[
                     '전체',
@@ -154,7 +154,7 @@ export default function Accommodations() {
                       firstimage: item.main_image,
                       title: item.name,
                       part: item.part,
-                      minfee: formatMinFee(item.minfee),
+                      min_price_per_night: formatMinFee(item.min_price_per_night),
                     }))
                   : []
               }
@@ -172,14 +172,7 @@ export default function Accommodations() {
             paginatedData.map((item) => (
               <div
                 key={item.lodging_id}
-                style={{
-                  display: 'flex',
-                  padding: '2% 0%',
-                  backgroundColor: 'transparent',
-                  boxShadow: 'none',
-                  borderBottom: '1px solid rgb(231,231,231)',
-                  cursor: 'pointer',
-                }}
+                className='accommo-component-item'
                 onClick={() => handleCardClick(item.lodging_id)}
               >
                 <img
@@ -203,7 +196,7 @@ export default function Accommodations() {
                     <p style={{ margin: '5px 0', color: '#666' }}>
                       {`${item.area} ${item.sigungu}`}
                     </p>
-                    <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.minfee)}</p>
+                    <p style={{ margin: '5px 0', color: '#666' }}>{formatMinFee(item.min_price_per_night)}</p>
                   </div>
                 </div>
               </div>
