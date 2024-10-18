@@ -5,6 +5,7 @@ import accommodationsRouter from './routes/accommodation.router.js';
 import adminRouter from './routes/admin.router.js';
 import cors from 'cors';
 import errorMiddleware from './middlewares/error.middleware.js';
+import reservationsRouter from './routes/reservations.routers.js';
 
 const app = express();
 const PORT = 3000;
@@ -23,6 +24,7 @@ app.use(
 app.use('/api/users', usersRouter); // usersRouter는 /api/users 경로로 접근
 app.use('/api/accommodations', accommodationsRouter); // accommodationsRouter는 /api/accommodations 경로로 접근
 app.use('/api/admin', adminRouter); // adminRouter는 /api/admin 경로로 접근
+app.use('/api/reservations', reservationsRouter); // 
 
 app.use(errorMiddleware);
 
