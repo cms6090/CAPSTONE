@@ -101,7 +101,6 @@ function Signup() {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Signup successful:', result);
         alert('회원가입에 성공했습니다.');
         window.location.href = '/'; // 메인 홈페이지로 이동
       } else {

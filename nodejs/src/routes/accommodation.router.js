@@ -10,8 +10,6 @@ const AccommodationsRouter = express.Router();
     [숙박 업소 조회]
 ---------------------------------------------*/
 AccommodationsRouter.get('/', async (req, res, next) => {
-  console.log('Request query:', req.query); // 요청 쿼리 로그 출력
-
   try {
     let { keyword, checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
 
@@ -51,17 +49,12 @@ AccommodationsRouter.get('/', async (req, res, next) => {
         l.lodging_id;
     `;
 
-    console.log('Raw query:', rawQuery); // 실행할 쿼리 로그 출력
-
     // Prisma를 사용하여 raw SQL 쿼리 실행
     const accommodations = await prisma.$queryRawUnsafe(rawQuery);
-
-    console.log('Accommodations result:', accommodations); // 검색 결과 로그 출력
 
     // 검색 결과를 클라이언트에게 반환
     return res.status(StatusCodes.OK).json(accommodations);
   } catch (error) {
-    console.error('Error in accommodations search:', error); // 에러 로그 출력
     // 에러 발생 시 상태 코드와 에러 메시지를 반환
     throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
   }
@@ -71,7 +64,6 @@ AccommodationsRouter.get('/', async (req, res, next) => {
     [숙박 업소 상세 조회]
 ---------------------------------------------*/
 AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
-  console.log('called');
   try {
     const { lodgingId } = req.params;
     const query = `
@@ -135,10 +127,8 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
     const lodgingDetails = await prisma.$queryRawUnsafe(query, parseInt(lodgingId));
 
     if (!lodgingDetails.length) {
-      console.log('dd');
       return res.status(404).json({ message: 'Lodging not found' });
     }
-    console.log('dl');
     res.status(200).json(lodgingDetails[0]);
   } catch (error) {
     console.error('Error fetching lodging details:', error);

@@ -42,7 +42,6 @@ const verifyAdmin = async (req, res, next) => {
 AdminRouter.get('/users', verifyAdmin, async (req, res, next) => {
   try {
     const users = await prisma.users.findMany(); // 데이터베이스에서 모든 사용자 가져오기
-    console.log('Total users fetched:', users.length); // lodgings 대신 users 사용
     return res.status(StatusCodes.OK).json(users); // 사용자 목록 반환
   } catch (error) {
     console.error('Error fetching user data:', error); // 오류 발생 시 로그 출력
@@ -57,10 +56,6 @@ AdminRouter.put('/users/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 사용자 ID 추출
     const { user_name, phone_number, gender, birth, permission } = req.body; // 요청 본문에서 업데이트할 데이터 추출
-
-    // 요청 데이터 출력 (디버깅 용도)
-    console.log('요청된 업데이트 데이터:', req.body); // 전체 업데이트 데이터 출력
-    console.log('추출된 user_name:', user_name); // 특정 필드 데이터 확인
 
     // 필수 필드가 모두 제공되었는지 확인
     if (!user_name || !phone_number || !gender || !birth || !permission) {
@@ -198,7 +193,6 @@ AdminRouter.get('/lodgings', verifyAdmin, async (req, res, next) => {
   try {
     // Fetch all lodgings without pagination
     const lodgings = await prisma.lodgings.findMany(); // Fetch all lodgings
-    console.log('Total lodgings fetched:', lodgings.length); // Log total number of lodgings fetched
     return res.status(StatusCodes.OK).json({ lodgings }); // Send all lodgings as response
   } catch (error) {
     console.error('Error fetching lodgings data:', error); // Log output when an error occurs
@@ -212,12 +206,8 @@ AdminRouter.get('/lodgings', verifyAdmin, async (req, res, next) => {
 AdminRouter.put('/lodgings/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // Extract lodging ID from URL
-    console.log('Received ID for Update:', id); // Log the received ID for debugging
 
     const { name, part, area, sigungu, address, rating, tel, main_image } = req.body; // Extract fields from request body
-
-    // Log request data for debugging purposes
-    console.log('요청된 업데이트 데이터:', req.body); // Log full request body
 
     // Validate that required fields are provided
     if (!name || !part || !area || !address) {
@@ -232,7 +222,6 @@ AdminRouter.put('/lodgings/:id', verifyAdmin, async (req, res, next) => {
     });
 
     if (!existingLodging) {
-      console.log(`No lodging found with ID: ${id}`); // Log if no record found
       return res.status(StatusCodes.NOT_FOUND).json({
         message: '숙소를 찾을 수 없습니다.',
       });
@@ -253,9 +242,6 @@ AdminRouter.put('/lodgings/:id', verifyAdmin, async (req, res, next) => {
         updated_at: new Date(), // Set the update time explicitly if needed
       },
     });
-
-    // Log the updated lodging data for debugging
-    console.log('업데이트된 숙소:', updatedLodging);
 
     // Respond with success message
     return res.status(StatusCodes.OK).json({
@@ -329,7 +315,6 @@ AdminRouter.get('/rooms', verifyAdmin, async (req, res, next) => {
         },
       },
     });
-    console.log('Total rooms fetched:', rooms.length); // Log total number of rooms fetched
     return res.status(StatusCodes.OK).json(rooms); // Return rooms correctly
   } catch (error) {
     console.error('Error fetching rooms data:', error); // Log output when an error occurs
@@ -343,12 +328,8 @@ AdminRouter.get('/rooms', verifyAdmin, async (req, res, next) => {
 AdminRouter.put('/rooms/:id', verifyAdmin, async (req, res, next) => {
   try {
     const { id } = req.params; // URL에서 객실 ID 추출
-    console.log('Received ID for Update:', id); // Log the received ID for debugging
 
     const { room_name, room_count, price_per_night, min_occupancy, max_occupancy } = req.body; // 업데이트할 객실 정보 추출
-
-    // Log request data for debugging purposes
-    console.log('요청된 업데이트 데이터:', req.body); // Log full request body
 
     // Validate that required fields are provided
     if (!room_name || !room_count || !price_per_night || !min_occupancy || !max_occupancy) {
@@ -364,7 +345,6 @@ AdminRouter.put('/rooms/:id', verifyAdmin, async (req, res, next) => {
     });
 
     if (!existingRooms) {
-      console.log(`No lodging found with ID: ${id}`); // Log if no record found
       return res.status(StatusCodes.NOT_FOUND).json({
         message: '숙소를 찾을 수 없습니다.',
       });
@@ -380,9 +360,6 @@ AdminRouter.put('/rooms/:id', verifyAdmin, async (req, res, next) => {
         max_occupancy,
       },
     });
-
-    // Log the updated lodging data for debugging
-    console.log('업데이트된 숙소:', updatedRoom);
 
     // Respond with success message
     return res.status(StatusCodes.OK).json({

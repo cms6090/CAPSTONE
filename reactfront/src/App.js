@@ -13,7 +13,6 @@ import ProfileReserve from './pages/Users/ProfileReserve';
 import ProfileSetting from './pages/Users/ProfileSetting';
 import Accommodations from './pages/Default/Accommodations';
 import Accommodation from './pages/Default/Accommodation';
-import Room from './pages/Room';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Reserve from './pages/Reserve';
 import AdminUsers from './pages/Admin/AdminUsers';
@@ -33,7 +32,6 @@ function App() {
         <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
         <Route path="/accommodations" element={<Accommodations />} />
         <Route path="/accommodations/:id" element={<Accommodation />} />
-        <Route path="/room" element={<Room />} />
         <Route path="/profile/reservations" element={<ProfileReserve />} />
         <Route path="/profile/info" element={<ProfileInfo />} />
         <Route path="/profile/setting" element={<ProfileSetting />} />

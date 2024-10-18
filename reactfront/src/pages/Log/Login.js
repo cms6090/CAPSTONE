@@ -45,7 +45,6 @@ export default function Login() {
 
         // 이메일과 권한이 응답에 존재하는지 확인
         if (result.user && result.user.email && result.user.permission) {
-          console.log('Login successful:', result);
           alert('로그인에 성공했습니다.');
 
           // 세션 스토리지에 토큰, 이메일, 권한 저장

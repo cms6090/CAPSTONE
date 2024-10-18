@@ -17,8 +17,6 @@ const auth = async (req, res, next) => {
     // 토큰 검증
     const decodedToken = jwt.verify(tokenValue, process.env.ACCESS_SECRET_KEY);
 
-    console.log(decodedToken);
-
     // 사용자 ID를 요청 객체에 저장
     req.userId = decodedToken.id;
 
