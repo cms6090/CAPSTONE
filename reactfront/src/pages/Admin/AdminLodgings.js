@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -12,11 +12,14 @@ import { Button4 } from '../../components/Button.style';
 // AdminLodgings Component
 export default function AdminLodgings() {
   const navigate = useNavigate();
+  const location = useLocation();
   const gridRef = useRef(null); // 그리드 참조 객체
   const [isAuthorized, setIsAuthorized] = useState(false); // 사용자 권한 상태
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태
   const [rowData, setRowData] = useState([]); // 숙소 데이터 배열
   const [isSaving, setIsSaving] = useState(false); // 저장 중 상태
+
+  const lodgingIDFilter = location.state?.lodgingID || '';
 
   // 저장 버튼 클릭 시 호출되는 함수
   const onSave = useCallback(
@@ -286,6 +289,14 @@ export default function AdminLodgings() {
     );
   }, []);
 
+  useEffect(() => {
+    const filterTextBox = document.getElementById('filter-text-box');
+    if (lodgingIDFilter && filterTextBox) {
+      filterTextBox.value = lodgingIDFilter;
+      onFilterTextBoxChanged(); // Apply the filter immediately after setting the value
+    }
+  }, [lodgingIDFilter, onFilterTextBoxChanged]);
+
   // 컬럼의 기본 설정 (필터 적용 및 초기화 버튼 포함)
   const defaultColDef = useMemo(
     () => ({
@@ -299,6 +310,12 @@ export default function AdminLodgings() {
   // 그리드가 준비되었을 때 호출되는 함수
   const onGridReady = (params) => {
     gridRef.current.api = params.api; // 그리드 API를 참조 객체에 저장
+
+    if (lodgingIDFilter) {
+      // 그리드가 준비되면 필터 텍스트 박스의 값을 설정하고 필터를 적용
+      document.getElementById('filter-text-box').value = lodgingIDFilter;
+      onFilterTextBoxChanged(); // 필터 적용
+    }
   };
 
   // 행 선택
@@ -376,6 +393,7 @@ export default function AdminLodgings() {
             id="filter-text-box"
             placeholder="Filter.."
             onChange={onFilterTextBoxChanged} // 필터 입력값 변경 시 호출
+            defaultValue={lodgingIDFilter} // 필터 초기값 설정
           />
           <Button4 onClick={onRemove}>
             <span className="material-symbols-outlined" style={{ color: 'rgba(255,0,0,0.5)' }}>

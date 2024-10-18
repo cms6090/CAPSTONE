@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -12,11 +12,14 @@ import { Button4 } from '../../components/Button.style';
 // AdminUsers 컴포넌트
 export default function AdminUsers() {
   const navigate = useNavigate();
+  const location = useLocation();
   const gridRef = useRef(null); // 그리드 참조 객체
   const [isAuthorized, setIsAuthorized] = useState(false); // 사용자 권한 상태
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태
   const [rowData, setRowData] = useState([]); // 사용자 데이터 배열
   const [isSaving, setIsSaving] = useState(false); // 저장 중 상태
+
+  const userIDFilter = location.state?.user_email || '';
 
   // 저장 버튼 클릭 시 호출되는 함수
   const onSave = useCallback(
@@ -73,6 +76,27 @@ export default function AdminUsers() {
     [isSaving],
   );
 
+  // 날짜 필터 파라미터 정의 (useMemo를 사용해 메모이제이션 처리)
+  const filterParams = useMemo(
+    () => ({
+      comparator: (filterLocalDateAtMidnight, cellValue) => {
+        if (!cellValue) return -1;
+        const cellDate = dayjs(cellValue, 'YYYY-MM-DD').toDate();
+        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+          return 0;
+        }
+        if (cellDate < filterLocalDateAtMidnight) {
+          return -1;
+        }
+        if (cellDate > filterLocalDateAtMidnight) {
+          return 1;
+        }
+        return 0;
+      },
+    }),
+    [],
+  );
+
   // 컬럼 정의 상수
   const colDefs = useMemo(
     () => [
@@ -97,9 +121,13 @@ export default function AdminUsers() {
       {
         headerName: '생년월일',
         field: 'birth',
-        valueFormatter: (params) => dayjs(params.value).format('YYYY-MM-DD'),
         flex: 1.5,
-        cellEditor: 'agDateInput',
+        editable: true,
+        filter: 'agDateColumnFilter', // 날짜 필터 추가
+        filterParams: filterParams, // 날짜 필터 파라미터 적용
+        cellEditor: 'agDateStringCellEditor',
+        valueGetter: (params) =>
+          dayjs(params.data.birth).isValid() ? dayjs(params.data.birth).format('YYYY-MM-DD') : '', // 날짜 포맷 적용
       },
       {
         headerName: '성별',
@@ -165,7 +193,7 @@ export default function AdminUsers() {
         ),
       },
     ],
-    [isSaving, onSave],
+    [isSaving, onSave, filterParams],
   );
 
   // 컴포넌트가 마운트될 때 사용자 권한을 확인하는 함수
@@ -243,16 +271,32 @@ export default function AdminUsers() {
   // 그리드가 준비되었을 때 호출되는 함수
   const onGridReady = (params) => {
     gridRef.current.api = params.api; // 그리드 API를 참조 객체에 저장
+
+    if (userIDFilter) {
+      // 그리드가 준비되면 필터 텍스트 박스의 값을 설정하고 필터를 적용
+      document.getElementById('filter-text-box').value = userIDFilter;
+      onFilterTextBoxChanged(); // 필터 적용
+    }
   };
 
   // 필터 텍스트 박스의 값이 변경되었을 때 호출되는 함수
   const onFilterTextBoxChanged = useCallback(() => {
-    // 필터 입력값을 그리드에 적용
     gridRef.current.api.setGridOption(
       'quickFilterText',
       document.getElementById('filter-text-box').value,
     );
   }, []);
+
+  // 필터 초기값 설정 및 적용
+  useEffect(() => {
+    if (userIDFilter) {
+      const filterTextBox = document.getElementById('filter-text-box');
+      if (filterTextBox) {
+        filterTextBox.value = userIDFilter; // 필터 텍스트 박스의 초기값 설정
+        onFilterTextBoxChanged(); // 필터 적용
+      }
+    }
+  }, [userIDFilter, onFilterTextBoxChanged]);
 
   // 행 선택
   const rowSelection = useMemo(() => {

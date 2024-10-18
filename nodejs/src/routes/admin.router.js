@@ -3,6 +3,7 @@ import { prisma } from '../utils/prisma/prisma.js';
 import { StatusCodes } from 'http-status-codes';
 import StatusError from '../errors/status.error.js';
 import jwt from 'jsonwebtoken';
+import dayjs from 'dayjs';
 
 const AdminRouter = express.Router();
 
@@ -64,6 +65,9 @@ AdminRouter.put('/users/:id', verifyAdmin, async (req, res, next) => {
       });
     }
 
+    // birth 값을 dayjs로 Date 객체로 변환
+    const birthDate = dayjs(birth).toDate();
+
     // 사용자 정보를 업데이트
     const updatedUser = await prisma.users.update({
       where: { user_id: Number(id) },
@@ -71,8 +75,8 @@ AdminRouter.put('/users/:id', verifyAdmin, async (req, res, next) => {
         user_name,
         phone_number,
         gender,
-        birth,
-        permission, // 수정할 권한 필드를 명시적으로 설정
+        birth: birthDate, // 변환된 Date 객체 사용
+        permission,
         updated_at: new Date(), // 수정 시간 갱신
       },
     });
@@ -138,12 +142,45 @@ AdminRouter.delete('/users/:id', verifyAdmin, async (req, res, next) => {
 /*---------------------------------------------
       [모든 예약 정보 조회]
   ---------------------------------------------*/
+// AdminRouter.js
 AdminRouter.get('/reservations', verifyAdmin, async (req, res, next) => {
   try {
-    const reservations = await prisma.reservations.findMany(); // 모든 예약 정보를 조회
-    return res.status(StatusCodes.OK).json(reservations); // 예약 정보 반환
+    // 'users', 'rooms', 'lodgings' 관계를 올바르게 참조하여 사용자 이메일, 객실 이름, 숙소 이름을 포함한 예약 정보를 가져옴
+    const reservations = await prisma.reservations.findMany({
+      include: {
+        users: {
+          select: {
+            email: true, // users 테이블에서 이메일 필드만 선택
+          },
+        },
+        rooms: {
+          select: {
+            room_name: true, // rooms 테이블에서 room_name 필드만 선택
+            lodging_id: true, // 나중에 숙소 정보를 찾기 위해 lodging_id 포함
+            lodgings: {
+              // lodgings 관계 추가
+              select: {
+                name: true, // lodgings 테이블에서 숙소 이름 선택
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // reservations 객체에 'user_email', 'room_name', 'lodging_name'을 포함하여 매핑
+    const reservationsWithDetails = reservations.map((reservation) => ({
+      ...reservation,
+      user_email: reservation.users ? reservation.users.email : null, // 사용자 정보가 없을 경우 처리
+      room_name: reservation.rooms ? reservation.rooms.room_name : null, // 객실 정보가 없을 경우 처리
+      lodging_name:
+        reservation.rooms && reservation.rooms.lodgings ? reservation.rooms.lodgings.name : null, // lodgings 정보를 이용해 숙소 이름 조회
+    }));
+
+    console.log(reservationsWithDetails);
+    return res.status(StatusCodes.OK).json(reservationsWithDetails); // 수정된 예약 정보 반환
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    next(error); // 오류가 발생하면 다음 미들웨어로 전달
   }
 });
 
@@ -152,22 +189,28 @@ AdminRouter.get('/reservations', verifyAdmin, async (req, res, next) => {
   ---------------------------------------------*/
 AdminRouter.put('/reservations/:id', verifyAdmin, async (req, res, next) => {
   try {
-    const { id } = req.params; // URL에서 예약 ID 추출
-    const { status, check_in, check_out } = req.body; // 업데이트할 예약 정보 추출
+    const { id } = req.params; // Extract reservation ID from URL
+    const { status, check_in_date, check_out_date, person_num, total_price } = req.body; // Extract reservation info to update
+
+    console.log('Received Data:', req.body); // 요청된 데이터 출력
     const updatedReservation = await prisma.reservations.update({
       where: { reservation_id: Number(id) },
       data: {
         status,
-        check_in,
-        check_out,
-        updated_at: new Date(), // 수정 시간 갱신
+        check_in_date: new Date(check_in_date), // Update check-in date
+        check_out_date: new Date(check_out_date), // Update check-out date
+        person_num, // Update number of persons
+        total_price, // Update total price if necessary
+        updated_at: new Date(), // Update modification timestamp
       },
     });
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: '예약 정보 업데이트 성공', reservation: updatedReservation });
+
+    return res.status(StatusCodes.OK).json({
+      message: '예약 정보 업데이트 성공',
+      reservation: updatedReservation,
+    });
   } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
+    next(error); // Pass errors to the next middleware
   }
 });
 
