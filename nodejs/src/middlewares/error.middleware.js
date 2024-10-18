@@ -11,7 +11,7 @@ export default function (err, req, res, next) {
   // Joi 유효성 검사 오류 처리
   if (err.name === 'ValidationError') {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      message: `유효성 검사 실패: ${err.message}`,
+      message: `${err.message}`,
     });
   }
 

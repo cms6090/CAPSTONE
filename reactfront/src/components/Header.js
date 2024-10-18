@@ -10,29 +10,28 @@ function Header() {
   const [userEmail, setUserEmail] = useState(''); // 사용자 이메일 상태 관리
   const [userPermission, setUserPermission] = useState(''); // 사용자 권한 상태 관리
   const [anchorEl, setAnchorEl] = useState(null); // 메뉴 앵커 요소 상태 관리
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅
 
   // 페이지가 로드될 때 세션에서 이메일과 권한을 가져와 상태 업데이트
   useEffect(() => {
     const storedUserEmail = sessionStorage.getItem('userEmail');
-    const storedUserPermission = sessionStorage.getItem('userPermission'); // 권한 가져오기
-    const accessToken = sessionStorage.getItem('accessToken');
+    const storedUserPermission = sessionStorage.getItem('userPermission'); // 사용자 권한 정보 가져오기
+    const accessToken = sessionStorage.getItem('accessToken'); // 액세스 토큰 가져오기
 
-    // 이메일과 권한이 존재하면 상태 설정
+    // 이메일과 액세스 토큰이 존재할 경우 사용자 정보를 상태에 설정
     if (storedUserEmail && accessToken) {
       setUserEmail(storedUserEmail);
       setUserPermission(storedUserPermission);
-      console.log('User email:', storedUserEmail);
-      console.log('User permission:', storedUserPermission); // 콘솔에 권한 출력
     } else {
       setUserEmail('');
       setUserPermission('');
     }
-  }, []); // 페이지 로드 시 한 번 실행
+  }, []); // 컴포넌트가 마운트될 때 한 번 실행
 
   // 로그아웃 처리 함수
   const handleLogout = async () => {
     try {
+      // 로그아웃 API 호출
       await fetch('http://localhost:3000/api/users/sign/logout', {
         method: 'POST',
         credentials: 'include', // 요청에 쿠키 포함하기
@@ -44,31 +43,59 @@ function Header() {
       sessionStorage.removeItem('userPermission');
       setUserEmail('');
       setUserPermission('');
-      window.location.href = '/'; // 메인 페이지로 이동
+      navigate('/'); // 메인 페이지로 이동
     } catch (error) {
-      console.error('Logout failed:', error);
-      alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
+      console.error('Logout failed:', error); // 에러 발생 시 콘솔에 출력
+      alert('로그아웃에 실패했습니다. 다시 시도해주세요.'); // 사용자에게 오류 알림
     }
   };
 
-  // 메뉴 버튼 클릭 시 앵커 요소 설정
+  // 메뉴 버튼 클릭 시 메뉴 앵커 요소 설정 함수
   const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget); // 클릭한 위치를 앵커 요소로 설정
   };
 
   // 메뉴 닫기 함수
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(null); // 메뉴 앵커 요소를 null로 설정하여 메뉴 닫기
   };
 
   // 페이지 네비게이션 함수
   const handleNavigation = (path) => {
-    handleMenuClose();
-    navigate(path);
+    handleMenuClose(); // 메뉴를 닫고
+    navigate(path); // 지정된 경로로 이동
   };
+
+  // 관리자 메뉴 항목 렌더링 함수
+  const renderAdminMenuItems = () => (
+    [
+      { key: 'users', label: '사용자 정보', path: '/admin/users' },
+      { key: 'accommodations', label: '숙소 정보', path: '/admin/lodgings' },
+      { key: 'rooms', label: '객실 정보', path: '/admin/rooms' },
+      { key: 'reservations', label: '예약 정보', path: '/admin/reservations' },
+    ].map((item) => (
+      <MenuItem key={item.key} onClick={() => handleNavigation(item.path)}>
+        <ListItemText primary={item.label} />
+      </MenuItem>
+    ))
+  );
+
+  // 일반 사용자 메뉴 항목 렌더링 함수
+  const renderUserMenuItems = () => (
+    [
+      { key: 'profile-reservations', label: '예약 내역', path: '/profile/reservations' },
+      { key: 'profile-info', label: '사용자 정보', path: '/profile/info' },
+      { key: 'profile-setting', label: '설정', path: '/profile/setting' },
+    ].map((item) => (
+      <MenuItem key={item.key} onClick={() => handleNavigation(item.path)}>
+        <ListItemText primary={item.label} />
+      </MenuItem>
+    ))
+  );
 
   return (
     <header className="header">
+      {/* 로고 표시 */}
       <div className="logo">
         <Link to="/">
           <img src={logo} alt="로고" />
@@ -79,9 +106,7 @@ function Header() {
           // 로그인된 경우 사용자 이메일과 권한 표시
           <div className="user-info" style={{ display: 'flex', alignItems: 'center' }}>
             <div onClick={handleMenuClick} className="user-set">
-              <span style={{ fontWeight: 'bold', marginRight: '10px' }}>
-                {userEmail} ({userPermission}) {/* 권한도 함께 표시 */}
-              </span>
+              <span style={{ fontWeight: 'bold', marginRight: '10px' }}>{userEmail}</span>
               <IconButton aria-label="menu" style={{ padding: 0 }}>
                 <Menu />
               </IconButton>
@@ -89,9 +114,9 @@ function Header() {
 
             {/* 메뉴 컴포넌트 */}
             <MenuComponent
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
+              anchorEl={anchorEl} // 메뉴가 열릴 위치 지정
+              open={Boolean(anchorEl)} // 메뉴 열림 여부 설정
+              onClose={handleMenuClose} // 메뉴 닫기 함수 연결
               PaperProps={{
                 style: {
                   width: '250px',
@@ -99,52 +124,22 @@ function Header() {
                 },
               }}
             >
-              {userPermission === '관리자' ? [
-                // 관리자 권한일 경우 메뉴 항목 표시
-                <MenuItem key="users" onClick={() => handleNavigation('/admin/users')}>
-                  <ListItemText primary="사용자 정보" />
-                  </MenuItem>,
-                <MenuItem key="accommodations" onClick={() => handleNavigation('/admin/lodgings')}>
-                  <ListItemText primary="숙소 정보" />
-                </MenuItem>,
-                <MenuItem key="rooms" onClick={() => handleNavigation('/admin/rooms')}>
-                  <ListItemText primary="객실 정보" />
-                </MenuItem>,
-                <MenuItem key="reservations" onClick={() => handleNavigation('/admin/reservations')}>
-                  <ListItemText primary="예약 정보" />
-                </MenuItem>,
-                <Divider key="divider" />,
-                <MenuItem
-                  key="logout"
-                  onClick={() => {
-                    handleMenuClose();
-                    handleLogout();
-                  }}
-                >
-                  <ListItemText primary="로그아웃" />
-                </MenuItem>,
-              ] : [
-                // 일반 사용자일 경우 메뉴 항목 표시
-                <MenuItem key="profile-reservations" onClick={() => handleNavigation('/profile/reservations')}>
-                  <ListItemText primary="예약 내역" />
-                </MenuItem>,
-                <Divider key="divider1" />,
-                <MenuItem key="profile-info" onClick={() => handleNavigation('/profile/info')}>
-                  <ListItemText primary="사용자 정보" />
-                </MenuItem>,
-                <MenuItem key="profile-setting" onClick={() => handleNavigation('/profile/setting')}>
-                  <ListItemText primary="설정" />
-                </MenuItem>,
-                <MenuItem
-                  key="profile-logout"
-                  onClick={() => {
-                    handleMenuClose();
-                    handleLogout();
-                  }}
-                >
-                  <ListItemText primary="로그아웃" />
-                </MenuItem>,
-              ]}
+              {/* 관리자 또는 일반 사용자에 따라 메뉴 항목 렌더링 */}
+              {userPermission === '관리자'
+                ? renderAdminMenuItems() // 관리자 메뉴 항목 렌더링
+                : renderUserMenuItems() // 일반 사용자 메뉴 항목 렌더링
+              }
+              <Divider />
+              {/* 로그아웃 메뉴 항목 */}
+              <MenuItem
+                key="logout"
+                onClick={() => {
+                  handleMenuClose();
+                  handleLogout();
+                }}
+              >
+                <ListItemText primary="로그아웃" />
+              </MenuItem>
             </MenuComponent>
           </div>
         ) : (

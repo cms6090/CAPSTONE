@@ -5,18 +5,18 @@ import logo from '../../assets/logo.svg';
 export default function Login() {
   const [email, setEmail] = useState(''); // 이메일 상태 관리
   const [password, setPassword] = useState(''); // 비밀번호 상태 관리
-  const [errors, setErrors] = useState({ email: '', password: '' }); // 에러 메시지 상태 관리
+  const [errors, setErrors] = useState({ email: '', password: '', general: '' }); // 에러 메시지 상태 관리
 
   // 입력값이 변경될 때 상태 업데이트 및 에러 초기화
   const handleChange = (setter) => (e) => {
     setter(e.target.value); // 입력 필드의 값을 해당 상태로 설정
-    setErrors({ ...errors, [e.target.name]: '' }); // 에러 메시지 초기화
+    setErrors({ ...errors, [e.target.name]: '', general: '' }); // 에러 메시지 초기화
   };
 
   // 로그인 처리 함수
   const handleLogin = async (e) => {
     e.preventDefault(); // 기본 폼 제출 동작 방지
-    const newErrors = { email: '', password: '' }; // 새로운 에러 객체 생성
+    const newErrors = { email: '', password: '', general: '' }; // 새로운 에러 객체 생성
 
     // 이메일과 비밀번호가 입력되었는지 확인
     if (!email) newErrors.email = '이메일을 입력하세요.';
@@ -61,11 +61,11 @@ export default function Login() {
       } else {
         const errorData = await response.json(); // 에러 응답 파싱
         console.error('Login failed:', errorData);
-        alert('로그인에 실패했습니다. 다시 시도해주세요.');
+        setErrors({ ...errors, general: errorData.message }); // 일반적인 에러 메시지 설정
       }
     } catch (error) {
       console.error('Network error:', error); // 네트워크 오류 처리
-      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      setErrors({ ...errors, general: '네트워크 오류가 발생했습니다. 다시 시도해주세요.' }); // 네트워크 에러 메시지 설정
     }
   };
 
@@ -114,6 +114,7 @@ export default function Login() {
         <button type="submit" className="login-button">
           로그인
         </button>
+        {errors.general && <div className="error-message general-error">{errors.general}</div>}
       </form>
       <div className="signup-link">
         <p style={{ fontSize: '0.8em', marginBottom: '1.1em' }}>계정이 없으신가요?</p>

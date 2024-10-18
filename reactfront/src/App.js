@@ -2,18 +2,17 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Main from './pages/Main';
+import Main from './pages/Default/Main';
 import Login from './pages/Log/Login';
 import Notice from './pages/Default/Notice';
 import FAQ from './pages/Default/FAQ';
 import './App.css';
-import COMPONENTTEST from './pages/COMPONENTTEST';
 import Signup from './pages/Log/Signup';
 import ProfileInfo from './pages/Users/ProfileInfo';
 import ProfileReserve from './pages/Users/ProfileReserve';
 import ProfileSetting from './pages/Users/ProfileSetting';
-import Accommodations from './pages/Accommodations';
-import Accommodation from './pages/Accommodation';
+import Accommodations from './pages/Default/Accommodations';
+import Accommodation from './pages/Default/Accommodation';
 import Room from './pages/Room';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Reserve from './pages/Reserve';
@@ -35,7 +34,6 @@ function App() {
         <Route path="/accommodations" element={<Accommodations />} />
         <Route path="/accommodations/:id" element={<Accommodation />} />
         <Route path="/room" element={<Room />} />
-        <Route path="/componenettest" element={<COMPONENTTEST />} />
         <Route path="/profile/reservations" element={<ProfileReserve />} />
         <Route path="/profile/info" element={<ProfileInfo />} />
         <Route path="/profile/setting" element={<ProfileSetting />} />

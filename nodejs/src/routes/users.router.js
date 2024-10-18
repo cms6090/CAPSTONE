@@ -25,11 +25,14 @@ UsersRouter.post('/sign/signup', async (req, res, next) => {
 
     if (existingUser) {
       // 이미 존재하는 이메일일 경우 에러 반환
-      throw new StatusError('이미 존재하는 이메일입니다.', StatusCodes.CONFLICT);
+      return res.status(StatusCodes.CONFLICT).json({
+        message: '이미 존재하는 이메일입니다.',
+      });
     }
 
     // 비밀번호 해싱
     const hashedPassword = await bcrypt.hash(password, 10);
+
     // 새로운 사용자 생성
     const createUser = await prisma.users.create({
       data: {
@@ -48,6 +51,10 @@ UsersRouter.post('/sign/signup', async (req, res, next) => {
       message: `이메일: ${createUser.email}, 닉네임: ${createUser.user_name} 회원가입 완료`,
     });
   } catch (error) {
+    if (error.isJoi) {
+      // Joi 유효성 검사 오류 메시지 반환
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: error.details[0].message });
+    }
     next(error);
   }
 });
@@ -68,14 +75,18 @@ UsersRouter.post('/sign/signin', async (req, res, next) => {
 
     if (!loginUser) {
       // 이메일이 존재하지 않을 경우 에러 반환
-      throw new StatusError('존재하지 않는 이메일입니다.', StatusCodes.NOT_FOUND);
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: '존재하지 않는 이메일입니다.',
+      });
     }
 
     // 비밀번호 일치 여부 확인
     const match = await bcrypt.compare(password, loginUser.password);
     if (!match) {
       // 비밀번호가 일치하지 않을 경우 에러 반환
-      throw new StatusError('비밀번호가 일치하지 않습니다.', StatusCodes.UNAUTHORIZED);
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        message: '비밀번호가 일치하지 않습니다.',
+      });
     }
 
     // 액세스 토큰 생성 (권한 포함)
