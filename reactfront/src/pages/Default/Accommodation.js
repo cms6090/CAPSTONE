@@ -80,7 +80,7 @@ export default function Accommodation() {
     navigate('/reserve', {
       state: {
         accommodation: accommodation,
-        room: room, // 객실 정보를 전체 전달
+        room: room, // 객실 정보를 전달
       },
     });
   };

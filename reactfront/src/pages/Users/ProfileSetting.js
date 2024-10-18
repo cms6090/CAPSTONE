@@ -1,6 +1,6 @@
 import React from 'react';
 import SettingList from '../../components/SettingList';
-import './ProfileSetting.css';
+// import './ProfileSetting.css';
 
 export default function ProfileSetting() {
   return (

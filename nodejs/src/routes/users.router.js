@@ -184,8 +184,6 @@ UsersRouter.get('/inquiry', async (req, res, next) => {
 ---------------------------------------------*/
 UsersRouter.put('/modify', async (req, res, next) => {
   try {
-    console.log('Received data:', req.body);
-
     // 요청 헤더에서 JWT 토큰 추출
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
