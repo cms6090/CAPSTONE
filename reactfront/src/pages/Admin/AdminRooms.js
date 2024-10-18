@@ -139,6 +139,7 @@ export default function AdminRooms() {
               justifyContent: 'center',
               alignItems: 'center',
               height: '100%',
+              gap: '1em',
             }}
           >
             <button
@@ -157,11 +158,21 @@ export default function AdminRooms() {
                 </span>
               )}
             </button>
+            <button
+              className="actions-icon"
+              onClick={() =>
+                navigate(`/admin/lodgings`, {
+                  state: { lodgingID: params.data.lodgings?.name }, // 상태로 숙소 이름 전달
+                })
+              }
+            >
+              <span className="material-symbols-outlined">house</span>
+            </button>
           </div>
         ),
       },
     ],
-    [isSaving, onSave],
+    [isSaving, onSave, navigate],
   );
 
   // 필터 옵션 현지화 문자열 설정
