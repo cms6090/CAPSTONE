@@ -18,6 +18,61 @@ export default function AdminUsers() {
   const [rowData, setRowData] = useState([]); // 사용자 데이터 배열
   const [isSaving, setIsSaving] = useState(false); // 저장 중 상태
 
+  // 저장 버튼 클릭 시 호출되는 함수
+  const onSave = useCallback(
+    async (params) => {
+      const rowData = params.data; // 현재 행의 데이터 가져오기
+      console.log('저장된 데이터:', rowData); // 저장된 데이터 출력
+
+      // 이미 저장 중이면 함수 종료
+      if (isSaving) {
+        return;
+      }
+
+      setIsSaving(true); // 저장 중 상태 설정
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/admin/users/${rowData.user_id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // 인증 토큰 사용
+          },
+          body: JSON.stringify({
+            user_name: rowData.user_name, // 수정할 사용자 이름
+            phone_number: rowData.phone_number, // 수정할 전화번호
+            gender: rowData.gender, // 수정할 성별
+            birth: rowData.birth, // 수정할 생년월일
+            permission: rowData.permission, // 수정할 권한
+          }),
+        });
+
+        if (!response.ok) {
+          // 응답 상태에 따라 다른 오류 메시지 출력
+          if (response.status === 400) {
+            throw new Error('잘못된 요청입니다. 입력 데이터를 확인해주세요.');
+          } else if (response.status === 401) {
+            throw new Error('권한이 없습니다. 다시 로그인해주세요.');
+          } else if (response.status === 404) {
+            throw new Error('사용자를 찾을 수 없습니다.');
+          } else {
+            throw new Error('사용자 정보를 업데이트하는 중 오류가 발생했습니다.');
+          }
+        }
+
+        const updatedUser = await response.json(); // 업데이트된 사용자 정보 가져오기
+        console.log('업데이트된 사용자:', updatedUser); // 업데이트된 사용자 정보 출력
+        alert('사용자 정보가 성공적으로 업데이트되었습니다.'); // 성공 메시지 출력
+      } catch (error) {
+        console.error('사용자 정보를 업데이트하는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
+        alert(`오류: ${error.message}`); // 오류 메시지 알림
+      } finally {
+        setIsSaving(false); // 저장 중 상태 해제
+      }
+    },
+    [isSaving],
+  );
+
   // 컬럼 정의 상수
   const colDefs = useMemo(
     () => [
@@ -110,7 +165,7 @@ export default function AdminUsers() {
         ),
       },
     ],
-    [isSaving],
+    [isSaving, onSave],
   );
 
   // 컴포넌트가 마운트될 때 사용자 권한을 확인하는 함수
@@ -251,61 +306,6 @@ export default function AdminUsers() {
       alert(`오류: ${error.message}`); // 오류 메시지 알림
     }
   }, [rowData]);
-
-  // 저장 버튼 클릭 시 호출되는 함수
-  const onSave = useCallback(
-    async (params) => {
-      const rowData = params.data; // 현재 행의 데이터 가져오기
-      console.log('저장된 데이터:', rowData); // 저장된 데이터 출력
-
-      // 이미 저장 중이면 함수 종료
-      if (isSaving) {
-        return;
-      }
-
-      setIsSaving(true); // 저장 중 상태 설정
-
-      try {
-        const response = await fetch(`http://localhost:3000/api/admin/users/${rowData.user_id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // 인증 토큰 사용
-          },
-          body: JSON.stringify({
-            user_name: rowData.user_name, // 수정할 사용자 이름
-            phone_number: rowData.phone_number, // 수정할 전화번호
-            gender: rowData.gender, // 수정할 성별
-            birth: rowData.birth, // 수정할 생년월일
-            permission: rowData.permission, // 수정할 권한
-          }),
-        });
-
-        if (!response.ok) {
-          // 응답 상태에 따라 다른 오류 메시지 출력
-          if (response.status === 400) {
-            throw new Error('잘못된 요청입니다. 입력 데이터를 확인해주세요.');
-          } else if (response.status === 401) {
-            throw new Error('권한이 없습니다. 다시 로그인해주세요.');
-          } else if (response.status === 404) {
-            throw new Error('사용자를 찾을 수 없습니다.');
-          } else {
-            throw new Error('사용자 정보를 업데이트하는 중 오류가 발생했습니다.');
-          }
-        }
-
-        const updatedUser = await response.json(); // 업데이트된 사용자 정보 가져오기
-        console.log('업데이트된 사용자:', updatedUser); // 업데이트된 사용자 정보 출력
-        alert('사용자 정보가 성공적으로 업데이트되었습니다.'); // 성공 메시지 출력
-      } catch (error) {
-        console.error('사용자 정보를 업데이트하는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
-        alert(`오류: ${error.message}`); // 오류 메시지 알림
-      } finally {
-        setIsSaving(false); // 저장 중 상태 해제
-      }
-    },
-    [isSaving],
-  );
 
   // 로딩 중이거나 권한이 없는 경우 컴포넌트를 렌더링하지 않음
   if (isLoading) {

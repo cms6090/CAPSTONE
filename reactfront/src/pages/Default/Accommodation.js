@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Accommodation.css';
-import JustMap from '../components/JustMap';
-import MapModal from '../components/MapModal';
-import { Button2 } from '../components/Button.style';
-import RoomModal from '../components/RoomModal';
+import JustMap from '../../components/JustMap';
+import MapModal from '../../components/MapModal';
+import { Button2 } from '../../components/Button.style';
+import RoomModal from '../../components/RoomModal';
 import { BsFillImageFill } from 'react-icons/bs';
 
 export default function Accommodation() {
@@ -173,7 +173,10 @@ export default function Accommodation() {
                     onClick={() => openRoomDetails(room)}
                   >
                     <div>상세정보</div>
-                    <span className="material-symbols-outlined" style={{ fontSize: 'inherit', marginLeft: '4px' }}>
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 'inherit', marginLeft: '4px' }}
+                    >
                       arrow_forward_ios
                     </span>
                   </div>

@@ -175,7 +175,7 @@ function NumPicker({ onNumSelect }) {
   };
 
   const decrement = () => {
-    const newCount = count > 0 ? count - 1 : 0; // 인원 수 감소
+    const newCount = count > 1 ? count - 1 : 1; // 인원 수 감소
     setCount(newCount);
     onNumSelect(newCount); // 부모 컴포넌트에 인원 수 전달
   };
@@ -188,7 +188,7 @@ function NumPicker({ onNumSelect }) {
       <div className="details">
         <div className="description">유아 및 아동도 인원수에 포함해주세요.</div>
         <div className="controls">
-          <button className="control-button" onClick={decrement}>
+          <button className="control-button" onClick={decrement} disabled={count <= 1}>
             <span className="material-symbols-outlined num-control">remove</span>
           </button>
           <span className="count">{count}</span>

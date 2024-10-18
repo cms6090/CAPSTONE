@@ -53,7 +53,7 @@
 
 .hotel-info-map-container {
   background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0)),
-    url('../assets/Map.svg'); /* 그라데이션과 이미지 결합 */
+    url('../../assets/Map.svg'); /* 그라데이션과 이미지 결합 */
   background-size: cover; /* 배경 이미지 크기 조정 */
 }
 

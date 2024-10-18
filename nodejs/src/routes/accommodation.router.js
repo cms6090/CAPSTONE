@@ -13,7 +13,7 @@ AccommodationsRouter.get('/', async (req, res, next) => {
   console.log('Request query:', req.query); // 요청 쿼리 로그 출력
 
   try {
-    let { keyword, checkIn, checkOut, personal = '2' } = req.query;
+    let { keyword, checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
 
     // 체크인과 체크아웃 날짜 기본값 설정
     const today = dayjs().format('YYYY-MM-DD'); // 오늘 날짜를 YYYY-MM-DD 형식으로 설정
@@ -28,25 +28,27 @@ AccommodationsRouter.get('/', async (req, res, next) => {
     // 숙소 검색 쿼리 실행
     const rawQuery = `
       SELECT
-         l.lodging_id,
-         l.name,
-         l.part,
-         l.area,
-         l.sigungu,
-         l.rating,
-         l.tel,
-         l.address,
-         l.main_image,
-         MIN(r.price_per_night) AS min_price_per_night
+        l.lodging_id,
+        l.name,
+        l.part,
+        l.area,
+        l.sigungu,
+        l.rating,
+        l.tel,
+        l.address,
+        l.main_image,
+        MIN(r.price_per_night) AS min_price_per_night
       FROM
-         lodgings l
+        lodgings l
       LEFT JOIN
-         rooms r ON l.lodging_id = r.lodging_id
+        rooms r ON l.lodging_id = r.lodging_id
       WHERE
-         1=1
-         ${keyword ? `AND (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%')` : ''}
+        1=1
+        ${keyword ? `AND (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%')` : ''}
+        ${minPrice ? `AND r.price_per_night >= ${minPrice}` : ''}
+        ${maxPrice ? `AND r.price_per_night <= ${maxPrice}` : ''}
       GROUP BY
-         l.lodging_id;
+        l.lodging_id;
     `;
 
     console.log('Raw query:', rawQuery); // 실행할 쿼리 로그 출력

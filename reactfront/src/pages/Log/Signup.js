@@ -14,6 +14,15 @@ function Signup() {
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('');
   const [isBirthdayDisabled, setIsBirthdayDisabled] = useState(false);
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+    userName: '',
+    phoneNumber: '',
+    birth: '',
+    gender: '',
+    general: '',
+  });
 
   // 일 수 계산
   const getDaysInMonth = (year, month) => {
@@ -46,9 +55,32 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    const newErrors = {
+      email: '',
+      password: '',
+      userName: '',
+      phoneNumber: '',
+      birth: '',
+      gender: '',
+      general: '',
+    };
+
+    // 필수 입력 필드 유효성 검사
+    if (!email) newErrors.email = '이메일을 입력하세요.';
+    if (!password) newErrors.password = '비밀번호를 입력하세요.';
+    if (!userName) newErrors.userName = '사용자 이름을 입력하세요.';
+    if (!phoneNumber) newErrors.phoneNumber = '휴대폰 번호를 입력하세요.';
+    if (!birthYear || !birthMonth || !birthDate) newErrors.birth = '생년월일을 모두 선택하세요.';
+    if (!gender) newErrors.gender = '성별을 선택하세요.';
+
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
+      return;
+    }
+
     const birth = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDate.padStart(2, '0')}`;
-  
+
     const signupData = {
       email,
       password,
@@ -57,7 +89,7 @@ function Signup() {
       birth,
       gender,
     };
-  
+
     try {
       const response = await fetch('http://localhost:3000/api/users/sign/signup', {
         method: 'POST',
@@ -66,7 +98,7 @@ function Signup() {
         },
         body: JSON.stringify(signupData),
       });
-  
+
       if (response.ok) {
         const result = await response.json();
         console.log('Signup successful:', result);
@@ -74,12 +106,14 @@ function Signup() {
         window.location.href = '/'; // 메인 홈페이지로 이동
       } else {
         const errorData = await response.json();
-        console.error('Signup failed:', errorData);
-        alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+        setErrors({
+          ...errors,
+          general: errorData.message || '회원가입에 실패했습니다. 다시 시도해주세요.',
+        });
       }
     } catch (error) {
       console.error('Network error:', error);
-      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      setErrors({ ...errors, general: '네트워크 오류가 발생했습니다. 다시 시도해주세요.' });
     }
   };
 
@@ -108,6 +142,7 @@ function Signup() {
             placeholder="example@example.com"
             required
           />
+          {errors.email && <div className="error-message">{errors.email}</div>}
         </div>
         <div className="password">
           <label htmlFor="password">
@@ -121,6 +156,7 @@ function Signup() {
             placeholder="비밀번호를 입력하세요"
             required
           />
+          {errors.password && <div className="error-message">{errors.password}</div>}
         </div>
         <div className="user-name">
           <label htmlFor="userName">
@@ -134,6 +170,7 @@ function Signup() {
             placeholder="사용자 이름"
             required
           />
+          {errors.userName && <div className="error-message">{errors.userName}</div>}
         </div>
         <div className="telno">
           <label htmlFor="phone">
@@ -147,6 +184,7 @@ function Signup() {
             placeholder="01012345678"
             required
           />
+          {errors.phoneNumber && <div className="error-message">{errors.phoneNumber}</div>}
         </div>
         <div className="birth">
           <label>
@@ -208,6 +246,7 @@ function Signup() {
               ))}
             </select>
           </div>
+          {errors.birth && <div className="error-message">{errors.birth}</div>}
         </div>
         <div className="gender">
           <label>
@@ -235,10 +274,12 @@ function Signup() {
               여성
             </label>
           </div>
+          {errors.gender && <div className="error-message">{errors.gender}</div>}
         </div>
         <Button2 type="submit" className="send-button" disabled={!isFormValid()}>
           확인
         </Button2>
+        {errors.general && <div className="error-message general-error">{errors.general}</div>}
       </form>
     </div>
   );

@@ -22,6 +22,54 @@ export default function AdminRooms() {
   // 쿼리 매개변수에서 숙소 이름 가져오기
   const lodgingNameFilter = location.state?.lodgingName || '';
 
+  // 저장 버튼 클릭 시 호출되는 함수
+  const onSave = useCallback(
+    async (params) => {
+      const rowData = params.data; // 현재 행의 데이터 가져오기
+      console.log('저장된 데이터:', rowData); // 저장된 데이터 출력
+
+      // 이미 저장 중이면 함수 종료
+      if (isSaving) {
+        return;
+      }
+
+      setIsSaving(true); // 저장 중 상태 설정
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/admin/rooms/${rowData.room_id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // 인증 토큰 사용
+          },
+          body: JSON.stringify({
+            room_id: rowData.room_id,
+            lodging_id: rowData.lodging_id,
+            room_name: rowData.room_name,
+            room_count: rowData.room_count,
+            price_per_night: rowData.price_per_night,
+            min_occupancy: rowData.min_occupancy,
+            max_occupancy: rowData.max_occupancy,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('객실 정보를 업데이트하는 중 오류가 발생했습니다.');
+        }
+
+        const updatedRoom = await response.json(); // 업데이트된 객실 정보 가져오기
+        console.log('업데이트된 객실:', updatedRoom); // 업데이트된 객실 정보 출력
+        alert('객실 정보가 성공적으로 업데이트되었습니다.'); // 성공 메시지 출력
+      } catch (error) {
+        console.error('객실 정보를 업데이트하는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
+        alert(`오류: ${error.message}`); // 오류 메시지 알림
+      } finally {
+        setIsSaving(false); // 저장 중 상태 해제
+      }
+    },
+    [isSaving],
+  );
+
   // 컬럼 정의 상수
   const colDefs = useMemo(
     () => [
@@ -113,7 +161,7 @@ export default function AdminRooms() {
         ),
       },
     ],
-    [isSaving],
+    [isSaving, onSave],
   );
 
   // 필터 옵션 현지화 문자열 설정
@@ -261,54 +309,6 @@ export default function AdminRooms() {
       alert(`오류: ${error.message}`); // 오류 메시지 알림
     }
   }, [rowData]);
-
-  // 저장 버튼 클릭 시 호출되는 함수
-  const onSave = useCallback(
-    async (params) => {
-      const rowData = params.data; // 현재 행의 데이터 가져오기
-      console.log('저장된 데이터:', rowData); // 저장된 데이터 출력
-
-      // 이미 저장 중이면 함수 종료
-      if (isSaving) {
-        return;
-      }
-
-      setIsSaving(true); // 저장 중 상태 설정
-
-      try {
-        const response = await fetch(`http://localhost:3000/api/admin/rooms/${rowData.room_id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // 인증 토큰 사용
-          },
-          body: JSON.stringify({
-            room_id: rowData.room_id,
-            lodging_id: rowData.lodging_id,
-            room_name: rowData.room_name,
-            room_count: rowData.room_count,
-            price_per_night: rowData.price_per_night,
-            min_occupancy: rowData.min_occupancy,
-            max_occupancy: rowData.max_occupancy,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('객실 정보를 업데이트하는 중 오류가 발생했습니다.');
-        }
-
-        const updatedRoom = await response.json(); // 업데이트된 객실 정보 가져오기
-        console.log('업데이트된 객실:', updatedRoom); // 업데이트된 객실 정보 출력
-        alert('객실 정보가 성공적으로 업데이트되었습니다.'); // 성공 메시지 출력
-      } catch (error) {
-        console.error('객실 정보를 업데이트하는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
-        alert(`오류: ${error.message}`); // 오류 메시지 알림
-      } finally {
-        setIsSaving(false); // 저장 중 상태 해제
-      }
-    },
-    [isSaving],
-  );
 
   // 로딩 중이거나 권한이 없는 경우 컴포넌트를 렌더링하지 않음
   if (isLoading) {
