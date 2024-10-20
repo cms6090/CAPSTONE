@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 import './ProfileReserve.css';
 import SettingList from '../../components/SettingList';
-import { Button2, Button5 } from '../../components/Button.style';
+import { Button2, Button5, Button6 } from '../../components/Button.style';
 import './ProfileReserve.css';
 
 export default function ProfileReserve() {
@@ -196,45 +196,70 @@ export default function ProfileReserve() {
               </div>
               {pastReservations.map((reservation) => (
                 <div
-                  key={reservation.reservation_id}
-                  className="reserve-card past"
-                  onClick={() => handleCardClick(reservation.rooms?.lodgings?.lodging_id)} // 클릭 시 숙소로 이동
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="reserve-card-body">
-                    <div className="reserve-card-image">
-                      <img src={reservation.rooms?.lodgings?.main_image} alt="객실 이미지" />
+                key={reservation.reservation_id}
+                className="reserve-card past"
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="reserve-card-body">
+                  <div
+                    className="reserve-card-image"
+                    onClick={() => handleCardClick(reservation.rooms?.lodgings?.lodging_id)} // 클릭 시 숙소로 이동
+                  >
+                    <img src={reservation.rooms?.lodgings?.main_image} alt="객실 이미지" />
+                  </div>
+                  <div
+                    className="reserve-card-contents"
+                    onClick={() => handleCardClick(reservation.rooms?.lodgings?.lodging_id)} // 클릭 시 숙소로 이동
+                  >
+                    <div style={{ fontSize: '1.2em' }}>
+                      {reservation.rooms?.lodgings?.name || '숙소 정보 없음'}
                     </div>
-                    <div className="reserve-card-contents">
-                      <div style={{ fontSize: '1.2em' }}>
-                        {reservation.rooms?.lodgings?.name || '숙소 정보 없음'}
-                      </div>
-                      <div style={{ color: 'rgba(0,0,0,0.5', marginBottom: '1em' }}>
-                        {reservation.rooms?.lodgings?.address}
-                      </div>
-                      <div className="reserve-card-contnets-roomname">
-                        {reservation.rooms?.room_name || '객실 정보 없음'}
-                      </div>
-                      <div className="reserve-card-contents-details">
-                        <div className="reserve-card-contents-details-header">
-                          <p>일정</p>
-                          <p>객실</p>
-                          <p>인원</p>
-                          <p>총 가격</p>
+                    <div style={{ color: 'rgba(0,0,0,0.5', marginBottom: '1em' }}>
+                      {reservation.rooms?.lodgings?.address}
+                    </div>
+                    <div className="reserve-card-contents-container">
+                      <div className="reserve-card-contents-user">
+                        <div>사용자 정보</div>
+                        <div className="reserve-card-contents-user-details">
+                          <div className="reserve-card-contents-user-header">
+                            <p>이름</p>
+                            <p>전화번호</p>
+                          </div>
+                          <div className="reserve-card-contents-user-contents">
+                            <p>{reservation.username}</p>
+                            <p>{reservation.phonenumber}</p>
+                          </div>
                         </div>
-                        <div className="reserve-card-contents-details-details">
-                          <p>
-                            {new Date(reservation.check_in_date).toLocaleDateString()} 14:00 ~
-                            {new Date(reservation.check_out_date).toLocaleDateString()} 10:00
-                          </p>
-                          <p> {reservation.rooms?.room_name || '객실 정보 없음'}</p>
-                          <p>{reservation.person_num}명</p>
-                          <p> {new Intl.NumberFormat().format(reservation.total_price)} 원</p>
+                      </div>
+                      <div className="reserve-card-contents-lodging">
+                        <div className="reserve-card-contents-room">객실 정보</div>
+                        <div className="reserve-card-contents-details">
+                          <div className="reserve-card-contents-details-header">
+                            <p>일정</p>
+                            <p>객실</p>
+                            <p>인원</p>
+                            <p>총 가격</p>
+                          </div>
+                          <div className="reserve-card-contents-details-details">
+                            <p>
+                              {new Date(reservation.check_in_date).toLocaleDateString()} 14:00 ~
+                              {new Date(reservation.check_out_date).toLocaleDateString()} 10:00
+                            </p>
+                            <p> {reservation.rooms?.room_name || '객실 정보 없음'}</p>
+                            <p>{reservation.person_num}명</p>
+                            <p> {new Intl.NumberFormat().format(reservation.total_price)} 원</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                  <div className="reserve-card-review">
+                    <Button6>
+                      리뷰 작성
+                    </Button6>
+                  </div>
                 </div>
+              </div>
               ))}
             </>
           ) : (

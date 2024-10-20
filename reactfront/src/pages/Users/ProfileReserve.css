@@ -153,3 +153,8 @@ h3 {
 .reserve-card-contents-user-header {
   border-right: 1px solid lightgray;
 }
+
+.reserve-card-review {
+  padding: 1em 1em 0 0;
+  text-align: right;
+}

@@ -54,3 +54,14 @@ export const Button5 = styled(Button)(() => ({
   borderRadius: '10px',
   backgroundColor: '#f44336',
 }));
+
+export const Button6 = styled(Button)(() => ({
+  fontFamily: 'pretendard-light',
+  fontWeight: '800',
+  fontSize:'0.9em',
+  padding: '0.5em 2em',
+  color: 'white',
+  border: 'none',
+  borderRadius: '10px',
+  backgroundColor: '#097ce6',
+}));
