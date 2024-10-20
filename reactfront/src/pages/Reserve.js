@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Reserve.css';
 import { Button1, Button2 } from '../components/Button.style';
 import DateRangePickerComponent from '../components/DateRangePickerComponent'; // 날짜 선택 컴포넌트 import
@@ -7,6 +7,7 @@ import NumPicker from '../components/NumPicker'; // 인원 선택 컴포넌트 i
 
 export default function Reserve() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { accommodation, room } = location.state || {}; // 추가된 room 정보 및 main_image 정보
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,14 +76,14 @@ export default function Reserve() {
   const handleReserveClick = async () => {
     if (userInfo && room && checkInDate && checkOutDate) {
       const reservationData = {
-        userId: userInfo.user_id,         // 사용자 ID
-        roomId: room.room_id,             // 객실 ID
-        userName: userName,          // 입력된 사용자 이름
-        phoneNumber: phoneNumber,    // 입력된 휴대폰 번호
-        checkInDate: checkInDate,    // 체크인 날짜
-        checkOutDate: checkOutDate,  // 체크아웃 날짜
-        roomPrice: room.price_per_night,        // 객실 가격
-        personNum: numPeople,        // 선택된 인원 수
+        userId: userInfo.user_id, // 사용자 ID
+        roomId: room.room_id, // 객실 ID
+        userName: userName, // 입력된 사용자 이름
+        phoneNumber: phoneNumber, // 입력된 휴대폰 번호
+        checkInDate: checkInDate, // 체크인 날짜
+        checkOutDate: checkOutDate, // 체크아웃 날짜
+        roomPrice: room.price_per_night, // 객실 가격
+        personNum: numPeople, // 선택된 인원 수
       };
 
       console.log('보내는 예약 데이터:', room, numPeople); // 데이터가 제대로 있는지 확인
@@ -104,6 +105,7 @@ export default function Reserve() {
         const data = await response.json();
         console.log('예약 성공:', data);
         alert('예약이 완료되었습니다!');
+        navigate('/');
       } catch (error) {
         console.error('예약 실패:', error);
         alert('예약 중 오류가 발생했습니다.');
@@ -193,7 +195,6 @@ export default function Reserve() {
                       <div className="reserve-title">인원</div>
                       <NumPicker onNumSelect={setNumPeople} />
                     </div>
-
                   </>
                 ) : (
                   <div>사용자 정보를 불러올 수 없습니다.</div>

@@ -7,7 +7,8 @@
   box-sizing: border-box;
 }
 
-.profile-setting-container, .reserve-info {
+.profile-setting-container,
+.reserve-info {
   width: 100%;
 }
 
@@ -15,7 +16,8 @@
   margin-top: 20px;
 }
 
-h2, h3 {
+h2,
+h3 {
   color: #333;
   font-weight: 600;
 }
@@ -31,17 +33,6 @@ h2, h3 {
 
 .reserve-card:hover {
   transform: scale(1.02);
-}
-
-.reserve-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.reserve-card-header h4 {
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 
 .status-badge {
@@ -64,7 +55,9 @@ h2, h3 {
 }
 
 .reserve-card-body {
-  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 1fr 5fr 1fr;
+  gap: 2%;
 }
 
 .reserve-card-body p {
@@ -73,14 +66,90 @@ h2, h3 {
   color: #555;
 }
 
+.reserve-card-image {
+  width: 100%;
+  border-radius: 15px;
+  aspect-ratio: 1/1;
+  height: 100%;
+}
+
+.reserve-card-image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+  overflow: hidden;
+}
+
 .no-reservations {
-  font-size: 1.2rem;
+  color: #666;
+  background-color: white;
+  border-radius: 15px;
+  padding: 2em;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.no-past {
+  font-size: 1em;
   color: #666;
   text-align: center;
 }
 
-.loading, .error {
+.loading,
+.error {
   font-size: 1.5rem;
   text-align: center;
   margin-top: 50px;
+}
+
+.reserve-info-title {
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.reserve-card-contents-details {
+  display: grid;
+  grid-template-columns: 1fr 7fr;
+  gap: 1em;
+}
+
+.reserve-card-contents-details-header {
+  border-right: 1px solid lightgray;
+}
+
+.reserve-card-contents-details-header p {
+  font-family: 'pretendard';
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.reserve-card-contents-roomname {
+  margin-bottom: 0.5em;
+}
+
+.reserve-card-cancel {
+  padding: 1em 1em 0 0;
+  text-align: right;
+}
+
+.reserve-card-contents-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1em;
+}
+
+.reserve-card-contents-user-details {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1em;
+}
+
+.reserve-card-contents-user-header p {
+  font-family: 'pretendard';
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.reserve-card-contents-user-header {
+  border-right: 1px solid lightgray;
 }
