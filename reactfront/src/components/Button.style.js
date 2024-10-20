@@ -8,9 +8,9 @@ export const Button1 = styled(Button)(() => ({
   padding: '0.8em 1em',
   border: '1px solid lightgray',
   borderRadius: '0.7em',
-  '&:hover':{
+  '&:hover': {
     backgroundColor: 'rgba(0,0,0,0.1)', // 마우스 오버 시 배경색 변경
-  }
+  },
 }));
 
 export const Button2 = styled(Button)(() => ({
@@ -42,4 +42,26 @@ export const Button4 = styled(Button)(() => ({
   color: 'rgba(255,0,0,0.5)',
   border: '1px solid rgba(255,0,0,0.5)',
   borderRadius: '15px',
+}));
+
+export const Button5 = styled(Button)(() => ({
+  fontFamily: 'pretendard-light',
+  fontWeight: '800',
+  fontSize:'0.9em',
+  padding: '0.5em 2em',
+  color: 'white',
+  border: 'none',
+  borderRadius: '10px',
+  backgroundColor: '#f44336',
+}));
+
+export const Button6 = styled(Button)(() => ({
+  fontFamily: 'pretendard-light',
+  fontWeight: '800',
+  fontSize:'0.9em',
+  padding: '0.5em 2em',
+  color: 'white',
+  border: 'none',
+  borderRadius: '10px',
+  backgroundColor: '#097ce6',
 }));
