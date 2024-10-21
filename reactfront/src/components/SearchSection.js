@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { DateRange } from 'react-date-range';
 import { addDays, isAfter } from 'date-fns';
 import { ko } from 'date-fns/locale'; // 한글 로케일 추가
@@ -7,14 +7,14 @@ import 'react-date-range/dist/theme/default.css'; // 테마 스타일
 import './SearchSection.css'; // CSS 파일을 import
 import { Button2 } from './Button.style';
 import NumPicker from './NumPicker';
+import { SearchContext } from './SearchContext';
 
 export default function SearchSection() {
+  const { startDate, setStartDate, endDate, setEndDate, numPeople, setNumPeople } =
+    useContext(SearchContext); // Destructure the context values
   const [showDatePicker, setShowDatePicker] = useState(false); // 날짜 선택기 표시 여부
   const [showNumPicker, setShowNumPicker] = useState(false); // 인원 선택기 표시 여부
-  const [dateRange, setDateRange] = useState('날짜 선택하기'); // 날짜 범위 상태
-  const [numPeople, setNumPeople] = useState(1); // 기본 인원 수
-  const [startDate, setStartDate] = useState(null); // 시작 날짜 상태
-  const [endDate, setEndDate] = useState(null); // 종료 날짜 상태
+  const [dateRange, setDateRange] = useState(''); // 날짜 범위 상태
   const [keyword, setKeyword] = useState(''); // 검색어 상태 추가
   const datePickerRef = useRef(null); // 날짜 선택기 참조
   const numPickerRef = useRef(null); // 인원 선택기 참조
@@ -27,6 +27,13 @@ export default function SearchSection() {
     setStartDate(start); // 시작 날짜 저장
     setEndDate(end); // 종료 날짜 저장
   };
+
+  // 컴포넌트가 처음 렌더링될 때 기본 날짜(오늘과 내일) 설정
+  useEffect(() => {
+    const today = new Date();
+    const tomorrow = addDays(today, 1);
+    handleDateSelect(today, tomorrow); // 기본 날짜를 설정
+  }, []);
 
   // 외부 클릭 시 날짜 선택기 및 인원 선택기 닫기
   useEffect(() => {
@@ -47,24 +54,23 @@ export default function SearchSection() {
   }, [datePickerRef, numPickerRef]);
 
   // 검색 버튼 클릭 시 이동
-const handleSearch = () => {
-  const encodedKeyword = encodeURIComponent(keyword); // 검색어 인코딩
-  const checkIn = startDate ? startDate.toISOString().split('T')[0] : ''; // 시작 날짜, 없으면 빈 값
-  const checkOut = endDate ? endDate.toISOString().split('T')[0] : ''; // 종료 날짜, 없으면 빈 값
-  const personal = numPeople || 1; // 인원 수가 없으면 기본값 1
+  const handleSearch = () => {
+    const encodedKeyword = encodeURIComponent(keyword); // 검색어 인코딩
+    const checkIn = startDate ? startDate.toISOString().split('T')[0] : ''; // 시작 날짜, 없으면 빈 값
+    const checkOut = endDate ? endDate.toISOString().split('T')[0] : ''; // 종료 날짜, 없으면 빈 값
+    const personal = numPeople || 1; // 인원 수가 없으면 기본값 1
 
-  // URL 생성
-  const searchUrl = `http://localhost:3005/accommodations?keyword=${encodedKeyword}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`;
-  
-  console.log('Generated URL:', searchUrl); // 로그로 URL을 확인
+    // URL 생성
+    const searchUrl = `http://localhost:3005/accommodations?keyword=${encodedKeyword}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`;
 
-  window.location.href = searchUrl; // 페이지 이동
-};
+    console.log('Generated URL:', searchUrl); // 로그로 URL을 확인
 
+    window.location.href = searchUrl; // 페이지 이동
+  };
 
   return (
     <div className="search-section">
-      <div className='input-container'>
+      <div className="input-container">
         <span className="material-symbols-outlined">search</span>
         <input
           className="input-container"
@@ -84,9 +90,9 @@ const handleSearch = () => {
         <input
           type="text"
           className="date-range-input"
-          value={dateRange}
+          value={dateRange} // 선택된 날짜 범위 표시
           readOnly
-          style={{ color: dateRange === '날짜 선택하기' ? 'gray' : 'black' }} // 초기값일 때 색상 변경
+          style={{ color: dateRange === '' ? 'gray' : 'black' }} // 초기값일 때 색상 변경
           ref={dateInputRef} // 날짜 선택 input 참조 추가
         />
       </div>
@@ -153,7 +159,7 @@ function DateRangePickerComponent({ onDateSelect }) {
   const [state, setState] = useState([
     {
       startDate: today,
-      endDate: addDays(today, 7),
+      endDate: addDays(today, 1),
       key: 'selection',
     },
   ]);
