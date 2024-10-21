@@ -1,0 +1,20 @@
+.arrowcontainer {
+    display: flex; /* Flexbox 사용 */
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    cursor: pointer; /* 마우스를 올렸을 때 포인터로 변경 */
+    overflow: hidden; /* 자식 요소가 컨테이너를 벗어나지 않도록 */
+    border-radius: 50%; /* 동그란 형태 만들기 */
+    width: 30px; /* 원하는 크기로 조정 */
+    height: 30px; /* 원하는 크기로 조정 */
+    transition: filter 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 */
+}
+
+.arrow {
+    width: 100%; /* 컨테이너 크기에 맞게 조정 */
+    height: auto; /* 비율 유지 */
+}
+
+.arrowcontainer:hover {
+    filter: brightness(0.8); /* 마우스를 올렸을 때 어두워짐 */
+}

@@ -1,0 +1,134 @@
+.verification-container {
+  max-width: 35%;
+  margin: 3% auto; /* 페이지 중앙 정렬 */
+  padding: 20px;
+  background-color: #fff; /* 배경색 */
+}
+
+.email input,
+.password input,
+.user-name input,
+.telno input,
+.gender select {
+  width: 100%;
+  padding: 2%;
+  border-radius: 10px;
+  border: none;
+  font-size: 1em;
+  font-family: 'pretendard-light';
+  background-color: rgba(222, 222, 222, 0.4);
+}
+
+.email,
+.password,
+.user-name,
+.telno,
+.gender {
+  margin: 3% 0%;
+}
+
+.send-button {
+  /* 기본 버튼 스타일 */
+  background-color: #007bff; /* 활성화된 버튼 색상 */
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.send-button.disabled {
+  background-color: gray; /* 비활성화된 버튼 색상 */
+  cursor: not-allowed; /* 비활성화 시 커서 스타일 */
+}
+
+.signup-form {
+  margin-bottom: 5%;
+  font-family: 'pretendard-regular';
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.gender-container {
+  margin: 1% 5%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5%;
+  font-size: 1.1em;
+}
+
+.gender-container label {
+  display: flex;
+  align-items: center;
+}
+
+.gender-select {
+  margin-right: 5%;
+  /* 기본 스타일을 숨기고 사용자 정의 스타일 추가 */
+  -webkit-appearance: none; /* 기본 스타일 제거 (Chrome) */
+  -moz-appearance: none; /* 기본 스타일 제거 (Firefox) */
+  appearance: none; /* 기본 스타일 제거 (기타 브라우저) */
+  width: 1em; /* 동그라미 크기 */
+  height: 1em; /* 동그라미 크기 */
+  border: 0.5px solid #ccc; /* 테두리 색상 */
+  border-radius: 50%; /* 동그라미 형태 */
+  outline: none; /* 포커스 스타일 제거 */
+  cursor: pointer; /* 커서 스타일 */
+  position: relative; /* 위치 설정 */
+}
+
+.gender-select:checked {
+  background-color: #007bff; /* 체크된 상태 색상 */
+  border: 0.5px solid #007bff; /* 체크된 상태 테두리 색상 */
+}
+
+label {
+  font-family: 'pretendard-light';
+  font-size: 0.9em;
+}
+
+.birth-detail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5%;
+  width: 100%;
+  border-radius: 10px;
+  border: none;
+  font-size: 1em;
+  font-family: 'pretendard-light';
+}
+
+.birth-detail select {
+  width: 100%;
+  padding: 10px; /* 패딩 조정 */
+  border-radius: 10px;
+  font-size: 1em;
+  font-family: 'pretendard-light';
+  background-color: rgba(222, 222, 222, 0.4);
+  appearance: none; /* 기본 드롭다운 화살표 제거 */
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Cpath fill="gray" d="M7 10l5 5 5-5H7z"/%3E%3C/svg%3E'); /* 커스텀 드롭다운 화살표 */
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* 화살표 위치 조정 */
+  background-size: 1em; /* 화살표 크기 조정 */
+}
+
+.birth-detail select:focus {
+  outline: none; /* 포커스 아웃라인 제거 */
+}
+
+.birth-detail option {
+  color: black; /* 드롭다운 옵션 색상 */
+  font-family: 'pretendard-light';
+}
+
+.birth-detail select:disabled {
+  background-color: rgba(222, 222, 222, 0.2); /* 비활성화된 드롭다운 배경색 */
+  color: rgba(0, 0, 0, 0.5); /* 비활성화된 텍스트 색상 */
+  cursor: not-allowed; /* 클릭할 수 없음을 표시하는 커서 스타일 */
+  border: none;
+}
+
+.birth-detail select:enabled {
+  border: none;
+}

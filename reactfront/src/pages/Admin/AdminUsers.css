@@ -1,0 +1,31 @@
+.admin {
+  display: flex;
+  background-color: #f8f9fa; /* 상단 배경색 */
+  box-sizing: border-box; /* 모든 요소에 대해 패딩과 테두리를 포함 */
+}
+
+.admin-setting-container {
+  width: 10%; /* SettingList의 너비 */
+}
+
+.admin-users {
+  width: 90%;
+  padding: 1% 3%;
+  border: none;
+}
+
+#filter-text-box {
+  padding: 0.8em;
+  border: 1px solid rgb(231, 231, 231);
+  border-radius: 10px;
+}
+
+.admin-users-table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1%;
+}
+
+.actions-icon:hover {
+  background-color: #2196f3 !important;
+}

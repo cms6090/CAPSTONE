@@ -1,0 +1,52 @@
+.swiper-card-wrapper {
+  position: relative;
+}
+
+.card-container {
+  margin: 0;
+}
+
+.card-wrap {
+  overflow: hidden; /* 이미지가 모서리를 넘지 않도록 */
+  padding: 0;
+  margin: 0 5%;
+  cursor: pointer; /* 포인터 커서로 변경 */
+}
+
+.card-wrap:hover {
+  filter: brightness(0.8); /* 마우스를 올렸을 때 어두워짐 */
+}
+
+.card-image {
+  border-radius: 15px;
+  width: 100%;
+}
+
+.card-name {
+  margin-top: 5%;
+  color: black;
+  font-size: 0.9em;
+  font-family: 'pretendard-bold';
+}
+
+.region-prev-btn,
+.region-next-btn {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: white; /* 버튼 배경 색상 */
+  border: none; /* 버튼 테두리 제거 */
+  padding: 10px; /* 버튼 여백 */
+  cursor: pointer; /* 포인터 커서로 변경 */
+  border-radius: 50%;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+}
+
+.region-prev-btn {
+  left: -0.5%; /* 왼쪽 버튼 위치 */
+}
+
+.region-next-btn {
+  right: -0.5%; /* 오른쪽 버튼 위치 */
+}
