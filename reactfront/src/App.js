@@ -19,6 +19,7 @@ import AdminUsers from './pages/Admin/AdminUsers';
 import AdminLodgings from './pages/Admin/AdminLodgings';
 import AdminReserves from './pages/Admin/AdminReserves';
 import AdminRooms from './pages/Admin/AdminRooms';
+import Review from './pages/Users/Review';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/profile/info" element={<ProfileInfo />} />
         <Route path="/profile/setting" element={<ProfileSetting />} />
         <Route path="/reserve" element={<Reserve />} />
+        <Route path="/review" element={<Review />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/admin/lodgings" element={<AdminLodgings />} />
         <Route path="/admin/rooms" element={<AdminRooms />} />
