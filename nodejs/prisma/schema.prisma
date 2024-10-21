@@ -91,7 +91,7 @@ model reviews {
   created_at     DateTime?       @default(now()) @db.DateTime(0)
   review_photos  review_photos[]
   users          users?          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, map: "reviews_ibfk_2")
-  lodgings       lodgings?       @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
+  lodgings       lodgings?       @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_3")
   reservations   reservations?   @relation(fields: [reservation_id], references: [reservation_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_4")
 
   @@index([user_id], map: "reviews_ibfk_2")
