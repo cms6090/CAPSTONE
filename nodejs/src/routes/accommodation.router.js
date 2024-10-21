@@ -11,8 +11,11 @@ const AccommodationsRouter = express.Router();
 ---------------------------------------------*/
 AccommodationsRouter.get('/', async (req, res, next) => {
   try {
+    // req.body가 아닌 req.query에서 쿼리 파라미터를 가져옵니다.
     let { keyword, checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
-
+    
+    personal = Number(personal);
+    console.log(req.query);
     // 체크인과 체크아웃 날짜 기본값 설정
     const today = dayjs().format('YYYY-MM-DD'); // 오늘 날짜를 YYYY-MM-DD 형식으로 설정
     const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD'); // 내일 날짜를 YYYY-MM-DD 형식으로 설정
@@ -40,11 +43,17 @@ AccommodationsRouter.get('/', async (req, res, next) => {
         lodgings l
       LEFT JOIN
         rooms r ON l.lodging_id = r.lodging_id
+      LEFT JOIN
+        room_availability ra ON r.room_id = ra.room_id
       WHERE
-        1=1
+        ra.date >= '${checkIn}'
+        AND ra.date < '${checkOut}'
+        AND ra.available_count > 0
         ${keyword ? `AND (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%')` : ''}
         ${minPrice ? `AND r.price_per_night >= ${minPrice}` : ''}
         ${maxPrice ? `AND r.price_per_night <= ${maxPrice}` : ''}
+        AND r.min_occupancy <= ${personal}
+        AND r.max_occupancy >= ${personal}
       GROUP BY
         l.lodging_id;
     `;
@@ -59,6 +68,9 @@ AccommodationsRouter.get('/', async (req, res, next) => {
     throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
   }
 });
+
+
+
 
 /*---------------------------------------------
     [숙박 업소 상세 조회]

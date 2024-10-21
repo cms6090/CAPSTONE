@@ -13,16 +13,19 @@ export default function SearchSection() {
   const [showNumPicker, setShowNumPicker] = useState(false); // 인원 선택기 표시 여부
   const [dateRange, setDateRange] = useState('날짜 선택하기'); // 날짜 범위 상태
   const [numPeople, setNumPeople] = useState(1); // 기본 인원 수
+  const [startDate, setStartDate] = useState(null); // 시작 날짜 상태
+  const [endDate, setEndDate] = useState(null); // 종료 날짜 상태
+  const [keyword, setKeyword] = useState(''); // 검색어 상태 추가
   const datePickerRef = useRef(null); // 날짜 선택기 참조
   const numPickerRef = useRef(null); // 인원 선택기 참조
   const dateInputRef = useRef(null); // 날짜 선택 input 참조
   const numInputRef = useRef(null); // 인원 선택 input 참조
 
   // 날짜 선택 후 호출되는 함수
-  const handleDateSelect = (startDate, endDate) => {
-    setDateRange(
-      `${startDate.toLocaleDateString('ko-KR')} - ${endDate.toLocaleDateString('ko-KR')}`,
-    );
+  const handleDateSelect = (start, end) => {
+    setDateRange(`${start.toLocaleDateString('ko-KR')} - ${end.toLocaleDateString('ko-KR')}`);
+    setStartDate(start); // 시작 날짜 저장
+    setEndDate(end); // 종료 날짜 저장
   };
 
   // 외부 클릭 시 날짜 선택기 및 인원 선택기 닫기
@@ -43,11 +46,32 @@ export default function SearchSection() {
     };
   }, [datePickerRef, numPickerRef]);
 
+  // 검색 버튼 클릭 시 이동
+const handleSearch = () => {
+  const encodedKeyword = encodeURIComponent(keyword); // 검색어 인코딩
+  const checkIn = startDate ? startDate.toISOString().split('T')[0] : ''; // 시작 날짜, 없으면 빈 값
+  const checkOut = endDate ? endDate.toISOString().split('T')[0] : ''; // 종료 날짜, 없으면 빈 값
+  const personal = numPeople || 1; // 인원 수가 없으면 기본값 1
+
+  // URL 생성
+  const searchUrl = `http://localhost:3005/accommodations?keyword=${encodedKeyword}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`;
+  
+  console.log('Generated URL:', searchUrl); // 로그로 URL을 확인
+
+  window.location.href = searchUrl; // 페이지 이동
+};
+
+
   return (
     <div className="search-section">
       <div className='input-container'>
         <span className="material-symbols-outlined">search</span>
-        <input className="input-container" placeholder="여행지나 숙소를 검색해보세요" />
+        <input
+          className="input-container"
+          placeholder="여행지나 숙소를 검색해보세요"
+          value={keyword} // 입력 필드의 값은 keyword 상태로
+          onChange={(e) => setKeyword(e.target.value)} // 사용자가 입력한 값을 상태로 저장
+        />
       </div>
       <div
         className="input-container"
@@ -114,8 +138,8 @@ export default function SearchSection() {
         <NumPicker onNumSelect={setNumPeople} /> {/* 인원 수 선택 후 상태 업데이트 */}
       </div>
 
-      <div >
-        <Button2>검색</Button2>
+      <div>
+        <Button2 onClick={handleSearch}>검색</Button2> {/* 버튼 클릭 시 handleSearch 호출 */}
       </div>
     </div>
   );
@@ -164,40 +188,3 @@ function DateRangePickerComponent({ onDateSelect }) {
     </div>
   );
 }
-
-// NumPicker 정의
-// function NumPicker({ onNumSelect }) {
-//   const [count, setCount] = useState(1); // 기본 인원 수
-
-//   const increment = () => {
-//     const newCount = count + 1;
-//     setCount(newCount); // 인원 수 증가
-//     onNumSelect(newCount); // 부모 컴포넌트에 인원 수 전달
-//   };
-
-//   const decrement = () => {
-//     const newCount = count > 0 ? count - 1 : 0; // 인원 수 감소
-//     setCount(newCount);
-//     onNumSelect(newCount); // 부모 컴포넌트에 인원 수 전달
-//   };
-
-//   return (
-//     <div className="people-selector">
-//       <div className="people-header">
-//         <span className="count-text">인원 {count}</span>
-//       </div>
-//       <div className="details">
-//         <div className="description">유아 및 아동도 인원수에 포함해주세요.</div>
-//         <div className="controls">
-//           <button className="control-button" onClick={decrement}>
-//             <span className="material-symbols-outlined num-control">remove</span>
-//           </button>
-//           <span className="count">{count}</span>
-//           <button className="control-button" onClick={increment}>
-//             <span className="material-symbols-outlined num-control">add</span>
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
