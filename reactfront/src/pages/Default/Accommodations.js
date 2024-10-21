@@ -47,18 +47,34 @@ export default function Accommodations() {
   useEffect(() => {
     const query = new URLSearchParams(location.search);
     const keyword = query.get('keyword'); // URL 쿼리 매개변수에서 키워드를 가져옴
+    const personal = query.get('personal'); // 인원 수 가져오기
+    const checkIn = query.get('checkIn'); // 체크인 날짜 가져오기
+    const checkOut = query.get('checkOut'); // 체크아웃 날짜 가져오기
     const minPrice = value[0]; // 슬라이더의 최소 가격 값
     const maxPrice = value[1]; // 슬라이더의 최대 가격 값
-
+  
     // 필터에 따라 API URL 구성
     let url = `http://localhost:3000/api/accommodations/?minPrice=${minPrice}`;
+  
+    // 조건적으로 쿼리 파라미터를 추가
     if (maxPrice < 500000) {
       url += `&maxPrice=${maxPrice}`;
     }
     if (keyword) {
       url += `&keyword=${encodeURIComponent(keyword)}`;
     }
-
+    if (personal) {
+      url += `&personal=${personal}`;
+    }
+    if (checkIn) {
+      url += `&checkIn=${checkIn}`;
+    }
+    if (checkOut) {
+      url += `&checkOut=${checkOut}`;
+    }
+  
+    console.log('Generated URL:', url); // 생성된 URL을 로그로 확인
+  
     // API로부터 데이터 가져오기
     const fetchData = async () => {
       try {
@@ -70,7 +86,7 @@ export default function Accommodations() {
         console.error('There was a problem with the fetch operation:', error);
       }
     };
-
+  
     fetchData();
   }, [location.search, value]);
 
