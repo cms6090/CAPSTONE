@@ -75,23 +75,28 @@ model reservations {
   phonenumber    String    @db.VarChar(20)
   users          users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, map: "reservations_ibfk_1")
   rooms          rooms?    @relation(fields: [room_id], references: [room_id], onDelete: NoAction, map: "reservations_ibfk_2")
+  reviews        reviews[]
 
   @@index([user_id], map: "reservations_ibfk_1")
   @@index([room_id], map: "reservations_ibfk_2")
 }
 
 model reviews {
-  review_id  Int       @id @default(autoincrement())
-  lodging_id Int?
-  user_id    Int?
-  rating     Int
-  comment    String?   @db.Text
-  created_at DateTime? @default(now()) @db.DateTime(0)
-  lodgings   lodgings? @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, map: "reviews_ibfk_1")
-  users      users?    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, map: "reviews_ibfk_2")
+  review_id      Int             @id @default(autoincrement())
+  reservation_id Int?
+  lodging_id     Int?
+  user_id        Int?
+  rating         Int
+  comment        String          @db.Text
+  created_at     DateTime?       @default(now()) @db.DateTime(0)
+  review_photos  review_photos[]
+  users          users?          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, map: "reviews_ibfk_2")
+  lodgings       lodgings?       @relation(fields: [lodging_id], references: [lodging_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_3")
+  reservations   reservations?   @relation(fields: [reservation_id], references: [reservation_id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_4")
 
-  @@index([lodging_id], map: "reviews_ibfk_1")
   @@index([user_id], map: "reviews_ibfk_2")
+  @@index([lodging_id], map: "lodging_id")
+  @@index([reservation_id], map: "reservation_id")
 }
 
 model room_photos {
@@ -117,4 +122,19 @@ model rooms {
   lodgings        lodgings?      @relation(fields: [lodging_id], references: [lodging_id], onDelete: Cascade, map: "rooms_ibfk_1")
 
   @@index([lodging_id], map: "rooms_ibfk_1")
+}
+
+model review_photos {
+  review_photos_id Int      @id @default(autoincrement())
+  lodging_id       Int
+  review_id        Int?
+  review_photos_1  String?  @db.VarChar(255)
+  review_photos_2  String?  @db.VarChar(255)
+  review_photos_3  String?  @db.VarChar(255)
+  review_photos_4  String?  @db.VarChar(255)
+  review_photos_5  String?  @db.VarChar(255)
+  reviews          reviews? @relation(fields: [review_id], references: [review_id], onDelete: Cascade, map: "review_photos_ibfk_2")
+
+  @@index([lodging_id], map: "lodging_id")
+  @@index([review_id], map: "review_photos_ibfk_2")
 }
