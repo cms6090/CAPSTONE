@@ -7,15 +7,12 @@ import dayjs from 'dayjs';
 const AccommodationsRouter = express.Router();
 
 /*---------------------------------------------
-    [숙박 업소 조회]
+    [숙박 업소 지역별, 파트별 조회]
 ---------------------------------------------*/
-AccommodationsRouter.get('/', async (req, res, next) => {
+AccommodationsRouter.get('/part', async (req, res, next) => {
   try {
-    // req.body가 아닌 req.query에서 쿼리 파라미터를 가져옵니다.
     let { keyword, checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
-    
-    personal = Number(personal);
-    console.log(req.query);
+
     // 체크인과 체크아웃 날짜 기본값 설정
     const today = dayjs().format('YYYY-MM-DD'); // 오늘 날짜를 YYYY-MM-DD 형식으로 설정
     const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD'); // 내일 날짜를 YYYY-MM-DD 형식으로 설정
@@ -43,17 +40,11 @@ AccommodationsRouter.get('/', async (req, res, next) => {
         lodgings l
       LEFT JOIN
         rooms r ON l.lodging_id = r.lodging_id
-      LEFT JOIN
-        room_availability ra ON r.room_id = ra.room_id
       WHERE
-        ra.date >= '${checkIn}'
-        AND ra.date < '${checkOut}'
-        AND ra.available_count > 0
+        1=1
         ${keyword ? `AND (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%')` : ''}
         ${minPrice ? `AND r.price_per_night >= ${minPrice}` : ''}
         ${maxPrice ? `AND r.price_per_night <= ${maxPrice}` : ''}
-        AND r.min_occupancy <= ${personal}
-        AND r.max_occupancy >= ${personal}
       GROUP BY
         l.lodging_id;
     `;
@@ -65,6 +56,77 @@ AccommodationsRouter.get('/', async (req, res, next) => {
     return res.status(StatusCodes.OK).json(accommodations);
   } catch (error) {
     // 에러 발생 시 상태 코드와 에러 메시지를 반환
+    throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
+  }
+});
+
+/*---------------------------------------------
+    [숙박 업소 쿼리 조회]
+---------------------------------------------*/
+AccommodationsRouter.get('/', async (req, res, next) => {
+  try {
+    // req.query에서 쿼리 파라미터를 가져옵니다.
+    let {
+      keyword = '',
+      checkIn,
+      checkOut,
+      personal = '2',
+      minPrice = '0',
+      maxPrice = '1000000',
+    } = req.query;
+
+    personal = Number(personal); // personal을 숫자로 변환
+    console.log(req.query);
+
+    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut); // 체크인과 체크아웃 날짜 로그 출력
+
+    // 숙소 검색 쿼리 실행
+    const rawQuery = `
+      SELECT 
+        l.lodging_id, 
+        l.name, 
+        l.part, 
+        l.area, 
+        l.sigungu, 
+        l.rating, 
+        l.tel, 
+        l.address, 
+        l.main_image, 
+        MIN(r.price_per_night) AS min_price_per_night, 
+        SUM(r.room_count - IFNULL((
+          SELECT COUNT(*) 
+          FROM reservations res 
+          WHERE res.room_id = r.room_id 
+          AND res.check_in_date <= '${checkOut}' 
+          AND res.check_out_date >= '${checkIn}'
+        ), 0)) AS available_rooms 
+      FROM 
+        lodgings l 
+      JOIN 
+        rooms r ON l.lodging_id = r.lodging_id 
+      WHERE 
+        (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%') 
+        AND r.price_per_night >= ${minPrice} 
+        AND r.price_per_night <= ${maxPrice}
+        AND r.min_occupancy <= ${personal} 
+        AND r.max_occupancy >= ${personal} 
+      GROUP BY 
+        l.lodging_id 
+      HAVING 
+        available_rooms > 0;
+    `;
+
+    // Prisma를 사용하여 raw SQL 쿼리 실행
+    const accommodations = await prisma.$queryRawUnsafe(rawQuery);
+    console.log(rawQuery);
+    // 검색 결과를 콘솔에 출력
+    console.log('Search results:', accommodations);
+
+    // 검색 결과를 클라이언트에게 반환
+    return res.status(StatusCodes.OK).json(accommodations);
+  } catch (error) {
+    // 에러 발생 시 상태 코드와 에러 메시지를 반환
+    console.error('Error fetching accommodations:', error);
     throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
   }
 });
