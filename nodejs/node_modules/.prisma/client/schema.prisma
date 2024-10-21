@@ -109,17 +109,18 @@ model room_photos {
 }
 
 model rooms {
-  room_id         Int            @id @default(autoincrement())
-  lodging_id      Int?
-  room_name       String         @db.VarChar(255)
-  room_count      Int
-  price_per_night Decimal        @db.Decimal(10, 2)
-  min_occupancy   Int
-  max_occupancy   Int
-  facilities      facilities[]
-  reservations    reservations[]
-  room_photos     room_photos[]
-  lodgings        lodgings?      @relation(fields: [lodging_id], references: [lodging_id], onDelete: Cascade, map: "rooms_ibfk_1")
+  room_id           Int                 @id @default(autoincrement())
+  lodging_id        Int?
+  room_name         String              @db.VarChar(255)
+  room_count        Int
+  price_per_night   Decimal             @db.Decimal(10, 2)
+  min_occupancy     Int
+  max_occupancy     Int
+  facilities        facilities[]
+  reservations      reservations[]
+  room_availability room_availability[]
+  room_photos       room_photos[]
+  lodgings          lodgings?           @relation(fields: [lodging_id], references: [lodging_id], onDelete: Cascade, map: "rooms_ibfk_1")
 
   @@index([lodging_id], map: "rooms_ibfk_1")
 }
@@ -137,4 +138,15 @@ model review_photos {
 
   @@index([lodging_id], map: "lodging_id")
   @@index([review_id], map: "review_photos_ibfk_2")
+}
+
+model room_availability {
+  id              Int      @id @default(autoincrement())
+  room_id         Int
+  date            DateTime @db.Date
+  available_count Int
+  rooms           rooms    @relation(fields: [room_id], references: [room_id], onDelete: Cascade, onUpdate: NoAction, map: "fk_room_id")
+
+  @@index([date], map: "idx_date")
+  @@index([room_id], map: "idx_room_id")
 }

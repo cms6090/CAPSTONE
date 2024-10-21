@@ -7,7 +7,7 @@ import accommodationsRouter from './routes/accommodation.router.js';
 import adminRouter from './routes/admin.router.js';
 import cors from 'cors';
 import errorMiddleware from './middlewares/error.middleware.js';
-import reservationsRouter from './routes/reservations.routers.js';
+import reservationsRouter from './routes/reservations.router.js';
 import reviewsRouter from './routes/review.router.js';
 
 // ES Module에서 __dirname 대체 정의

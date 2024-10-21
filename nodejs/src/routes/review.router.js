@@ -185,8 +185,10 @@ reviewsRouter.put(
         newPhotoPaths = req.files.map((file) => `${file.filename}`);
       }
 
-      // 기존 사진과 새로운 사진 결합
-      const combinedPhotoPaths = [...existingPhotoPaths, ...newPhotoPaths];
+      // 기존 사진과 새로운 사진 결합, 삭제된 사진은 제외
+      const combinedPhotoPaths = [...existingPhotoPaths, ...newPhotoPaths].filter(
+        (photo) => !deletedPhotoPaths.includes(photo),
+      );
 
       // review_photos 테이블을 새로운 결합된 사진으로 업데이트
       await prisma.review_photos.update({
