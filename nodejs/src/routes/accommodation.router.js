@@ -13,14 +13,6 @@ AccommodationsRouter.get('/part', async (req, res, next) => {
   try {
     let { keyword, checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
 
-    // 체크인과 체크아웃 날짜 기본값 설정
-    const today = dayjs().format('YYYY-MM-DD'); // 오늘 날짜를 YYYY-MM-DD 형식으로 설정
-    const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD'); // 내일 날짜를 YYYY-MM-DD 형식으로 설정
-
-    // 사용자가 제공하지 않은 경우 기본 체크인/체크아웃 날짜 설정
-    checkIn = checkIn || today;
-    checkOut = checkOut || tomorrow;
-
     console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut); // 체크인과 체크아웃 날짜 로그 출력
 
     // 숙소 검색 쿼리 실행
@@ -65,7 +57,6 @@ AccommodationsRouter.get('/part', async (req, res, next) => {
 ---------------------------------------------*/
 AccommodationsRouter.get('/', async (req, res, next) => {
   try {
-    // req.query에서 쿼리 파라미터를 가져옵니다.
     let {
       keyword = '',
       checkIn,
@@ -75,12 +66,20 @@ AccommodationsRouter.get('/', async (req, res, next) => {
       maxPrice = '1000000',
     } = req.query;
 
-    personal = Number(personal); // personal을 숫자로 변환
+    personal = Number(personal);
+
+    // Log the incoming query parameters for debugging
     console.log(req.query);
+    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut);
 
-    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut); // 체크인과 체크아웃 날짜 로그 출력
+    // Ensure checkIn and checkOut dates have fallback values
+    const today = dayjs().format('YYYY-MM-DD');
+    const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
 
-    // 숙소 검색 쿼리 실행
+    checkIn = checkIn || today;
+    checkOut = checkOut || tomorrow;
+
+    // Prepare the SQL query
     const rawQuery = `
       SELECT 
         l.lodging_id, 
@@ -93,39 +92,58 @@ AccommodationsRouter.get('/', async (req, res, next) => {
         l.address, 
         l.main_image, 
         MIN(r.price_per_night) AS min_price_per_night, 
-        SUM(r.room_count - IFNULL((
-          SELECT COUNT(*) 
-          FROM reservations res 
-          WHERE res.room_id = r.room_id 
-          AND res.check_in_date <= '${checkOut}' 
-          AND res.check_out_date >= '${checkIn}'
-        ), 0)) AS available_rooms 
+        SUM(r.room_count - IFNULL(reserved_rooms.reserved_count, 0)) AS available_rooms 
       FROM 
         lodgings l 
       JOIN 
-        rooms r ON l.lodging_id = r.lodging_id 
+        rooms r 
+      ON 
+        l.lodging_id = r.lodging_id 
+      LEFT JOIN (
+        SELECT 
+          room_id, 
+          COUNT(*) AS reserved_count 
+        FROM 
+          reservations 
+        WHERE 
+          check_in_date <= ? 
+          AND check_out_date >= ? 
+        GROUP BY 
+          room_id
+      ) reserved_rooms 
+      ON 
+        r.room_id = reserved_rooms.room_id 
       WHERE 
-        (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%') 
-        AND r.price_per_night >= ${minPrice} 
-        AND r.price_per_night <= ${maxPrice}
-        AND r.min_occupancy <= ${personal} 
-        AND r.max_occupancy >= ${personal} 
+        (l.name LIKE CONCAT('%', ?, '%') OR l.area LIKE CONCAT('%', ?, '%') OR l.sigungu LIKE CONCAT('%', ?, '%'))
+        AND r.price_per_night BETWEEN ? AND ?
+        AND r.min_occupancy <= ?
+        AND r.max_occupancy >= ?
       GROUP BY 
         l.lodging_id 
       HAVING 
         available_rooms > 0;
     `;
 
-    // Prisma를 사용하여 raw SQL 쿼리 실행
-    const accommodations = await prisma.$queryRawUnsafe(rawQuery);
-    console.log(rawQuery);
-    // 검색 결과를 콘솔에 출력
+    // Execute the query safely with placeholders
+    const accommodations = await prisma.$queryRawUnsafe(
+      rawQuery,
+      checkOut, // First ? for check_in_date in the subquery
+      checkIn, // Second ? for check_out_date in the subquery
+      keyword, // Third ? for name, area, sigungu search term
+      keyword, // Fourth ? for name, area, sigungu search term
+      keyword, // Fifth ? for name, area, sigungu search term
+      minPrice, // Sixth ? for min price
+      maxPrice, // Seventh ? for max price
+      personal, // Eighth ? for min occupancy
+      personal, // Ninth ? for max occupancy
+    );
+
     console.log('Search results:', accommodations);
 
-    // 검색 결과를 클라이언트에게 반환
+    // Return the search results to the client
     return res.status(StatusCodes.OK).json(accommodations);
   } catch (error) {
-    // 에러 발생 시 상태 코드와 에러 메시지를 반환
+    // Log the error and return an appropriate response
     console.error('Error fetching accommodations:', error);
     throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
   }
