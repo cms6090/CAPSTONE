@@ -20,7 +20,16 @@ reservationsRouter.post('/', async (req, res) => {
     } = req.body;
 
     // 유효성 검사 (필수 데이터가 누락된 경우 처리)
-    if (!userId || !roomId || !checkInDate || !checkOutDate || !roomPrice || !personNum || !userName || !phoneNumber) {
+    if (
+      !userId ||
+      !roomId ||
+      !checkInDate ||
+      !checkOutDate ||
+      !roomPrice ||
+      !personNum ||
+      !userName ||
+      !phoneNumber
+    ) {
       console.log(userId, roomId, checkInDate, checkOutDate, roomPrice, personNum);
       return res.status(400).json({ message: '필수 정보가 누락되었습니다.' });
     }
@@ -76,8 +85,9 @@ reservationsRouter.get('/', auth, async (req, res) => {
       },
     });
 
+    // 예약 내역이 없을 때도 오류가 아니므로 200 OK 반환
     if (reservations.length === 0) {
-      return res.status(404).json({ message: '예약 내역이 없습니다.' });
+      return res.status(200).json({ message: '예약 내역이 없습니다.', reservations: [] });
     }
 
     // 예약 내역 반환
@@ -121,6 +131,5 @@ reservationsRouter.delete('/:reservationId', auth, async (req, res) => {
     return res.status(500).json({ message: '서버 오류로 예약을 삭제할 수 없습니다.' });
   }
 });
-
 
 export default reservationsRouter;

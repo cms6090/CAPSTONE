@@ -120,6 +120,14 @@
   margin-bottom: 5em;
 }
 
+@media screen and (max-width: 1600px) {
+  .hotel-room-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1em;
+  }
+}
+
 .hotel-room-card-container {
   background-color: #f5f7fa;
   border-radius: 15px;

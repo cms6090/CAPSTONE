@@ -21,6 +21,7 @@ import AdminReserves from './pages/Admin/AdminReserves';
 import AdminRooms from './pages/Admin/AdminRooms';
 import Review from './pages/Users/Review';
 import { SearchProvider } from './components/SearchContext';
+import AdminReviews from './pages/Admin/AdminReviews';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/admin/lodgings" element={<AdminLodgings />} />
           <Route path="/admin/rooms" element={<AdminRooms />} />
           <Route path="/admin/reservations" element={<AdminReserves />} />
+          <Route path="/admin/reviews" element={<AdminReviews />} />
           {/* 필요한 다른 라우트 추가 */}
         </Routes>
         <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}

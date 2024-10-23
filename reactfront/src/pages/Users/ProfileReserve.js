@@ -5,7 +5,7 @@ import SettingList from '../../components/SettingList';
 import { Button2, Button5, Button6 } from '../../components/Button.style';
 
 export default function ProfileReserve() {
-  const [reservations, setReservations] = useState([]);
+  const [reservations, setReservations] = useState([]); // Empty array if no reservations
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -33,18 +33,20 @@ export default function ProfileReserve() {
 
       let reservationsData = await response.json();
 
-      // 예약 데이터에 리뷰 중복 여부 추가
+      // reservationsData가 배열이 아닐 경우 빈 배열로 처리
+      if (!Array.isArray(reservationsData)) {
+        reservationsData = [];
+      }
+
+      // 리뷰 중복 여부 확인 후 예약 데이터 설정
       const updatedReservations = await Promise.all(
         reservationsData.map(async (reservation) => {
           const isReviewed = await checkDuplicateReview(reservation.reservation_id);
-          return {
-            ...reservation,
-            isReviewed, // 리뷰 작성 여부 추가
-          };
+          return { ...reservation, isReviewed };
         }),
       );
 
-      setReservations(updatedReservations || []); // 예약이 없을 경우 빈 배열로 처리
+      setReservations(updatedReservations || []); // 빈 배열일 경우 기본값으로 빈 배열 설정
     } catch (err) {
       setError(err.message);
     } finally {
@@ -84,6 +86,20 @@ export default function ProfileReserve() {
     fetchReservations();
   }, [fetchReservations]);
 
+  const today = new Date();
+  const [pastReservations, currentReservations] = reservations.reduce(
+    ([past, current], reservation) => {
+      const checkOutDate = new Date(reservation.check_out_date);
+      if (checkOutDate < today) {
+        past.push(reservation);
+      } else {
+        current.push(reservation);
+      }
+      return [past, current];
+    },
+    [[], []],
+  );
+
   const handleCardClick = (lodgingId) => {
     navigate(`/accommodations/${lodgingId}`);
   };
@@ -117,21 +133,6 @@ export default function ProfileReserve() {
     }
   };
 
-  const today = new Date();
-  const [pastReservations, currentReservations] = reservations.reduce(
-    ([past, current], reservation) => {
-      const checkOutDate = new Date(reservation.check_out_date);
-      if (checkOutDate < today) {
-        past.push(reservation);
-      } else {
-        current.push(reservation);
-      }
-      return [past, current];
-    },
-    [[], []],
-  );
-
-  // 예약 카드 컴포넌트
   const ReservationCard = ({ reservation, isPast }) => {
     const { isReviewed } = reservation;
 
@@ -183,7 +184,7 @@ export default function ProfileReserve() {
                   </div>
                   <div className="reserve-card-contents-details-details">
                     <p>
-                      {new Date(reservation.check_in_date).toLocaleDateString()} 14:00 ~
+                      {new Date(reservation.check_in_date).toLocaleDateString()} 14:00 ~{' '}
                       {new Date(reservation.check_out_date).toLocaleDateString()} 10:00
                     </p>
                     <p>{reservation.rooms?.room_name || '객실 정보 없음'}</p>
@@ -228,6 +229,7 @@ export default function ProfileReserve() {
       <div className="reserve-info">
         <h2>예약 내역</h2>
         <div className="reserve-info-container">
+          {/* 현재 예약 */}
           <div className="reserve-info-title">현재 예약</div>
           {currentReservations.length > 0 ? (
             currentReservations.map((reservation) => (
@@ -242,30 +244,22 @@ export default function ProfileReserve() {
             </div>
           )}
 
-          {pastReservations.length > 0 && (
-            <>
-              <div className="reserve-info-title" style={{ marginTop: '1.2em' }}>
-                지난 예약
-              </div>
-              {pastReservations.map((reservation) => (
-                <ReservationCard
-                  key={reservation.reservation_id}
-                  reservation={reservation}
-                  isPast
-                />
-              ))}
-            </>
-          )}
-
-          {currentReservations.length === 0 && pastReservations.length === 0 && !error && (
-            <div className="no-reservations">
-              <div style={{ fontSize: '1.1em' }}>예약 내역이 없습니다.</div>
-              <div style={{ width: '20%' }}>
-                <Button2 onClick={() => navigate('/')}>숙소 찾아보기</Button2>
-              </div>
+          {/* 지난 예약 */}
+          <div className="reserve-info-title" style={{ marginTop: '1.2em' }}>
+            지난 예약
+          </div>
+          {pastReservations.length > 0 ? (
+            pastReservations.map((reservation) => (
+              <ReservationCard key={reservation.reservation_id} reservation={reservation} isPast />
+            ))
+          ) : (
+            <div style={{ fontSize: '1em', color: 'rgba(0,0,0,0.7)', textAlign: 'center' }}>
+              지난 예약 내역이 없습니다.
             </div>
           )}
 
+
+          {/* 오류 메시지 처리 */}
           {error && (
             <div className="error-message">
               <p>{error}</p>

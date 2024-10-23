@@ -3,176 +3,84 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import './AdminLodgings.css';
+import './AdminReviews.css';
 import AdminSettingList from '../../components/AdminSettingList';
 import dayjs from 'dayjs';
-import { CircularProgress } from '@mui/material';
 import { Button4 } from '../../components/Button.style';
 
-// AdminLodgings Component
-export default function AdminLodgings() {
+// AdminRooms Component
+export default function AdminReviews() {
   const navigate = useNavigate();
   const location = useLocation();
   const gridRef = useRef(null); // 그리드 참조 객체
   const [isAuthorized, setIsAuthorized] = useState(false); // 사용자 권한 상태
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태
-  const [rowData, setRowData] = useState([]); // 숙소 데이터 배열
-  const [isSaving, setIsSaving] = useState(false); // 저장 중 상태
+  const [rowData, setRowData] = useState([]); // 리뷰 데이터 배열
 
-  const lodgingIDFilter = location.state?.lodgingID || '';
-
-  // 저장 버튼 클릭 시 호출되는 함수
-  const onSave = useCallback(
-    async (params) => {
-      const rowData = params.data; // 현재 행의 데이터 가져오기
-
-      // 이미 저장 중이면 함수 종료
-      if (isSaving) {
-        return;
-      }
-
-      setIsSaving(true); // 저장 중 상태 설정
-
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/admin/lodgings/${rowData.lodging_id}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // 인증 토큰 사용
-            },
-            body: JSON.stringify({
-              name: rowData.name, // 수정할 숙소 이름
-              part: rowData.part, // 수정할 파트
-              area: rowData.area, // 수정할 지역
-              sigungu: rowData.sigungu, // 수정할 시군구
-              address: rowData.address, // 수정할 주소
-              rating: rowData.rating, // 수정할 평점
-              tel: rowData.tel, // 수정할 전화번호
-              main_image: rowData.main_image, // 수정할 메인 이미지
-            }),
-          },
-        );
-
-        if (!response.ok) {
-          // 응답 상태에 따라 다른 오류 메시지 출력
-          if (response.status === 400) {
-            throw new Error('잘못된 요청입니다. 입력 데이터를 확인해주세요.');
-          } else if (response.status === 401) {
-            throw new Error('권한이 없습니다. 다시 로그인해주세요.');
-          } else if (response.status === 404) {
-            throw new Error('숙소를 찾을 수 없습니다.');
-          } else {
-            throw new Error('숙소 정보를 업데이트하는 중 오류가 발생했습니다.');
-          }
-        }
-
-        const updatedLodging = await response.json(); // 업데이트된 숙소 정보 가져오기
-        console.log('업데이트된 숙소:', updatedLodging); // 업데이트된 숙소 정보 출력
-        alert('숙소 정보가 성공적으로 업데이트되었습니다.'); // 성공 메시지 출력
-      } catch (error) {
-        console.error('숙소 정보를 업데이트하는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
-        alert(`오류: ${error.message}`); // 오류 메시지 알림
-      } finally {
-        setIsSaving(false); // 저장 중 상태 해제
-      }
-    },
-    [isSaving],
-  );
-
+  // 쿼리 매개변수에서 숙소 이름 가져오기
+  const lodgingNameFilter = location.state?.lodgingName || '';
   // 컬럼 정의 상수
   const colDefs = useMemo(
     () => [
-      { headerName: 'ID', field: 'lodging_id', flex: 0.5 },
+      { headerName: 'ID', field: 'review_id', flex: 0.5 },
+      {
+        headerName: '예약 ID',
+        field: 'reservation_id',
+        filter: 'agTextColumnFilter',
+        flex: 1,
+      },
+      { headerName: '유저 ID', field: 'user_id', filter: 'agTextColumnFilter', flex: 1 },
       {
         headerName: '숙소 이름',
-        headerTooltip: '필수 항목',
-        field: 'name',
-        filter: 'agTextColumnFilter',
-        editable: true,
-        flex: 1.5,
-      },
-      {
-        headerName: '파트',
-        headerTooltip: '필수 항목',
-        field: 'part',
-        filter: 'agTextColumnFilter',
-        editable: true,
+        field: 'lodging_name',
         flex: 1,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-          values: [
-            '한옥',
-            '관광호텔',
-            '펜션',
-            '모텔',
-            '게스트하우스',
-            '관광단지',
-            '민박',
-            '콘도미니엄',
-            '서비스드레지던스',
-            '홈스테이',
-            '야영장',
-          ],
-        },
-      },
-      {
-        headerName: '지역',
-        headerTooltip: '필수 항목',
-        field: 'area',
-        filter: 'agTextColumnFilter',
-        editable: true,
-        flex: 1,
-      },
-      {
-        headerName: '시군구',
-        field: 'sigungu',
-        filter: 'agTextColumnFilter',
-        editable: true,
-        flex: 1,
-      },
-      {
-        headerName: '주소',
-        headerTooltip: '필수 항목',
-        field: 'address',
-        filter: 'agTextColumnFilter',
-        editable: true,
-        flex: 2,
       },
       {
         headerName: '평점',
         field: 'rating',
-        editable: false, // 평점은 읽기 전용이므로 편집 불가능
-        flex: 0.8,
+        flex: 1,
+        filter: 'agNumberColumnFilter',
       },
       {
-        headerName: '전화번호',
-        field: 'tel',
-        filter: 'agTextColumnFilter',
+        headerName: '리뷰 내용',
+        field: 'comment',
         editable: true,
-        flex: 1.5,
+        flex: 10,
       },
       {
-        headerName: '메인 이미지',
-        field: 'main_image',
-        flex: 2,
+        headerName: '사진 1',
+        field: 'review_photos_1',
+        flex: 0.7,
+      },
+      {
+        headerName: '사진 2',
+        field: 'review_photos_2',
+        flex: 0.7,
+      },
+      {
+        headerName: '사진 3',
+        field: 'review_photos_3',
+        flex: 0.7,
+      },
+      {
+        headerName: '사진 4',
+        field: 'review_photos_4',
+        flex: 0.7,
+      },
+      {
+        headerName: '사진 5',
+        field: 'review_photos_5',
+        flex: 0.7,
       },
       {
         headerName: '생성일',
         field: 'created_at',
         valueFormatter: (params) => dayjs(params.value).format('YYYY-MM-DD HH:mm:ss'),
-        flex: 2,
-      },
-      {
-        headerName: '수정일',
-        field: 'updated_at',
-        valueFormatter: (params) => dayjs(params.value).format('YYYY-MM-DD HH:mm:ss'),
-        flex: 2,
+        flex: 1.5,
       },
       {
         headerName: 'Action',
-        width: 100,
+        flex: 1.5,
         cellRenderer: (params) => (
           <div
             style={{
@@ -185,35 +93,29 @@ export default function AdminLodgings() {
           >
             <button
               className="actions-icon"
-              style={{
-                cursor: isSaving ? 'not-allowed' : 'pointer',
-              }}
-              onClick={() => !isSaving && onSave(params)}
-              disabled={isSaving}
+              onClick={() =>
+                navigate(`/admin/users`, {
+                  state: { user_email: params.data.user_id }, // 상태로 사용자 메일 전달
+                })
+              }
             >
-              {isSaving ? (
-                <CircularProgress size={20} style={{ color: 'white' }} />
-              ) : (
-                <span className="material-symbols-outlined" style={{ color: 'white' }}>
-                  save
-                </span>
-              )}
+              <span className="material-symbols-outlined">account_circle</span>
             </button>
             <button
               className="actions-icon"
               onClick={() =>
-                navigate(`/admin/rooms`, {
-                  state: { lodgingName: params.data.name }, // 상태로 숙소 이름 전달
+                navigate(`/admin/lodgings`, {
+                  state: { lodgingID: params.data.lodgings?.name }, // 상태로 숙소 이름 전달
                 })
               }
             >
-              <span className="material-symbols-outlined">bed</span>
+              <span className="material-symbols-outlined">house</span>
             </button>
           </div>
         ),
       },
     ],
-    [isSaving, onSave, navigate],
+    [navigate],
   );
 
   // 필터 옵션 현지화 문자열 설정
@@ -254,12 +156,12 @@ export default function AdminLodgings() {
     setIsLoading(false); // 로딩 완료
   }, [navigate]);
 
-  // 권한이 있는 경우 숙소 데이터를 가져오는 함수
+  // 권한이 있는 경우 리뷰 데이터를 가져오는 함수
   useEffect(() => {
     if (isAuthorized) {
-      const fetchLodgings = async () => {
+      const fetchRooms = async () => {
         try {
-          const response = await fetch('http://localhost:3000/api/admin/lodgings', {
+          const response = await fetch('http://localhost:3000/api/admin/reviews', {
             headers: {
               Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // 인증 토큰 사용
             },
@@ -268,12 +170,28 @@ export default function AdminLodgings() {
             throw new Error('데이터를 가져오는 중 오류가 발생했습니다.');
           }
           const data = await response.json();
-          setRowData(data.lodgings); // 숙소 데이터 설정
+
+          // review_photos 배열을 분리하여 각각의 필드로 변환
+          const processedData = data.map((review) => {
+            const lodging_name = review.lodgings?.name;
+            const photos = review.review_photos?.[0] || {}; // review_photos 배열에서 첫 번째 객체를 추출
+            return {
+              ...review,
+              lodging_name: lodging_name,
+              review_photos_1: photos.review_photos_1 || '',
+              review_photos_2: photos.review_photos_2 || '',
+              review_photos_3: photos.review_photos_3 || '',
+              review_photos_4: photos.review_photos_4 || '',
+              review_photos_5: photos.review_photos_5 || '',
+            };
+          });
+
+          setRowData(processedData); // 가공된 데이터 설정
         } catch (error) {
           console.error('데이터를 가져오는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
         }
       };
-      fetchLodgings(); // 숙소 데이터 가져오기 함수 호출
+      fetchRooms(); // 리뷰 데이터 가져오기 함수 호출
     }
   }, [isAuthorized]);
 
@@ -286,13 +204,14 @@ export default function AdminLodgings() {
     );
   }, []);
 
+  // lodgingNameFilter가 있을 경우 초기 필터를 설정
   useEffect(() => {
     const filterTextBox = document.getElementById('filter-text-box');
-    if (lodgingIDFilter && filterTextBox) {
-      filterTextBox.value = lodgingIDFilter;
-      onFilterTextBoxChanged(); // Apply the filter immediately after setting the value
+    if (lodgingNameFilter && filterTextBox) {
+      filterTextBox.value = lodgingNameFilter;
+      onFilterTextBoxChanged(); // 필터 적용
     }
-  }, [lodgingIDFilter, onFilterTextBoxChanged]);
+  }, [lodgingNameFilter, onFilterTextBoxChanged]);
 
   // 컬럼의 기본 설정 (필터 적용 및 초기화 버튼 포함)
   const defaultColDef = useMemo(
@@ -308,9 +227,9 @@ export default function AdminLodgings() {
   const onGridReady = (params) => {
     gridRef.current.api = params.api; // 그리드 API를 참조 객체에 저장
 
-    if (lodgingIDFilter) {
+    if (lodgingNameFilter) {
       // 그리드가 준비되면 필터 텍스트 박스의 값을 설정하고 필터를 적용
-      document.getElementById('filter-text-box').value = lodgingIDFilter;
+      document.getElementById('filter-text-box').value = lodgingNameFilter;
       onFilterTextBoxChanged(); // 필터 적용
     }
   };
@@ -328,7 +247,7 @@ export default function AdminLodgings() {
   // 선택된 행을 제거하는 함수
   const onRemove = useCallback(async () => {
     const selectedNodes = gridRef.current.api.getSelectedNodes(); // 선택된 행 가져오기
-    const selectedIDs = selectedNodes.map((node) => node.data.lodging_id); // 선택된 행의 lodging_id 추출
+    const selectedIDs = selectedNodes.map((node) => node.data.review_id); // 선택된 행의 review_id 추출
     const numberOfSelectedRows = selectedIDs.length; // 선택된 행의 수 저장
 
     if (numberOfSelectedRows === 0) {
@@ -337,33 +256,25 @@ export default function AdminLodgings() {
     }
 
     try {
-      // 서버에서 해당 숙소 삭제 요청
-      for (const lodging_id of selectedIDs) {
-        const response = await fetch(`http://localhost:3000/api/admin/lodgings/${lodging_id}`, {
+      // 서버에서 해당 리뷰 삭제 요청
+      for (const review_id of selectedIDs) {
+        const response = await fetch(`http://localhost:3000/api/admin/reviews/${review_id}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`, // 인증 토큰 사용
           },
         });
         if (!response.ok) {
-          if (response.status === 400) {
-            throw new Error('잘못된 요청입니다. 입력 데이터를 확인해주세요.');
-          } else if (response.status === 401) {
-            throw new Error('권한이 없습니다. 다시 로그인해주세요.');
-          } else if (response.status === 404) {
-            throw new Error('숙소를 찾을 수 없습니다.');
-          } else {
-            throw new Error('숙소 삭제 중 오류가 발생했습니다.');
-          }
+          throw new Error('리뷰 삭제 중 오류가 발생했습니다.');
         }
       }
       // 선택된 행을 제외한 나머지 데이터만 남겨서 업데이트
-      const updatedRowData = rowData.filter((data) => !selectedIDs.includes(data.lodging_id));
+      const updatedRowData = rowData.filter((data) => !selectedIDs.includes(data.review_id));
       setRowData(updatedRowData); // 업데이트된 데이터 설정
 
       alert(`${numberOfSelectedRows}건의 데이터가 성공적으로 삭제되었습니다.`); // 삭제된 행의 수 알림
     } catch (error) {
-      console.error('숙소 삭제 오류:', error); // 오류 메시지 출력
+      console.error('리뷰 삭제 오류:', error); // 오류 메시지 출력
       alert(`오류: ${error.message}`); // 오류 메시지 알림
     }
   }, [rowData]);
@@ -383,14 +294,14 @@ export default function AdminLodgings() {
       <div className="admin-setting-container">
         <AdminSettingList /> {/* 관리자 설정 리스트 컴포넌트 */}
       </div>
-      <div className="admin-lodgings">
-        <div className="admin-lodgings-table-header">
+      <div className="admin-reviews">
+        <div className="admin-reviews-table-header">
           <input
             type="text"
             id="filter-text-box"
             placeholder="Filter.."
             onChange={onFilterTextBoxChanged} // 필터 입력값 변경 시 호출
-            defaultValue={lodgingIDFilter} // 필터 초기값 설정
+            defaultValue={lodgingNameFilter} // 필터 초기값 설정
           />
           <Button4 onClick={onRemove}>
             <span className="material-symbols-outlined" style={{ color: 'rgba(255,0,0,0.5)' }}>
@@ -398,11 +309,11 @@ export default function AdminLodgings() {
             </span>
           </Button4>
         </div>
-        <div className="ag-theme-quartz">
+        <div className="ag-theme-quartz" id="myGrid">
           <AgGridReact
             rowGroupPanelShow="always"
             ref={gridRef} // 그리드 참조 객체
-            rowData={rowData} // 숙소 데이터 설정
+            rowData={rowData} // 리뷰 데이터 설정
             columnDefs={colDefs} // 데이터 속성 명, 형태
             rowSelection={rowSelection} // 다중 행 선택 가능
             onGridReady={onGridReady} // 그리드가 준비되었을 때 호출
@@ -412,7 +323,7 @@ export default function AdminLodgings() {
             popupParent={document.body} // 필터 팝업의 부모 요소 설정
             domLayout="autoHeight" // 그리드의 높이를 자동으로 조정하여 필터 팝업이 보이도록 함
             localeText={filtercontext} // 현지화 문자열 설정
-            defaultColDef={defaultColDef} // 컬럼 기본 설정 적용
+            defaultColDef={defaultColDef} // 필터 적용 및 초기화 버튼 포함
           />
         </div>
       </div>

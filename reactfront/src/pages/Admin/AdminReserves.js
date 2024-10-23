@@ -30,7 +30,6 @@ export default function AdminUsers() {
       setIsSaving(true); // 저장 상태로 변경
 
       try {
-        console.log('Saving reservation data:', rowData);
         const response = await fetch(
           `http://localhost:3000/api/admin/reservations/${rowData.reservation_id}`,
           {
@@ -63,7 +62,7 @@ export default function AdminUsers() {
         }
 
         const updatedReservation = await response.json();
-        console.log('Updated reservation:', updatedReservation);
+        console.log('업데이트된 예약:', updatedReservation);
         alert('예약 정보가 성공적으로 업데이트되었습니다.');
       } catch (error) {
         console.error('예약 정보 업데이트 중 오류 발생:', error);
@@ -255,7 +254,6 @@ export default function AdminUsers() {
           }
           const data = await response.json();
           setRowData(data); // 예약 데이터 설정
-          console.log(data);
         } catch (error) {
           console.error('데이터를 가져오는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
         }
@@ -413,7 +411,7 @@ export default function AdminUsers() {
             rowStyle={rowStyle} // 행 스타일 설정
             domLayout="autoHeight" // 그리드의 높이를 자동으로 조정하여 필터 팝업이 보이도록 함
             localeText={filtercontext} // 현지화 문자열 설정
-            defaultColDef={defaultColDef} // 컬럼 기본 설정 적용
+            defaultColDef={defaultColDef} // 컬럼 기본 설정 
           />
         </div>
       </div>
