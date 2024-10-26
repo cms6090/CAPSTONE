@@ -3,12 +3,13 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import usersRouter from './routes/users.router.js';
-import accommodationsRouter from './routes/accommodation.router.js';
+import accommodationsRouter from "./routes/accommodation.router.js"
 import adminRouter from './routes/admin.router.js';
 import cors from 'cors';
 import errorMiddleware from './middlewares/error.middleware.js';
 import reservationsRouter from './routes/reservations.router.js';
 import reviewsRouter from './routes/review.router.js';
+import compression from 'compression';
 
 // ES Module에서 __dirname 대체 정의
 const __filename = fileURLToPath(import.meta.url);
@@ -21,6 +22,10 @@ dotenv.config();
 
 // JSON 형식의 요청 본문을 처리하기 위한 미들웨어 설정
 app.use(express.json());
+
+
+//압축 설정
+app.use(compression());
 
 // CORS 설정
 app.use(

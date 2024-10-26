@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './Accommodation.css';
 import JustMap from '../../components/JustMap';
 import MapModal from '../../components/MapModal';
@@ -10,6 +10,7 @@ import { BsFillImageFill } from 'react-icons/bs';
 export default function Accommodation() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMapModalOpen, setMapModalOpen] = useState(false);
   const [isRoomModalOpen, setRoomModalOpen] = useState(false);
   const [isMorePhotosModalOpen, setMorePhotosModalOpen] = useState(false);
@@ -22,12 +23,19 @@ export default function Accommodation() {
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/accommodations/${id}`);
+        const queryParams = new URLSearchParams(location.search);
+        const checkIn = queryParams.get('checkIn');
+        const checkOut = queryParams.get('checkOut');
+
+        const response = await fetch(
+          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`
+        );
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
         }
         const data = await response.json();
         setAccommodation(data);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching accommodation details:', error);
         setError(error.message);
@@ -40,7 +48,7 @@ export default function Accommodation() {
     setIsLoggedIn(!!loggedIn);
 
     fetchAccommodationDetails();
-  }, [id]);
+  }, [id, location.search]);
 
   if (loading) {
     return <h2>로딩 중...</h2>;
@@ -181,31 +189,42 @@ export default function Accommodation() {
                     </span>
                   </div>
                 </div>
-                <div className="hotel-room-card-content">
-                  <div className="hotel-room-card-details">
-                    <div className="hotel-room-card-time">
-                      <div className="check-in-out">
-                        <div className="check-label">체크인</div>
-                        <div className="check-time">14:00</div>
-                      </div>
-                      <div className="check-in-out">
-                        <div className="check-label">체크아웃</div>
-                        <div className="check-time">10:00</div>
-                      </div>
-                    </div>
-                    <div className="hotel-room-card-end">
-                      <div className="occupancy-info">
-                        기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
-                      </div>
-                      <div className="price-info">
-                        {new Intl.NumberFormat().format(room.price_per_night)} 원
-                      </div>
-                    </div>
-                    <Button2 onClick={() => handleReserve(room)} style={{ width: '100%' }}>
-                      예약하기
-                    </Button2>
-                  </div>
-                </div>
+                <div className="hotel-room-card-details">
+  <div className="hotel-room-card-time">
+    <div className="check-in-out">
+      <div className="check-label">체크인</div>
+      <div className="check-time">14:00</div>
+    </div>
+    <div className="check-in-out">
+      <div className="check-label">체크아웃</div>
+      <div className="check-time">10:00</div>
+    </div>
+  </div>
+  <div className="hotel-room-card-end">
+    <div className="occupancy-info">
+      기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
+    </div>
+    <div className="available-info">
+      잔여석: {room.available_count}
+    </div>
+    <div className="price-info">
+      {new Intl.NumberFormat().format(room.price_per_night)} 원
+    </div>
+  </div>
+  <Button2
+    onClick={() => handleReserve(room)}
+    disabled={room.available_count === 0}
+    style={{
+      width: '100%',
+      backgroundColor: room.available_count == 0 ? 'grey' : '',
+      cursor: room.available_count == 0 ? 'not-allowed' : 'pointer',
+    }}
+  >
+    {room.available_count == 0 ? '예약 불가' : '예약하기'}
+  </Button2>
+</div>
+
+
               </div>
             </div>
           ))}

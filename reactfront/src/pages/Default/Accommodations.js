@@ -161,9 +161,10 @@ export default function Accommodations() {
   // 카드 클릭 시 해당 숙소 상세 페이지로 이동하는 함수
   const handleCardClick = useCallback(
     (contentid) => {
-      navigate(`/accommodations/${contentid}`);
+      const queryParams = new URLSearchParams(location.search);
+      navigate(`/accommodations/${contentid}?${queryParams.toString()}`);
     },
-    [navigate],
+    [navigate, location.search],
   );
 
   return (
