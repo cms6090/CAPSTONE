@@ -1,14 +1,16 @@
 import '../../node_modules/swiper/swiper.css';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useContext } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './AccommoCard.css';
 import { useNavigate } from 'react-router-dom';
+import { SearchContext } from './SearchContext'; // Import the context
 import { Button3 } from './Button.style';
 
 import arrowLeft from '../assets/Arrowleft.svg';
 import arrowRight from '../assets/Arrowright.svg';
 
 export default function AccommoCard() {
+  const { startDate, endDate, numPeople } = useContext(SearchContext); // Destructure the context values
   const [accommodations, setAccommodations] = useState([]); // 숙소 데이터를 저장할 상태 관리
   const [selectedCategory, setSelectedCategory] = useState('전체'); // 선택된 숙소 카테고리 상태 관리
   const swiperRef = useRef(null); // Swiper 인스턴스를 참조하기 위한 ref
@@ -19,7 +21,7 @@ export default function AccommoCard() {
     const fetchAccommodations = async () => {
       try {
         // 숙소 데이터를 API에서 가져옴
-        const response = await fetch('http://localhost:3000/api/accommodations/');
+        const response = await fetch('http://localhost:3000/api/accommodations/part');
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
         }
@@ -47,9 +49,15 @@ export default function AccommoCard() {
     '전통 숙소': accommodations.filter((data) => data.part === '한옥'),
   };
 
+  console.log(startDate, endDate);
+
   // 특정 숙소 상세 페이지로 이동하는 함수
   const goToAccommo = (accommoId) => {
-    navigate(`/accommodations/${encodeURIComponent(accommoId)}`); // 숙소 ID를 URL에 포함하여 이동
+    const checkIn = startDate ? startDate.toISOString().split('T')[0] : '';
+    const checkOut = endDate ? endDate.toISOString().split('T')[0] : '';
+    const personal = numPeople || 1;
+
+    navigate(`/accommodations/${encodeURIComponent(accommoId)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`); // 숙소 ID를 URL에 포함하여 이동
   };
 
   // 슬라이드 이동 처리 함수
