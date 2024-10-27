@@ -54,6 +54,19 @@ export default function Reserve() {
     fetchUserInfo();
   }, []);
 
+  // 쿼리 파라미터에서 체크인, 체크아웃 및 인원 수 정보 가져오기
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const checkIn = queryParams.get('checkIn');
+    const checkOut = queryParams.get('checkOut');
+    const personal = queryParams.get('personal');
+
+    //console.log(checkIn, checkOut);
+    if (checkIn) setCheckInDate(checkIn);
+    if (checkOut) setCheckOutDate(checkOut);
+    if (personal) setNumPeople(Number(personal));
+  }, [location.search]);
+
   // 날짜 선택 핸들러
   const handleDateSelect = (startDate, endDate) => {
     setCheckInDate(startDate);
@@ -187,8 +200,13 @@ export default function Reserve() {
                     {/* 날짜 선택 컴포넌트 */}
                     <div className="reserve-user-detail">
                       <div className="reserve-title">숙박 날짜</div>
-                      <DateRangePickerComponent onDateSelect={handleDateSelect} />
+                      <DateRangePickerComponent
+                        onDateSelect={handleDateSelect}
+                        initialStartDate={checkInDate ? new Date(checkInDate) : null}
+                        initialEndDate={checkOutDate ? new Date(checkOutDate) : null}
+                      />
                     </div>
+
 
                     {/* 인원 선택 컴포넌트 */}
                     <div className="reserve-user-detail">
