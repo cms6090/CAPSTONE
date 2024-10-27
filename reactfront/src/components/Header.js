@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Header.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.svg';
 import { Button1 } from './Button.style';
 import { Menu } from '@mui/icons-material';
 import { IconButton, Menu as MenuComponent, MenuItem, Divider, ListItemText } from '@mui/material';
+import SearchSection from '../components/SearchSection'; // 검색 컴포넌트 import
 
 function Header() {
   const [userEmail, setUserEmail] = useState(''); // 사용자 이메일 상태 관리
   const [userPermission, setUserPermission] = useState(''); // 사용자 권한 상태 관리
   const [anchorEl, setAnchorEl] = useState(null); // 메뉴 앵커 요소 상태 관리
   const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅
+  const location = useLocation(); // 현재 URL 확인을 위한 훅
 
   // 페이지가 로드될 때 세션에서 이메일과 권한을 가져와 상태 업데이트
   useEffect(() => {
@@ -102,6 +104,14 @@ function Header() {
           <img src={logo} alt="로고" />
         </Link>
       </div>
+
+      {/* 현재 URL이 /accommodations로 시작할 경우 검색 컴포넌트 표시 */}
+      {location.pathname.startsWith('/accommodations') && (
+        <div className="search-component">
+          <SearchSection />
+        </div>
+      )}
+
       <div>
         {userEmail ? (
           // 로그인된 경우 사용자 이메일과 권한 표시
