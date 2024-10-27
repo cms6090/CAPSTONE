@@ -212,7 +212,7 @@ export default function Accommodation() {
     </div>
   </div>
   <Button2
-    onClick={() => handleReserve(room)}
+    onClick={room.available_count > 0 ? () => handleReserve(room) : null}
     disabled={room.available_count === 0}
     style={{
       width: '100%',
@@ -223,8 +223,6 @@ export default function Accommodation() {
     {room.available_count == 0 ? '예약 불가' : '예약하기'}
   </Button2>
 </div>
-
-
               </div>
             </div>
           ))}
