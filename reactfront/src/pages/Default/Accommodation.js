@@ -79,19 +79,37 @@ export default function Accommodation() {
   };
 
   const handleReserve = (room) => {
+    if (loading) {
+      alert('숙소 정보를 로드하는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+  
+    if (!accommodation) {
+      alert('숙소 정보를 찾을 수 없습니다.');
+      return;
+    }
+  
     if (!isLoggedIn) {
       alert('예약을 하려면 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
       navigate('/login');
       return;
     }
-
-    navigate('/reserve', {
+  
+    // 현재 URL에서 쿼리 파라미터 가져오기
+    const queryParams = new URLSearchParams(location.search);
+    const checkIn = queryParams.get('checkIn');
+    const checkOut = queryParams.get('checkOut');
+    const personal = queryParams.get('personal');
+  
+    // 쿼리 파라미터가 있는 경우 예약 페이지로 함께 전달
+    navigate(`/reserve?accommodationId=${accommodation.lodging_id}&roomId=${room.room_id}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`, {
       state: {
         accommodation: accommodation,
-        room: room, // 객실 정보를 전달
+        room: room,
       },
     });
   };
+  
 
   const roomPhotos = accommodation.rooms.flatMap((room) => room.room_photos || []);
   const displayedPhotos = roomPhotos.slice(0, 4);
