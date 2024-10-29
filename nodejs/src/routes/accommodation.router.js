@@ -1,10 +1,14 @@
 import express from 'express';
+import compression from 'compression'; // compression 라이브러리 가져오기
 import { prisma } from '../utils/prisma/prisma.js'; // Prisma 클라이언트 가져오기
 import { StatusCodes } from 'http-status-codes';
 import StatusError from '../errors/status.error.js';
 import dayjs from 'dayjs';
 
 const AccommodationsRouter = express.Router();
+
+// 압축 미들웨어 추가
+AccommodationsRouter.use(compression());
 
 /*---------------------------------------------
     [숙박 업소 지역별, 파트별 조회]
@@ -155,6 +159,9 @@ AccommodationsRouter.get('/', async (req, res, next) => {
 AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
   try {
     const { lodgingId } = req.params;
+    const { checkIn, checkOut } = req.query;
+
+    // 기본 숙소 정보 쿼리
     const query = `
       SELECT l.*, 
              JSON_ARRAYAGG(
@@ -213,16 +220,57 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
       GROUP BY l.lodging_id;
     `;
 
-    const lodgingDetails = await prisma.$queryRawUnsafe(query, parseInt(lodgingId));
+    let lodgingDetails = await prisma.$queryRawUnsafe(query, parseInt(lodgingId));
 
     if (!lodgingDetails.length) {
       return res.status(404).json({ message: 'Lodging not found' });
     }
-    res.status(200).json(lodgingDetails[0]);
+
+    // 잔여석 확인 쿼리 (checkIn과 checkOut이 있을 경우)
+    if (checkIn && checkOut) {
+      const availabilityQuery = `
+        SELECT r.room_id, r.room_count - IFNULL(COUNT(res.room_id), 0) AS available_rooms
+        FROM rooms r
+        LEFT JOIN reservations res ON r.room_id = res.room_id
+          AND res.check_in_date < ? AND res.check_out_date > ?
+        WHERE r.lodging_id = ?
+        GROUP BY r.room_id;
+      `;
+
+      const availabilityResult = await prisma.$queryRawUnsafe(
+        availabilityQuery,
+        checkOut,
+        checkIn,
+        parseInt(lodgingId)
+      );
+
+      // 방 별로 잔여석 수를 설정
+      const roomsWithAvailability = lodgingDetails[0].rooms.map((room) => {
+        const availability = availabilityResult.find((av) => av.room_id === room.room_id);
+        return {
+          ...room,
+          available_count: availability ? availability.available_rooms : room.room_count,
+        };
+      });
+
+      // 방 정보를 업데이트하여 반환
+      lodgingDetails[0].rooms = roomsWithAvailability;
+    }
+
+    // BigInt를 문자열로 변환
+    const sanitizedLodgingDetails = JSON.parse(
+      JSON.stringify(lodgingDetails, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value
+      )
+    );
+
+    console.log(sanitizedLodgingDetails);
+    res.status(200).json(sanitizedLodgingDetails[0]);
   } catch (error) {
     console.error('Error fetching lodging details:', error);
     next(error);
   }
 });
+
 
 export default AccommodationsRouter;
