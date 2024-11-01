@@ -19,6 +19,10 @@
   text-decoration: none; /* 밑줄 제거 */
 }
 
+.region-link :hover {
+  cursor: pointer;
+}
+
 .region-link:hover {
   /* 마우스를 올렸을 때 효과 */
   text-decoration: underline; /* 밑줄 추가 */

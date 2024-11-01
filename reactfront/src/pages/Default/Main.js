@@ -4,6 +4,7 @@ import RegionCard from '../../components/RegionCard';
 import AccommoCard from '../../components/AccommoCard';
 import MainBottom from '../../components/MainBottom';
 import SearchSection from '../../components/SearchSection';
+import TagCard from '../../components/TagCard';
 
 function Main() {
   return (
@@ -16,23 +17,27 @@ function Main() {
           </div>
         </div>
       </div>
-      <div className="content">
-        <div>
+      <div className="contents">
+        <div className="content">
           <div className="main-content">국내 인기 여행지</div>
           <div className="card-container">
             <RegionCard />
           </div>
         </div>
-        <div>
+        <div className="content">
           <div className="main-content">국내 추천 숙소</div>
           <div className="card-container">
             <AccommoCard />
           </div>
         </div>
-        <div>
-          <div className="main-content">
-            <MainBottom />
+        <div className="content">
+          <div className="main-content">태그 숙소</div>
+          <div className="card-container">
+            <TagCard />
           </div>
+        </div>
+        <div>
+          <MainBottom />
         </div>
       </div>
     </div>

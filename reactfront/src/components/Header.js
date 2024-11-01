@@ -98,7 +98,6 @@ function Header() {
 
   return (
     <header className="header">
-      {/* 로고 표시 */}
       <div className="logo">
         <Link to="/">
           <img src={logo} alt="로고" />

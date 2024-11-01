@@ -55,7 +55,7 @@
 
 .details {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 2fr 1fr;
   gap: 5%; /* 열 간의 간격 */
   margin: 4% 0% 2% 0%; 
 }

@@ -57,7 +57,9 @@ export default function AccommoCard() {
     const checkOut = endDate ? endDate.toISOString().split('T')[0] : '';
     const personal = numPeople || 1;
 
-    navigate(`/accommodations/${encodeURIComponent(accommoId)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`); // 숙소 ID를 URL에 포함하여 이동
+    navigate(
+      `/accommodations/${encodeURIComponent(accommoId)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
+    ); // 숙소 ID를 URL에 포함하여 이동
   };
 
   // 슬라이드 이동 처리 함수
@@ -116,7 +118,9 @@ export default function AccommoCard() {
                 <div className="accommo-info">
                   <div className="accommo-part">{data.part}</div>
                   <div className="accommo-title">{data.name}</div>
-                  <div className="accommo-addr">{data.address}</div>
+                  <div className="accommo-addr">
+                    {data.area} {data.sigungu}
+                  </div>
                   <div className="accommo-price">
                     {data.min_price_per_night ? (
                       // 가격이 있을 경우 가격 표시, 없을 경우 '정보 없음' 표시

@@ -1,8 +1,8 @@
 .login-container {
   max-width: 35%;
-  margin: auto; /* 페이지 중앙 정렬 */
+  margin: 3em auto; /* 페이지 중앙 정렬 */
   padding: 5% 20px;
-  background-color: #fff; /* 배경색 */
+  border-radius: 15px;
 }
 
 .login-container img {

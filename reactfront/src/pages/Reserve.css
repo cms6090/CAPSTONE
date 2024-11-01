@@ -1,7 +1,7 @@
 .Reserve {
   justify-content: space-between;
   align-items: center;
-  padding: 1% 10%;
+  padding: 1% 25%;
   width: 100%;
 }
 
@@ -75,11 +75,12 @@
 
 .reserve-right-contents-detail {
   margin: 2% 0%;
+  line-height: 2em;
 }
 
 .reserve-right-contents-detail-title {
   display: grid;
-  grid-template-columns: 1fr 9fr;
+  grid-template-columns: 1fr 6fr;
   gap: 3%;
 }
 
@@ -88,3 +89,5 @@
   grid-template-columns: 7fr 1fr;
   gap: 2%;
 }
+
+

@@ -167,10 +167,12 @@ export default function SearchSection() {
           top: '115%',
           left: '60%', // input 왼쪽 정렬
           zIndex: 1000,
-          width: '25%', // 원하는 너비 설정
+          width: '30%', // 원하는 너비 설정
+          backgroundColor: 'transparent',
         }}
       >
-        <NumPicker onNumSelect={setNumPeople} /> {/* 인원 수 선택 후 상태 업데이트 */}
+        <NumPicker onNumSelect={setNumPeople} style={{ width: '100%' }} />
+        {/* 인원 수 선택 후 상태 업데이트 */}
       </div>
 
       <div>
