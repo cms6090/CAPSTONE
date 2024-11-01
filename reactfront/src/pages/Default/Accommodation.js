@@ -28,7 +28,7 @@ export default function Accommodation() {
         const checkOut = queryParams.get('checkOut');
 
         const response = await fetch(
-          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`
+          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`,
         );
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
@@ -83,33 +83,35 @@ export default function Accommodation() {
       alert('숙소 정보를 로드하는 중입니다. 잠시 후 다시 시도해주세요.');
       return;
     }
-  
+
     if (!accommodation) {
       alert('숙소 정보를 찾을 수 없습니다.');
       return;
     }
-  
+
     if (!isLoggedIn) {
       alert('예약을 하려면 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
       navigate('/login');
       return;
     }
-  
+
     // 현재 URL에서 쿼리 파라미터 가져오기
     const queryParams = new URLSearchParams(location.search);
     const checkIn = queryParams.get('checkIn');
     const checkOut = queryParams.get('checkOut');
     const personal = queryParams.get('personal');
-  
+
     // 쿼리 파라미터가 있는 경우 예약 페이지로 함께 전달
-    navigate(`/reserve?accommodationId=${accommodation.lodging_id}&roomId=${room.room_id}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`, {
-      state: {
-        accommodation: accommodation,
-        room: room,
+    navigate(
+      `/reserve?accommodationId=${accommodation.lodging_id}&roomId=${room.room_id}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
+      {
+        state: {
+          accommodation: accommodation,
+          room: room,
+        },
       },
-    });
+    );
   };
-  
 
   const roomPhotos = accommodation.rooms.flatMap((room) => room.room_photos || []);
   const displayedPhotos = roomPhotos.slice(0, 4);
@@ -208,39 +210,40 @@ export default function Accommodation() {
                   </div>
                 </div>
                 <div className="hotel-room-card-details">
-  <div className="hotel-room-card-time">
-    <div className="check-in-out">
-      <div className="check-label">체크인</div>
-      <div className="check-time">14:00</div>
-    </div>
-    <div className="check-in-out">
-      <div className="check-label">체크아웃</div>
-      <div className="check-time">10:00</div>
-    </div>
-  </div>
-  <div className="hotel-room-card-end">
-    <div className="occupancy-info">
-      기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
-    </div>
-    <div className="available-info">
-      잔여석: {room.available_count}
-    </div>
-    <div className="price-info">
-      {new Intl.NumberFormat().format(room.price_per_night)} 원
-    </div>
-  </div>
-  <Button2
-    onClick={room.available_count > 0 ? () => handleReserve(room) : null}
-    disabled={room.available_count === 0}
-    style={{
-      width: '100%',
-      backgroundColor: room.available_count == 0 ? 'grey' : '',
-      cursor: room.available_count == 0 ? 'not-allowed' : 'pointer',
-    }}
-  >
-    {room.available_count == 0 ? '예약 불가' : '예약하기'}
-  </Button2>
-</div>
+                  <div className="hotel-room-card-time">
+                    <div className="check-in-out">
+                      <div className="check-label">체크인</div>
+                      <div className="check-time">14:00</div>
+                    </div>
+                    <div className="check-in-out">
+                      <div className="check-label">체크아웃</div>
+                      <div className="check-time">10:00</div>
+                    </div>
+                  </div>
+                  <div className="hotel-room-card-end">
+                    <div className="occupancy-info">
+                      기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
+                    </div>
+                    <div className="available-info">
+                      <div>잔여 객실 : {room.available_count}</div>
+                      <div className="price-info">
+                        {new Intl.NumberFormat().format(room.price_per_night)} 원
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={room.available_count > 0 ? () => handleReserve(room) : null}
+                    disabled={room.available_count === 0}
+                    style={{
+                      width: '100%',
+                      backgroundColor: room.available_count == 0 ? 'grey' : '',
+                      cursor: room.available_count == 0 ? 'not-allowed' : 'pointer',
+                    }}
+                    className="reserve-button"
+                  >
+                    {room.available_count == 0 ? '예약 불가' : '예약하기'}
+                  </button>
+                </div>
               </div>
             </div>
           ))}

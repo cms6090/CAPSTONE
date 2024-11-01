@@ -1,5 +1,5 @@
 .hotel {
-  padding: 1% 10%;
+  padding: 1% 25%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -175,14 +175,15 @@
 .hotel-room-card-time {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 3%;
+  gap: 1em;
   margin-bottom: 5%;
 }
 
 .hotel-room-card-end {
   margin: 1% 0%;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
 }
 
 .hotel-room-card-detail-modal {
@@ -210,4 +211,24 @@
 
 .more-photos-overlay {
   font-size: 0.8em;
+}
+
+.available-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-info {
+  text-align: right;
+}
+
+.reserve-button {
+  font-size: 0.8em;
+  font-weight: 800;
+  color: white;
+  width: 100%;
+  padding: 1em;
+  border-radius: 0.7em;
+  background-color: #097ce6;
+  border: none;
 }

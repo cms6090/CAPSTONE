@@ -3,6 +3,7 @@
   margin: 3% auto; /* 페이지 중앙 정렬 */
   padding: 20px;
   background-color: #fff; /* 배경색 */
+  border-radius: 10px;
 }
 
 .email input,

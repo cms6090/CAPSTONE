@@ -5,7 +5,12 @@ import { ko } from 'date-fns/locale';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
-export default function DateRangePickerComponent({ onDateSelect, initialStartDate, initialEndDate }) {
+export default function DateRangePickerComponent({
+  onDateSelect,
+  initialStartDate,
+  initialEndDate,
+  disabled,
+}) {
   const today = startOfDay(new Date());
   const oneMonthLater = addDays(today, 60);
 
@@ -18,18 +23,22 @@ export default function DateRangePickerComponent({ onDateSelect, initialStartDat
   ]);
 
   useEffect(() => {
-    setState([{
-      startDate: initialStartDate || today,
-      endDate: initialEndDate || addDays(today, 7),
-      key: 'selection',
-    }]);
-    // 총 가격을 계산하기 위해 초기 날짜 선택 시 onDateSelect 호출
-    if (initialStartDate && initialEndDate) {
+    setState([
+      {
+        startDate: initialStartDate || today,
+        endDate: initialEndDate || addDays(today, 7),
+        key: 'selection',
+      },
+    ]);
+    // onDateSelect가 존재할 때만 호출
+    if (onDateSelect && initialStartDate && initialEndDate) {
       onDateSelect(initialStartDate, initialEndDate);
     }
   }, [initialStartDate, initialEndDate]);
 
   const handleSelect = (ranges) => {
+    if (disabled) return; // disabled가 true면 날짜 선택을 비활성화
+
     const { startDate, endDate } = ranges.selection;
 
     // 선택된 날짜가 오늘부터 최대 2개월 내인지 확인
@@ -39,11 +48,14 @@ export default function DateRangePickerComponent({ onDateSelect, initialStartDat
     }
 
     setState([ranges.selection]);
-    onDateSelect(startDate, endDate); // 부모 컴포넌트에 날짜 전달
+    // onDateSelect가 존재할 때만 호출
+    if (onDateSelect) {
+      onDateSelect(startDate, endDate); // 부모 컴포넌트에 날짜 전달
+    }
   };
 
   return (
-    <div style={{ border: '1px solid lightgray', borderRadius: '3px', padding: '10px' }}>
+    <p style={{ border: '1px solid lightgray', borderRadius: '3px', width: 'fit-content' }}>
       <DateRange
         onChange={handleSelect}
         showSelectionPreview={true}
@@ -56,6 +68,6 @@ export default function DateRangePickerComponent({ onDateSelect, initialStartDat
         maxDate={oneMonthLater}
         monthDisplayFormat="yyyy년 MMM"
       />
-    </div>
+    </p>
   );
 }

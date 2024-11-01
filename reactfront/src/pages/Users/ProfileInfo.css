@@ -1,6 +1,6 @@
 .profilemain {
   display: grid;
-  padding: 3% 10%;
+  padding: 3% 25%;
   grid-template-columns: 1fr 4fr;
   gap: 5%;
   background-color: #f8f9fa; /* 상단 배경색 */

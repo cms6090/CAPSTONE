@@ -6,7 +6,7 @@
 .Main-Header {
   background-image: url('https://static.yeogi.com/_next/static/media/05_Kv_PC_Light.3deeaa46.webp');
   background-size: cover;
-  padding: 1% 10%; /* 콘텐츠에 패딩 추가 */
+  padding: 1% 25%; /* 콘텐츠에 패딩 추가 */
   display: flex;
   align-items: flex-end;
 }
@@ -28,9 +28,9 @@
   z-index: 1; /* 이미지 위에 위치하도록 설정 */
 }
 
-.content {
+.contents {
   position: relative; /* 콘텐츠의 위치 설정 */
-  padding: 1% 10%; /* 콘텐츠에 패딩 추가 */
+  padding: 1% 25%; /* 콘텐츠에 패딩 추가 */
   background-color: #f8f9fa; /* 상단 배경색 */
   z-index: 1; /* 이미지 위에 콘텐츠가 오도록 설정 */
 }
@@ -38,4 +38,8 @@
 .main-content {
   margin: 1% 0;
   padding-left: 1%;
+}
+
+.content {
+  margin: 5% 0;
 }
