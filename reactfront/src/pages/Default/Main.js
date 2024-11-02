@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import './Main.css';
 import RegionCard from '../../components/RegionCard';
 import AccommoCard from '../../components/AccommoCard';

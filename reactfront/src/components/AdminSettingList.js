@@ -6,33 +6,27 @@ import './AdminSettingList.css'; // 새로운 CSS 파일 생성
 const buttons = [
   {
     key: 'one',
-    name: '사용자 관리',
+    name: '사용자 정보',
     path: '/admin/users',
     icon: <span className="material-symbols-outlined">account_circle</span>,
   },
   {
     key: 'three',
-    name: '숙소 관리',
+    name: '숙소 정보',
     path: '/admin/lodgings',
     icon: <span className="material-symbols-outlined">house</span>,
   },
   {
     key: 'four',
-    name: '객실 관리',
+    name: '객실 정보',
     path: '/admin/rooms',
     icon: <span className="material-symbols-outlined">bed</span>,
   },
   {
-    key: 'five',
-    name: '예약 관리',
+    key: 'two',
+    name: '예약 정보',
     path: '/admin/reservations',
     icon: <span className="material-symbols-outlined">calendar_month</span>,
-  },
-  {
-    key: 'six',
-    name: '리뷰 관리',
-    path: '/admin/reviews',
-    icon: <span className="material-symbols-outlined">reviews</span>,
   },
 ];
 

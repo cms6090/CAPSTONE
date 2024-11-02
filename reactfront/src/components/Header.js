@@ -69,11 +69,10 @@ function Header() {
   // 관리자 메뉴 항목 렌더링 함수
   const renderAdminMenuItems = () => (
     [
-      { key: 'users', label: '사용자 관리', path: '/admin/users' },
-      { key: 'accommodations', label: '숙소 관리', path: '/admin/lodgings' },
-      { key: 'rooms', label: '객실 관리', path: '/admin/rooms' },
-      { key: 'reservations', label: '예약 관리', path: '/admin/reservations' },
-      { key: 'reviews', label: '리뷰 관리', path: '/admin/reviews' },
+      { key: 'users', label: '사용자 정보', path: '/admin/users' },
+      { key: 'accommodations', label: '숙소 정보', path: '/admin/lodgings' },
+      { key: 'rooms', label: '객실 정보', path: '/admin/rooms' },
+      { key: 'reservations', label: '예약 정보', path: '/admin/reservations' },
     ].map((item) => (
       <MenuItem key={item.key} onClick={() => handleNavigation(item.path)}>
         <ListItemText primary={item.label} />

@@ -7,11 +7,22 @@ import dayjs from 'dayjs';
 const AccommodationsRouter = express.Router();
 
 /*---------------------------------------------
-    [숙박 업소 지역별, 파트별 조회]
+    [숙박 업소 조회]
 ---------------------------------------------*/
-AccommodationsRouter.get('/part', async (req, res, next) => {
+AccommodationsRouter.get('/', async (req, res, next) => {
   try {
+    // req.body가 아닌 req.query에서 쿼리 파라미터를 가져옵니다.
     let { keyword, checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
+    
+    personal = Number(personal);
+    console.log(req.query);
+    // 체크인과 체크아웃 날짜 기본값 설정
+    const today = dayjs().format('YYYY-MM-DD'); // 오늘 날짜를 YYYY-MM-DD 형식으로 설정
+    const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD'); // 내일 날짜를 YYYY-MM-DD 형식으로 설정
+
+    // 사용자가 제공하지 않은 경우 기본 체크인/체크아웃 날짜 설정
+    checkIn = checkIn || today;
+    checkOut = checkOut || tomorrow;
 
     console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut); // 체크인과 체크아웃 날짜 로그 출력
 
@@ -32,11 +43,17 @@ AccommodationsRouter.get('/part', async (req, res, next) => {
         lodgings l
       LEFT JOIN
         rooms r ON l.lodging_id = r.lodging_id
+      LEFT JOIN
+        room_availability ra ON r.room_id = ra.room_id
       WHERE
-        1=1
+        ra.date >= '${checkIn}'
+        AND ra.date < '${checkOut}'
+        AND ra.available_count > 0
         ${keyword ? `AND (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%')` : ''}
         ${minPrice ? `AND r.price_per_night >= ${minPrice}` : ''}
         ${maxPrice ? `AND r.price_per_night <= ${maxPrice}` : ''}
+        AND r.min_occupancy <= ${personal}
+        AND r.max_occupancy >= ${personal}
       GROUP BY
         l.lodging_id;
     `;
@@ -52,102 +69,8 @@ AccommodationsRouter.get('/part', async (req, res, next) => {
   }
 });
 
-/*---------------------------------------------
-    [숙박 업소 쿼리 조회]
----------------------------------------------*/
-AccommodationsRouter.get('/', async (req, res, next) => {
-  try {
-    let {
-      keyword = '',
-      checkIn,
-      checkOut,
-      personal = '2',
-      minPrice = '0',
-      maxPrice = '1000000',
-    } = req.query;
 
-    personal = Number(personal);
 
-    // Log the incoming query parameters for debugging
-    console.log(req.query);
-    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut);
-
-    // Ensure checkIn and checkOut dates have fallback values
-    const today = dayjs().format('YYYY-MM-DD');
-    const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
-
-    checkIn = checkIn || today;
-    checkOut = checkOut || tomorrow;
-
-    // Prepare the SQL query
-    const rawQuery = `
-      SELECT 
-        l.lodging_id, 
-        l.name, 
-        l.part, 
-        l.area, 
-        l.sigungu, 
-        l.rating, 
-        l.tel, 
-        l.address, 
-        l.main_image, 
-        MIN(r.price_per_night) AS min_price_per_night, 
-        SUM(r.room_count - IFNULL(reserved_rooms.reserved_count, 0)) AS available_rooms 
-      FROM 
-        lodgings l 
-      JOIN 
-        rooms r 
-      ON 
-        l.lodging_id = r.lodging_id 
-      LEFT JOIN (
-        SELECT 
-          room_id, 
-          COUNT(*) AS reserved_count 
-        FROM 
-          reservations 
-        WHERE 
-          check_in_date <= ? 
-          AND check_out_date >= ? 
-        GROUP BY 
-          room_id
-      ) reserved_rooms 
-      ON 
-        r.room_id = reserved_rooms.room_id 
-      WHERE 
-        (l.name LIKE CONCAT('%', ?, '%') OR l.area LIKE CONCAT('%', ?, '%') OR l.sigungu LIKE CONCAT('%', ?, '%'))
-        AND r.price_per_night BETWEEN ? AND ?
-        AND r.min_occupancy <= ?
-        AND r.max_occupancy >= ?
-      GROUP BY 
-        l.lodging_id 
-      HAVING 
-        available_rooms > 0;
-    `;
-
-    // Execute the query safely with placeholders
-    const accommodations = await prisma.$queryRawUnsafe(
-      rawQuery,
-      checkOut, // First ? for check_in_date in the subquery
-      checkIn, // Second ? for check_out_date in the subquery
-      keyword, // Third ? for name, area, sigungu search term
-      keyword, // Fourth ? for name, area, sigungu search term
-      keyword, // Fifth ? for name, area, sigungu search term
-      minPrice, // Sixth ? for min price
-      maxPrice, // Seventh ? for max price
-      personal, // Eighth ? for min occupancy
-      personal, // Ninth ? for max occupancy
-    );
-
-    console.log('Search results:', accommodations);
-
-    // Return the search results to the client
-    return res.status(StatusCodes.OK).json(accommodations);
-  } catch (error) {
-    // Log the error and return an appropriate response
-    console.error('Error fetching accommodations:', error);
-    throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
-  }
-});
 
 /*---------------------------------------------
     [숙박 업소 상세 조회]

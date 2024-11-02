@@ -1,8 +1,7 @@
 import '../../node_modules/swiper/swiper.css';
-import React, { useRef, useContext } from 'react';
+import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './RegionCard.css';
-import { SearchContext } from './SearchContext'; // Import the context
 import { useNavigate } from 'react-router-dom';
 
 // 이미지 임포트
@@ -33,19 +32,12 @@ const swiperList = [
 ];
 
 export default function RegionCard() {
-  const { startDate, endDate, numPeople } = useContext(SearchContext); // Destructure the context values
   const swiperRef = useRef(null); // Swiper 인스턴스를 저장할 ref
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
 
   // 특정 지역 페이지로 이동하는 함수
   const goToRegion = (regionName) => {
-    const checkIn = startDate ? startDate.toISOString().split('T')[0] : '';
-    const checkOut = endDate ? endDate.toISOString().split('T')[0] : '';
-    const personal = numPeople || 1;
-
-    navigate(
-      `/accommodations?keyword=${encodeURIComponent(regionName)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
-    );
+    navigate(`/accommodations?keyword=${encodeURIComponent(regionName)}`); // 지역 이름을 쿼리 파라미터로 전달
   };
 
   // 슬라이드 이동 처리 함수

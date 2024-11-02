@@ -3,9 +3,11 @@
   padding: 3% 10%;
   grid-template-columns: 1fr 4fr;
   gap: 5%;
+  background-color: #f8f9fa;
   box-sizing: border-box;
 }
 
+.profile-setting-container,
 .reserve-info {
   width: 100%;
 }
@@ -53,10 +55,9 @@ h3 {
 }
 
 .reserve-card-body {
-  width: 100%;
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
-  gap: 2em;
+  grid-template-columns: 1fr 5fr 1fr;
+  gap: 2%;
 }
 
 .reserve-card-body p {
@@ -88,6 +89,12 @@ h3 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.no-past {
+  font-size: 1em;
+  color: #666;
+  text-align: center;
+}
+
 .loading,
 .error {
   font-size: 1.5rem;
@@ -106,11 +113,23 @@ h3 {
   gap: 1em;
 }
 
-.reserve-card-contents-details-header p,
-.reserve-card-contents-user-header p {
+.reserve-card-contents-details-header {
+  border-right: 1px solid lightgray;
+}
+
+.reserve-card-contents-details-header p {
   font-family: 'pretendard';
   font-weight: 600;
   color: rgba(0, 0, 0, 0.4);
+}
+
+.reserve-card-contents-roomname {
+  margin-bottom: 0.5em;
+}
+
+.reserve-card-cancel {
+  padding: 1em 1em 0 0;
+  text-align: right;
 }
 
 .reserve-card-contents-container {
@@ -125,75 +144,17 @@ h3 {
   gap: 1em;
 }
 
-.reserve-card-action,
+.reserve-card-contents-user-header p {
+  font-family: 'pretendard';
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.reserve-card-contents-user-header {
+  border-right: 1px solid lightgray;
+}
+
 .reserve-card-review {
   padding: 1em 1em 0 0;
   text-align: right;
-}
-
-.reserve-card-content {
-  font-size: 1rem;
-  color: #555;
-  margin: 5px 0;
-}
-
-:root {
-  --badge-completed: #28a745;
-  --badge-pending: #ffc107;
-  --badge-cancelled: #dc3545;
-}
-
-.status-badge.completed {
-  background-color: var(--badge-completed);
-}
-
-.status-badge.pending {
-  background-color: var(--badge-pending);
-}
-
-.status-badge.cancelled {
-  background-color: var(--badge-cancelled);
-}
-
-@media screen and (max-width: 1200px) {
-  .reserve-card-body {
-    grid-template-columns: 1fr 3fr 2fr;
-  }
-}
-
-@media screen and (max-width: 1600px) {
-  .reserve-card-body {
-    grid-template-columns: 1fr 3fr 1fr;
-  }
-  .profilemain {
-    grid-template-columns: 1fr;
-    gap: 2em;
-  }
-  .reserve-card-image,
-  .reserve-card-contents,
-  .reserve-card-action {
-    width: 100%; /* 전체 너비를 차지하도록 설정 */
-  }
-  .reserve-card-action {
-    padding: 0;
-    text-align: right; /* 액션 버튼을 가운데 정렬 */
-  }
-  .reserve-card-contents-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1em;
-  }
-}
-
-@media screen and (max-width: 1600px) {
-  .setting-list {
-    flex-direction: row; /* 화면이 줄어들면 가로 방향으로 정렬 */
-  }
-  .button-container {
-    border-bottom: none; /* 가로 방향에서는 border-bottom을 제거 */
-    border-right: 1px solid rgb(231, 231, 231); /* border-right 추가 */
-  }
-  .button-container:last-child {
-    border-right: none; /* 마지막 버튼의 border-right를 없앰 */
-  }
 }

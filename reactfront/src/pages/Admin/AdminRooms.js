@@ -26,6 +26,7 @@ export default function AdminRooms() {
   const onSave = useCallback(
     async (params) => {
       const rowData = params.data; // 현재 행의 데이터 가져오기
+      console.log('저장된 데이터:', rowData); // 저장된 데이터 출력
 
       // 이미 저장 중이면 함수 종료
       if (isSaving) {
@@ -227,6 +228,7 @@ export default function AdminRooms() {
           }
           const data = await response.json();
           setRowData(data); // 객실 데이터 설정
+          console.log(data);
         } catch (error) {
           console.error('데이터를 가져오는 중 오류가 발생했습니다.', error); // 오류 메시지 출력
         }
