@@ -25,7 +25,6 @@ export default function AdminLodgings() {
   const onSave = useCallback(
     async (params) => {
       const rowData = params.data; // 현재 행의 데이터 가져오기
-      console.log('저장된 데이터:', rowData); // 저장된 데이터 출력
 
       // 이미 저장 중이면 함수 종료
       if (isSaving) {
@@ -144,8 +143,7 @@ export default function AdminLodgings() {
       {
         headerName: '평점',
         field: 'rating',
-        valueFormatter: (params) => params.value?.toFixed(1),
-        editable: true,
+        editable: false, // 평점은 읽기 전용이므로 편집 불가능
         flex: 0.8,
       },
       {
@@ -270,7 +268,6 @@ export default function AdminLodgings() {
             throw new Error('데이터를 가져오는 중 오류가 발생했습니다.');
           }
           const data = await response.json();
-          console.log('Lodgings fetched:', data.lodgings.length); // Log the number of lodgings fetched
           setRowData(data.lodgings); // 숙소 데이터 설정
         } catch (error) {
           console.error('데이터를 가져오는 중 오류가 발생했습니다.', error); // 오류 메시지 출력

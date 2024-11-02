@@ -1,0 +1,146 @@
+/* 리뷰 리스트 스타일 */
+.review-list {
+  margin-top: 1.5em;
+  padding: 1em;
+  border-top: 1px solid #ddd;
+}
+
+.review-item {
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  border-bottom: 1px solid #eee;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 1em;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 이름과 별점 사이 간격 */
+}
+
+.review-author img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 0.5em;
+}
+
+.review-date {
+  font-size: 0.8em;
+  color: #888;
+}
+
+.review-rating {
+  font-size: 1em;
+  color: #ff9900; /* 별점 색상 */
+}
+
+.review-photos {
+  display: flex;
+  gap: 8px;
+  margin: 1em 0;
+}
+
+.review-photo {
+  width: 300px; /* 기존 80px에서 120px로 확대 */
+  height: 300px; /* 기존 80px에서 120px로 확대 */
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid #ddd;
+  cursor: pointer; /* 클릭 가능 표시 */
+}
+
+.review-photo:hover {
+  transform: scale(1.1); /* 마우스 오버 시 더 큰 확대 효과 */
+}
+
+.review-comment {
+  font-size: 0.95em;
+  color: #333;
+  line-height: 1.4;
+  margin: 0.5em 0;
+}
+
+.review-actions {
+  display: flex;
+  align-items: center;
+  font-size: 0.85em;
+  color: #0073e6;
+  cursor: pointer;
+}
+
+.review-actions:hover {
+  text-decoration: underline;
+}
+
+.review-likes {
+  display: flex;
+  align-items: center;
+  margin-left: 1em;
+  color: #888;
+}
+
+/* 모달 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.toggle-more {
+  color: #0073e6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: bold;
+  padding: 0;
+  margin-left: 5px;
+}
+
+.toggle-more:hover {
+  text-decoration: underline;
+}
+
+.star-rating {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 1.2em; /* 별 크기 */
+  color: #ddd; /* 빈 별 색상 */
+}
+
+.star.filled {
+  color: #ff9900; /* 채워진 별 색상 */
+}
+
+.hotel-reviews h2 {
+  display: flex;
+  align-items: center;
+}
+.star-icon {
+  color: #ff9900; /* 별 색상 */
+  font-size: 1.2em; /* 별 크기 */
+  margin-right: 8px; /* 별과 텍스트 간격 */
+}

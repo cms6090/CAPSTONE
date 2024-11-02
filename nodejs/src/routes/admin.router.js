@@ -177,7 +177,6 @@ AdminRouter.get('/reservations', verifyAdmin, async (req, res, next) => {
         reservation.rooms && reservation.rooms.lodgings ? reservation.rooms.lodgings.name : null, // lodgings 정보를 이용해 숙소 이름 조회
     }));
 
-    console.log(reservationsWithDetails);
     return res.status(StatusCodes.OK).json(reservationsWithDetails); // 수정된 예약 정보 반환
   } catch (error) {
     next(error); // 오류가 발생하면 다음 미들웨어로 전달
@@ -192,7 +191,6 @@ AdminRouter.put('/reservations/:id', verifyAdmin, async (req, res, next) => {
     const { id } = req.params; // Extract reservation ID from URL
     const { status, check_in_date, check_out_date, person_num, total_price } = req.body; // Extract reservation info to update
 
-    console.log('Received Data:', req.body); // 요청된 데이터 출력
     const updatedReservation = await prisma.reservations.update({
       where: { reservation_id: Number(id) },
       data: {
@@ -466,32 +464,31 @@ AdminRouter.delete('/rooms/:id', verifyAdmin, async (req, res, next) => {
   ---------------------------------------------*/
 AdminRouter.get('/reviews', verifyAdmin, async (req, res, next) => {
   try {
-    const reviews = await prisma.reviews.findMany(); // 모든 리뷰 정보를 조회
-    return res.status(StatusCodes.OK).json(reviews); // 리뷰 정보 반환
-  } catch (error) {
-    next(error); // 오류 발생 시 다음 미들웨어로 전달
-  }
-});
-
-/*---------------------------------------------
-      [리뷰 업데이트]
-  ---------------------------------------------*/
-AdminRouter.put('/reviews/:id', verifyAdmin, async (req, res, next) => {
-  try {
-    const { id } = req.params; // URL에서 리뷰 ID 추출
-    const { content, rating } = req.body; // 업데이트할 리뷰 정보 추출
-    const updatedReview = await prisma.reviews.update({
-      where: { review_id: Number(id) },
-      data: {
-        content,
-        rating,
-        updated_at: new Date(), // 수정 시간 갱신
+    // 리뷰 정보와 함께 숙소 이름 및 사진 정보도 가져오기
+    const reviews = await prisma.reviews.findMany({
+      include: {
+        // 숙소 이름 가져오기 위해 lodgings 테이블과 조인
+        lodgings: {
+          select: {
+            name: true, // 숙소 이름 필드만 선택
+          },
+        },
+        // 리뷰에 연결된 사진 정보도 가져오기
+        review_photos: {
+          select: {
+            review_photos_1: true,
+            review_photos_2: true,
+            review_photos_3: true,
+            review_photos_4: true,
+            review_photos_5: true,
+          },
+        },
       },
     });
-    return res
-      .status(StatusCodes.OK)
-      .json({ message: '리뷰 정보 업데이트 성공', review: updatedReview });
+
+    return res.status(StatusCodes.OK).json(reviews); // 리뷰 정보 반환
   } catch (error) {
+    console.error('Error fetching reviews:', error); // 오류 메시지 출력
     next(error); // 오류 발생 시 다음 미들웨어로 전달
   }
 });

@@ -1,25 +1,33 @@
+// components/Accommodation.js
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Accommodation.css';
 import JustMap from '../../components/JustMap';
 import MapModal from '../../components/MapModal';
 import { Button2 } from '../../components/Button.style';
 import RoomModal from '../../components/RoomModal';
 import { BsFillImageFill } from 'react-icons/bs';
+import ReviewList from '../../components/ReviewList';
 
 export default function Accommodation() {
-  const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+
   const [isMapModalOpen, setMapModalOpen] = useState(false);
   const [isRoomModalOpen, setRoomModalOpen] = useState(false);
   const [isMorePhotosModalOpen, setMorePhotosModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [accommodation, setAccommodation] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 추가
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    // URL에서 id 추출
+    const pathSegments = location.pathname.split('/');
+    const id = pathSegments[2].split('&')[0];
+
     const fetchAccommodationDetails = async () => {
       try {
         const response = await fetch(`http://localhost:3000/api/accommodations/${id}`);
@@ -36,11 +44,25 @@ export default function Accommodation() {
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/reviews/accommodation/${id}`);
+        if (!response.ok) {
+          throw new Error('리뷰를 가져오는 데 실패했습니다.');
+        }
+        const reviewData = await response.json();
+        setReviews(reviewData);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
     const loggedIn = sessionStorage.getItem('userEmail');
     setIsLoggedIn(!!loggedIn);
 
     fetchAccommodationDetails();
-  }, [id]);
+    fetchReviews();
+  }, [location.pathname]);
 
   if (loading) {
     return <h2>로딩 중...</h2>;
@@ -80,7 +102,7 @@ export default function Accommodation() {
     navigate('/reserve', {
       state: {
         accommodation: accommodation,
-        room: room, // 객실 정보를 전달
+        room: room,
       },
     });
   };
@@ -230,6 +252,14 @@ export default function Accommodation() {
           </div>
         </MapModal>
       )}
+
+      {/* 리뷰 리스트 컴포넌트 추가 */}
+      <section className="hotel-reviews">
+        <h2>
+          <span className="star-icon">★</span> 리얼 리뷰
+        </h2>
+        <ReviewList reviews={reviews} />
+      </section>
     </div>
   );
 }

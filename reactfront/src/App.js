@@ -19,31 +19,38 @@ import AdminUsers from './pages/Admin/AdminUsers';
 import AdminLodgings from './pages/Admin/AdminLodgings';
 import AdminReserves from './pages/Admin/AdminReserves';
 import AdminRooms from './pages/Admin/AdminRooms';
+import Review from './pages/Users/Review';
+import { SearchProvider } from './components/SearchContext';
+import AdminReviews from './pages/Admin/AdminReviews';
 
 function App() {
   return (
-    <Router>
-      <Header /> {/* 모든 페이지에 Header가 표시됩니다 */}
-      <Routes>
-        <Route path="/" element={<Main />} /> {/* 메인 페이지 */}
-        <Route path="/login" element={<Login />} /> {/* 로그인 페이지 */}
-        <Route path="/signup" element={<Signup />} /> {/*회원가입 페이지 */}
-        <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/}
-        <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
-        <Route path="/accommodations" element={<Accommodations />} />
-        <Route path="/accommodations/:id" element={<Accommodation />} />
-        <Route path="/profile/reservations" element={<ProfileReserve />} />
-        <Route path="/profile/info" element={<ProfileInfo />} />
-        <Route path="/profile/setting" element={<ProfileSetting />} />
-        <Route path="/reserve" element={<Reserve />} />
-        <Route path="/admin/users" element={<AdminUsers />} />
-        <Route path="/admin/lodgings" element={<AdminLodgings />} />
-        <Route path="/admin/rooms" element={<AdminRooms />} />
-        <Route path="/admin/reservations" element={<AdminReserves />} />
-        {/* 필요한 다른 라우트 추가 */}
-      </Routes>
-      <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}
-    </Router>
+    <SearchProvider>
+      <Router>
+        <Header /> {/* 모든 페이지에 Header가 표시됩니다 */}
+        <Routes>
+          <Route path="/" element={<Main />} /> {/* 메인 페이지 */}
+          <Route path="/login" element={<Login />} /> {/* 로그인 페이지 */}
+          <Route path="/signup" element={<Signup />} /> {/*회원가입 페이지 */}
+          <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/}
+          <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
+          <Route path="/accommodations" element={<Accommodations />} />
+          <Route path="/accommodations/:id" element={<Accommodation />} />
+          <Route path="/profile/reservations" element={<ProfileReserve />} />
+          <Route path="/profile/info" element={<ProfileInfo />} />
+          <Route path="/profile/setting" element={<ProfileSetting />} />
+          <Route path="/reserve" element={<Reserve />} />
+          <Route path="/review" element={<Review />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/lodgings" element={<AdminLodgings />} />
+          <Route path="/admin/rooms" element={<AdminRooms />} />
+          <Route path="/admin/reservations" element={<AdminReserves />} />
+          <Route path="/admin/reviews" element={<AdminReviews />} />
+          {/* 필요한 다른 라우트 추가 */}
+        </Routes>
+        <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}
+      </Router>
+    </SearchProvider>
   );
 }
 

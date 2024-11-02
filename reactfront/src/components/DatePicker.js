@@ -13,6 +13,7 @@ const CustomDatePicker = styled(DatePicker)({
   backgroundColor: 'rgb(239, 239, 239)',
   '& input': {
     fontSize: '1em',
+    padding: '1em',
     fontFamily: 'pretendard-bold',
   },
   '& .MuiOutlinedInput-notchedOutline': {
