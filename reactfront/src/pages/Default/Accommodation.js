@@ -25,7 +25,13 @@ export default function Accommodation() {
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/accommodations/${id}`);
+        const queryParams = new URLSearchParams(location.search);
+        const checkIn = queryParams.get('checkIn');
+        const checkOut = queryParams.get('checkOut');
+
+        const response = await fetch(
+          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`
+        );
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
         }
@@ -47,7 +53,6 @@ export default function Accommodation() {
         }
         const reviewData = await response.json();
         setReviews(reviewData);
-        console.log(reviewData);
       } catch (error) {
         console.error('Error fetching reviews:', error);
       }

@@ -216,6 +216,8 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
     const { lodgingId } = req.params;
     const { checkIn, checkOut } = req.query;
 
+    console.log(checkIn, checkOut);
+
     // 기본 숙소 정보 쿼리
     const query = `
       SELECT l.*, 
@@ -283,6 +285,7 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
 
     // 잔여석 확인 쿼리 (checkIn과 checkOut이 있을 경우)
     if (checkIn && checkOut) {
+      console.log(checkIn, checkOut);
       const availabilityQuery = `
         SELECT r.room_id, r.room_count - IFNULL(COUNT(res.room_id), 0) AS available_rooms
         FROM rooms r

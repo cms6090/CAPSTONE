@@ -58,9 +58,11 @@ export default function ReviewList({ reviews = [] }) {
                 <div className="review-author">
                   <div>
                     <strong>{review.users?.user_name || '익명 사용자'}</strong>
-                    <div className="review-date">
-                      {new Date(review.created_at).toLocaleDateString()}
-                    </div>
+                    {review.created_at && (
+                      <div className="review-date">
+                        {new Date(review.created_at).toLocaleDateString()}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <StarRating rating={review.rating} />
