@@ -3,18 +3,18 @@ import React, { useRef, useState, useEffect, useContext } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './AccommoCard.css';
 import { useNavigate } from 'react-router-dom';
-import { SearchContext } from './SearchContext'; // Import the context
+import { SearchContext } from './SearchContext';
 import { Button3 } from './Button.style';
 
 import arrowLeft from '../assets/Arrowleft.svg';
 import arrowRight from '../assets/Arrowright.svg';
 
 export default function AccommoCard() {
-  const { startDate, endDate, numPeople } = useContext(SearchContext); // Destructure the context values
-  const [accommodations, setAccommodations] = useState([]); // 숙소 데이터를 저장할 상태 관리
-  const [selectedCategory, setSelectedCategory] = useState('전체'); // 선택된 숙소 카테고리 상태 관리
-  const swiperRef = useRef(null); // Swiper 인스턴스를 참조하기 위한 ref
-  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+  const { startDate, endDate, numPeople } = useContext(SearchContext);
+  const [accommodations, setAccommodations] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const swiperRef = useRef(null);
+  const navigate = useNavigate();
 
   // 컴포넌트가 마운트될 때 숙소 데이터를 가져오는 useEffect
   useEffect(() => {
