@@ -51,3 +51,29 @@
   color: gray;
   margin-bottom: 2%;
 }
+
+.custom-select-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.custom-select {
+  width: 100%;
+  font-size: 1em;
+  color: inherit;
+  border-radius: 4px;
+}
+
+.custom-select-container::after {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.custom-select option {
+  color: gray;
+}

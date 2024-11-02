@@ -46,7 +46,7 @@ export default function TagCard() {
     const personal = numPeople || 1;
 
     navigate(
-      `/accommodations/${encodeURIComponent(accommoId)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
+      `/accommodations/${encodeURIComponent(accommoId)}?checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
     );
   };
 

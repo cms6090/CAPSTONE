@@ -7,6 +7,7 @@ import { Button2 } from '../../components/Button.style';
 import RoomModal from '../../components/RoomModal';
 import { BsFillImageFill } from 'react-icons/bs';
 import ReviewList from '../../components/ReviewList';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Accommodation() {
   const { id } = useParams();
@@ -25,12 +26,12 @@ export default function Accommodation() {
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
       try {
-        const queryParams = new URLSearchParams(location.search);
+        const queryParams = new URLSearchParams(window.location.search);
         const checkIn = queryParams.get('checkIn');
         const checkOut = queryParams.get('checkOut');
 
         const response = await fetch(
-          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`
+          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`,
         );
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
@@ -66,7 +67,13 @@ export default function Accommodation() {
   }, [id, location.search]);
 
   if (loading) {
-    return <h2>로딩 중...</h2>;
+    return (
+      <div
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
+        <CircularProgress />
+      </div>
+    );
   }
 
   if (error) {
@@ -115,6 +122,7 @@ export default function Accommodation() {
     const checkIn = queryParams.get('checkIn');
     const checkOut = queryParams.get('checkOut');
     const personal = queryParams.get('personal');
+    console.log(queryParams, checkIn, checkOut);
 
     // 쿼리 파라미터가 있는 경우 예약 페이지로 함께 전달
     navigate(
@@ -288,7 +296,7 @@ export default function Accommodation() {
       <section className="hotel-reviews">
         <div>
           <div>
-            <span className="star-icon">★</span> 리뷰
+            <span className="star-icon">★</span> 리뷰 <span>{reviews.length}건</span>
           </div>
           <ReviewList reviews={reviews} />
         </div>

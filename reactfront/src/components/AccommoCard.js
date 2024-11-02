@@ -49,8 +49,6 @@ export default function AccommoCard() {
     '전통 숙소': accommodations.filter((data) => data.part === '한옥'),
   };
 
-  console.log(startDate, endDate);
-
   // 특정 숙소 상세 페이지로 이동하는 함수
   const goToAccommo = (accommoId) => {
     const checkIn = startDate ? startDate.toISOString().split('T')[0] : '';
@@ -58,7 +56,7 @@ export default function AccommoCard() {
     const personal = numPeople || 1;
 
     navigate(
-      `/accommodations/${encodeURIComponent(accommoId)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
+      `/accommodations/${encodeURIComponent(accommoId)}?checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
     ); // 숙소 ID를 URL에 포함하여 이동
   };
 

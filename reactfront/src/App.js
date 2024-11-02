@@ -14,7 +14,7 @@ import ProfileSetting from './pages/Users/ProfileSetting';
 import Accommodations from './pages/Default/Accommodations';
 import Accommodation from './pages/Default/Accommodation';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Reserve from './pages/Reserve';
+import Reserve from './pages/Users/Reserve';
 import AdminUsers from './pages/Admin/AdminUsers';
 import AdminLodgings from './pages/Admin/AdminLodgings';
 import AdminReserves from './pages/Admin/AdminReserves';

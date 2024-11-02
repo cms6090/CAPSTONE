@@ -120,12 +120,18 @@ export default function ProfileInfo() {
             </div>
             <div className="info-item">
               <div className="info-title">성별</div>
-              <div className="info-data">
+              <div className="info-data custom-select-container">
                 <select
+                  className="custom-select"
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
                   disabled={!isEditable}
-                  style={{ color: isEditable ? 'black' : 'rgba(0, 0, 0, 0.4)', border:'none', padding:'0', margin:'0,', backgroundColor:'transparent' }}
+                  style={{
+                    color: isEditable ? 'black' : 'rgba(0, 0, 0, 0.4)',
+                    border: 'none',
+                    padding: '0',
+                    backgroundColor: 'transparent',
+                  }}
                 >
                   <option value="남성">남성</option>
                   <option value="여성">여성</option>
@@ -133,7 +139,9 @@ export default function ProfileInfo() {
               </div>
             </div>
             <div className="info-item">
-              <div className="info-title" style={{visibility:'hidden'}}>수정</div>
+              <div className="info-title" style={{ visibility: 'hidden' }}>
+                수정
+              </div>
               <Button1 onClick={handleEditClick} style={{ padding: '1.18em' }}>
                 {isEditable ? '완료' : '변경하기'}
               </Button1>

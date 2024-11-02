@@ -16,8 +16,8 @@ export default function DateRangePickerComponent({
 
   const [state, setState] = useState([
     {
-      startDate: initialStartDate || today,
-      endDate: initialEndDate || addDays(today, 7),
+      startDate: initialStartDate ? new Date(initialStartDate) : today, // 문자열일 경우 Date 객체로 변환
+      endDate: initialEndDate ? new Date(initialEndDate) : addDays(today, 7), // 문자열일 경우 Date 객체로 변환
       key: 'selection',
     },
   ]);
@@ -25,37 +25,34 @@ export default function DateRangePickerComponent({
   useEffect(() => {
     setState([
       {
-        startDate: initialStartDate || today,
-        endDate: initialEndDate || addDays(today, 7),
+        startDate: initialStartDate ? new Date(initialStartDate) : today,
+        endDate: initialEndDate ? new Date(initialEndDate) : addDays(today, 7),
         key: 'selection',
       },
     ]);
-    // onDateSelect가 존재할 때만 호출
     if (onDateSelect && initialStartDate && initialEndDate) {
-      onDateSelect(initialStartDate, initialEndDate);
+      onDateSelect(new Date(initialStartDate), new Date(initialEndDate));
     }
   }, [initialStartDate, initialEndDate]);
 
   const handleSelect = (ranges) => {
-    if (disabled) return; // disabled가 true면 날짜 선택을 비활성화
+    if (disabled) return;
 
     const { startDate, endDate } = ranges.selection;
 
-    // 선택된 날짜가 오늘부터 최대 2개월 내인지 확인
     if (isAfter(endDate, oneMonthLater) || isBefore(startDate, today)) {
       alert('선택 가능한 날짜 범위는 오늘부터 최대 2개월 이내입니다.');
       return;
     }
 
     setState([ranges.selection]);
-    // onDateSelect가 존재할 때만 호출
     if (onDateSelect) {
-      onDateSelect(startDate, endDate); // 부모 컴포넌트에 날짜 전달
+      onDateSelect(startDate, endDate);
     }
   };
 
   return (
-    <p style={{ border: '1px solid lightgray', borderRadius: '3px', width: 'fit-content' }}>
+    <div style={{ border: '1px solid lightgray', borderRadius: '3px', width: 'fit-content' }}>
       <DateRange
         onChange={handleSelect}
         showSelectionPreview={true}
@@ -63,11 +60,11 @@ export default function DateRangePickerComponent({
         months={2}
         ranges={state}
         direction="horizontal"
-        locale={ko} // 한글 로케일 설정
+        locale={ko}
         minDate={today}
         maxDate={oneMonthLater}
         monthDisplayFormat="yyyy년 MMM"
       />
-    </p>
+    </div>
   );
 }

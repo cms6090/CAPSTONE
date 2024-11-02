@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Reserve.css';
-import { Button1, Button2 } from '../components/Button.style';
-import DateRangePickerComponent from '../components/DateRangePickerComponent';
-import NumPicker from '../components/NumPicker';
+import { Button1, Button2 } from '../../components/Button.style';
+import DateRangePickerComponent from '../../components/DateRangePickerComponent';
 
 export default function Reserve() {
   const location = useLocation();
@@ -17,6 +16,7 @@ export default function Reserve() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [nights, setNights] = useState(1);
 
   // 쿼리 파라미터에서 체크인, 체크아웃 및 인원 수 정보 가져오기
   const queryParams = new URLSearchParams(location.search);
@@ -62,8 +62,8 @@ export default function Reserve() {
     if (checkIn && checkOut && room) {
       const checkInDate = new Date(checkIn);
       const checkOutDate = new Date(checkOut);
-      const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-      setTotalPrice(nights * room.price_per_night);
+      setNights(Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)));
+      setTotalPrice(nights * parseInt(room.price_per_night));
     }
   }, [checkIn, checkOut, room]);
 
@@ -243,7 +243,7 @@ export default function Reserve() {
                     <div>{new Intl.NumberFormat().format(room.price_per_night)} 원</div>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <div>총 가격</div>
+                    <div>총 가격({nights}박)</div>
                     <div>{new Intl.NumberFormat().format(totalPrice)} 원</div>
                   </div>
                 </div>

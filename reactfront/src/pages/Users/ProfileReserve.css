@@ -55,7 +55,7 @@ h3 {
 .reserve-card-body {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-columns: 1fr 4fr;
   gap: 2em;
 }
 
@@ -80,6 +80,11 @@ h3 {
   overflow: hidden;
 }
 
+.reserve-card-contents-header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .no-reservations {
   color: #666;
   background-color: white;
@@ -102,7 +107,7 @@ h3 {
 
 .reserve-card-contents-details {
   display: grid;
-  grid-template-columns: 1fr 7fr;
+  grid-template-columns: 1fr 5fr;
   gap: 1em;
 }
 
@@ -116,7 +121,7 @@ h3 {
 .reserve-card-contents-container {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 1em;
+  gap: 1.5em;
 }
 
 .reserve-card-contents-user-details {
