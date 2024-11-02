@@ -1,6 +1,5 @@
 .hotel {
   padding: 1% 25%;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -129,38 +128,36 @@
 }
 
 .hotel-room-card-container {
+  display: flex;
+  width: 100%;
+  height: 15em;
+  gap: 1em;
   background-color: #f5f7fa;
   border-radius: 15px;
-  padding: 3%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr 2.5fr;
-  gap: 3%;
+  padding: 1em;
   align-items: stretch;
 }
 
 .hotel-room-card-img {
-  width: 100%;
-  object-fit: cover;
-  overflow: hidden;
+  height: 100%; /* 부모 높이에 맞추기 */
+  aspect-ratio: 1 / 1; /* 1:1 비율 유지 */
   border-radius: 15px;
-  aspect-ratio: 1 / 1;
-  height: 100%;
+  overflow: hidden;
+  flex-shrink: 0; /* 너비 줄어들지 않게 고정 */
 }
 
 .hotel-room-card-img img {
   width: 100%;
   height: 100%;
-  margin: 0;
-  object-fit: cover;
+  object-fit: cover; /* 이미지 비율 유지하면서 꽉 채우기 */
   border-radius: 15px;
 }
 
 .hotel-room-card-content-container {
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
 }
 
 .hotel-room-card-details {
