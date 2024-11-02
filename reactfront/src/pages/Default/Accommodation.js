@@ -6,6 +6,7 @@ import MapModal from '../../components/MapModal';
 import { Button2 } from '../../components/Button.style';
 import RoomModal from '../../components/RoomModal';
 import { BsFillImageFill } from 'react-icons/bs';
+import ReviewList from '../../components/ReviewList';
 
 export default function Accommodation() {
   const { id } = useParams();
@@ -19,23 +20,17 @@ export default function Accommodation() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 추가
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
       try {
-        const queryParams = new URLSearchParams(location.search);
-        const checkIn = queryParams.get('checkIn');
-        const checkOut = queryParams.get('checkOut');
-
-        const response = await fetch(
-          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`,
-        );
+        const response = await fetch(`http://localhost:3000/api/accommodations/${id}`);
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
         }
         const data = await response.json();
         setAccommodation(data);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching accommodation details:', error);
         setError(error.message);
@@ -44,10 +39,25 @@ export default function Accommodation() {
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/reviews/accommodation/${id}`);
+        if (!response.ok) {
+          throw new Error('리뷰를 가져오는 데 실패했습니다.');
+        }
+        const reviewData = await response.json();
+        setReviews(reviewData);
+        console.log(reviewData);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
     const loggedIn = sessionStorage.getItem('userEmail');
     setIsLoggedIn(!!loggedIn);
 
     fetchAccommodationDetails();
+    fetchReviews();
   }, [id, location.search]);
 
   if (loading) {
@@ -268,6 +278,16 @@ export default function Accommodation() {
           </div>
         </MapModal>
       )}
+
+      {/* 리뷰 리스트 컴포넌트 추가 */}
+      <section className="hotel-reviews">
+        <div>
+          <div>
+            <span className="star-icon">★</span> 리뷰
+          </div>
+          <ReviewList reviews={reviews} />
+        </div>
+      </section>
     </div>
   );
 }
