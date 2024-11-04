@@ -2,10 +2,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1% 25%;
+  padding: 1% 10%;
   background-color: #f8f9fa; /* 상단 배경색 */
   border-bottom: 1px solid rgb(231, 231, 231);
   margin-bottom: 0;
+}
+
+@media (min-width: 1920px) {
+  .header {
+    padding: 1% 25%; /* 1% 30%로 padding 변경 */
+  }
 }
 
 .user-set {

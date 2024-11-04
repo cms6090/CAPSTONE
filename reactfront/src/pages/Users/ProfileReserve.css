@@ -1,9 +1,15 @@
 .profilemain {
   display: grid;
-  padding: 3% 25%;
+  padding: 3% 10%;
   grid-template-columns: 1fr 4fr;
   gap: 5%;
   box-sizing: border-box;
+}
+
+@media (min-width: 1920px) {
+  .profilemain {
+    padding: 3% 25%;
+  }
 }
 
 .reserve-info {
@@ -166,7 +172,7 @@ h3 {
   }
 }
 
-@media screen and (max-width: 1600px) {
+@media screen and (max-width: 1200px) {
   .reserve-card-body {
     grid-template-columns: 1fr 3fr 1fr;
   }
@@ -190,7 +196,7 @@ h3 {
   }
 }
 
-@media screen and (max-width: 1600px) {
+@media screen and (max-width: 1200px) {
   .setting-list {
     flex-direction: row; /* 화면이 줄어들면 가로 방향으로 정렬 */
   }
