@@ -228,7 +228,7 @@ export default function Accommodations() {
               <div className="filter-tag">
                 <div className="tag-button-group">
                   <div className="tag-button-row">
-                    {['가성비', '청결도', '위치', '풍경'].map((tag) => (
+                    {['가성비', '청결', '위치'].map((tag) => (
                       <Button3
                         key={tag}
                         onClick={() => handleTagClick(tag)}
@@ -244,7 +244,7 @@ export default function Accommodations() {
                     ))}
                   </div>
                   <div className="tag-button-row">
-                    {['직원 만족', '가족 여행', '연인'].map((tag) => (
+                    {['직원 만족', '가족 여행', '풍경'].map((tag) => (
                       <Button3
                         key={tag}
                         onClick={() => handleTagClick(tag)}
@@ -326,18 +326,20 @@ export default function Accommodations() {
                     <p
                       style={{ margin: '5px 0', color: '#666' }}
                     >{`${item.area} ${item.sigungu}`}</p>
-                    <div
-                      style={{
-                        display: 'inline-block',
-                        backgroundColor: 'rgb(255,173,10)',
-                        padding: '2px 4px',
-                        borderRadius: '4px',
-                        color: 'black',
-                        fontSize: '0.8em',
-                      }}
-                    >
-                      ★ {item.rating}
-                    </div>
+                    {item.rating && item.rating !== '0' && (
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          backgroundColor: 'rgb(255,173,10)',
+                          padding: '2px 4px',
+                          borderRadius: '4px',
+                          color: 'black',
+                          fontSize: '0.8em',
+                        }}
+                      >
+                        ★ {item.rating}
+                      </div>
+                    )}
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <p style={{ margin: '5px 0', color: '#666' }}>

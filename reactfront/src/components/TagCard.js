@@ -37,7 +37,7 @@ export default function TagCard() {
   }, [selectedTag]); // selectedTag가 변경될 때마다 데이터 다시 가져오기
 
   // 태그 목록 정의
-  const tags = ['가성비', '직원 만족', '청결도', '가족 여행', '연인', '위치', '풍경'];
+  const tags = ['가성비', '직원 만족', '청결', '가족 여행', '위치', '풍경'];
 
   // 숙소 상세 페이지로 이동하는 함수
   const goToAccommo = (accommoId) => {

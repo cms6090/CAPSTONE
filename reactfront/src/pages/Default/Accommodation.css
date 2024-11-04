@@ -1,7 +1,13 @@
 .hotel {
-  padding: 1% 25%;
+  padding: 1% 10%;
   display: flex;
   flex-direction: column;
+}
+
+@media (min-width: 1920px) {
+  .hotel {
+    padding: 1% 25%;
+  }
 }
 
 .hotel-image {
