@@ -1,14 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProfileReserve.css';
 import SettingList from '../../components/SettingList';
 import { Button2, Button5, Button6 } from '../../components/Button.style';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function ProfileReserve() {
-  const [reservations, setReservations] = useState([]); // Empty array if no reservations
+  const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // 예약 데이터 가져오기
   const fetchReservations = useCallback(async () => {
@@ -21,32 +26,20 @@ export default function ProfileReserve() {
 
     try {
       const response = await fetch('http://localhost:3000/api/reservations', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
+      if (!response.ok) throw new Error('예약 내역을 불러오는 데 실패했습니다.');
 
-      if (!response.ok) {
-        throw new Error('예약 내역을 불러오는 데 실패했습니다.');
-      }
+      const data = await response.json();
+      const reservationsData = Array.isArray(data) ? data : [];
 
-      let reservationsData = await response.json();
-
-      // reservationsData가 배열이 아닐 경우 빈 배열로 처리
-      if (!Array.isArray(reservationsData)) {
-        reservationsData = [];
-      }
-
-      // 리뷰 중복 여부 확인 후 예약 데이터 설정
       const updatedReservations = await Promise.all(
-        reservationsData.map(async (reservation) => {
-          const isReviewed = await checkDuplicateReview(reservation.reservation_id);
-          return { ...reservation, isReviewed };
-        }),
+        reservationsData.map(async (reservation) => ({
+          ...reservation,
+          isReviewed: await checkDuplicateReview(reservation.reservation_id),
+        })),
       );
-
-      setReservations(updatedReservations || []); // 빈 배열일 경우 기본값으로 빈 배열 설정
+      setReservations(updatedReservations);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -55,7 +48,7 @@ export default function ProfileReserve() {
   }, []);
 
   // 리뷰 중복 확인 함수
-  const checkDuplicateReview = async (reservationId) => {
+  const checkDuplicateReview = useCallback(async (reservationId) => {
     const token = sessionStorage.getItem('accessToken');
     if (!token) {
       setError('로그인이 필요합니다.');
@@ -64,15 +57,9 @@ export default function ProfileReserve() {
 
     try {
       const response = await fetch(`http://localhost:3000/api/reviews/check/${reservationId}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (!response.ok) {
-        throw new Error('리뷰 중복 여부를 확인하는 데 실패했습니다.');
-      }
+      if (!response.ok) throw new Error('리뷰 중복 여부를 확인하는 데 실패했습니다.');
 
       const data = await response.json();
       return data.exists;
@@ -80,31 +67,41 @@ export default function ProfileReserve() {
       setError(err.message);
       return false;
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchReservations();
   }, [fetchReservations]);
 
   const today = new Date();
-  const [pastReservations, currentReservations] = reservations.reduce(
-    ([past, current], reservation) => {
-      const checkOutDate = new Date(reservation.check_out_date);
-      if (checkOutDate < today) {
-        past.push(reservation);
-      } else {
-        current.push(reservation);
-      }
-      return [past, current];
-    },
-    [[], []],
-  );
 
-  const handleCardClick = (lodgingId) => {
-    navigate(`/accommodations/${lodgingId}`);
+  const { pastReservations, currentReservations } = useMemo(() => {
+    return reservations.reduce(
+      (acc, reservation) => {
+        const checkOutDate = new Date(reservation.check_out_date);
+        if (checkOutDate < today) acc.pastReservations.push(reservation);
+        else acc.currentReservations.push(reservation);
+        return acc;
+      },
+      { pastReservations: [], currentReservations: [] },
+    );
+  }, [reservations]);
+
+  const handleCardClick = (reservation) => {
+    const { rooms, check_in_date, check_out_date, person_num } = reservation;
+    const lodgingId = rooms?.lodgings?.lodging_id;
+    if (!lodgingId) return;
+
+    // 날짜 형식을 'YYYY-MM-DD'로 변환
+    const checkIn = new Date(check_in_date).toISOString().split('T')[0];
+    const checkOut = new Date(check_out_date).toISOString().split('T')[0];
+
+    navigate(
+      `/accommodations/${encodeURIComponent(lodgingId)}?checkIn=${checkIn}&checkOut=${checkOut}&personal=${person_num}`,
+    );
   };
 
-  const cancelReservation = async (reservationId) => {
+  const cancelReservation = useCallback(async (reservationId) => {
     const token = sessionStorage.getItem('accessToken');
     if (!token) {
       setError('로그인이 필요합니다.');
@@ -114,16 +111,11 @@ export default function ProfileReserve() {
     try {
       const response = await fetch(`http://localhost:3000/api/reservations/${reservationId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!response.ok) {
-        throw new Error('예약 취소에 실패했습니다.');
-      }
+      if (!response.ok) throw new Error('예약 취소에 실패했습니다.');
 
-      // 예약 취소 성공 시 예약 목록에서 해당 예약 제거
       setReservations((prevReservations) =>
         prevReservations.filter((reservation) => reservation.reservation_id !== reservationId),
       );
@@ -131,94 +123,113 @@ export default function ProfileReserve() {
     } catch (err) {
       setError(err.message);
     }
-  };
+  }, []);
 
-  const ReservationCard = ({ reservation, isPast }) => {
-    const { isReviewed } = reservation;
-
-    return (
-      <div
-        key={reservation.reservation_id}
-        className={`reserve-card ${isPast ? 'past' : ''}`}
-        style={{ cursor: 'pointer' }}
-      >
-        <div className="reserve-card-body">
-          <div
-            className="reserve-card-image"
-            onClick={() => handleCardClick(reservation.rooms?.lodgings?.lodging_id)}
-          >
-            <img src={reservation.rooms?.lodgings?.main_image} alt="객실 이미지" />
-          </div>
-          <div
-            className="reserve-card-contents"
-            onClick={() => handleCardClick(reservation.rooms?.lodgings?.lodging_id)}
-          >
-            <div style={{ fontSize: '1.2em' }}>
-              {reservation.rooms?.lodgings?.name || '숙소 정보 없음'}
-            </div>
-            <div style={{ color: 'rgba(0,0,0,0.5)', marginBottom: '1em' }}>
-              {reservation.rooms?.lodgings?.address}
-            </div>
-            <div className="reserve-card-contents-container">
-              <div className="reserve-card-contents-user">
-                <div>사용자 정보</div>
-                <div className="reserve-card-contents-user-details">
-                  <div className="reserve-card-contents-user-header">
-                    <p>이름</p>
-                    <p>전화번호</p>
-                  </div>
-                  <div className="reserve-card-contents-user-contents">
-                    <p>{reservation.username}</p>
-                    <p>{reservation.phonenumber}</p>
-                  </div>
-                </div>
+  const ReservationCard = ({ reservation, isPast }) => (
+    <div
+      key={reservation.reservation_id}
+      className={`reserve-card ${isPast ? 'past' : ''}`}
+      style={{ cursor: 'pointer' }}
+      onClick={() => handleCardClick(reservation)}
+    >
+      <div className="reserve-card-body">
+        <div className="reserve-card-image">
+          <img
+            src={reservation.rooms?.lodgings?.main_image || 'https://via.placeholder.com/150'}
+            alt="객실 이미지"
+          />
+        </div>
+        <div className="reserve-card-contents">
+          <div className="reserve-card-contents-header">
+            <div>
+              <div style={{ fontSize: '1.2em' }}>
+                {reservation.rooms?.lodgings?.name || '숙소 정보 없음'}
               </div>
-              <div className="reserve-card-contents-lodging">
-                <div className="reserve-card-contents-room">객실 정보</div>
-                <div className="reserve-card-contents-details">
-                  <div className="reserve-card-contents-details-header">
-                    <p>일정</p>
-                    <p>객실</p>
-                    <p>인원</p>
-                    <p>총 가격</p>
-                  </div>
-                  <div className="reserve-card-contents-details-details">
-                    <p>
-                      {new Date(reservation.check_in_date).toLocaleDateString()} 14:00 ~{' '}
-                      {new Date(reservation.check_out_date).toLocaleDateString()} 10:00
-                    </p>
-                    <p>{reservation.rooms?.room_name || '객실 정보 없음'}</p>
-                    <p>{reservation.person_num}명</p>
-                    <p>{new Intl.NumberFormat().format(reservation.total_price)} 원</p>
-                  </div>
-                </div>
+              <div style={{ color: 'rgba(0,0,0,0.5)', marginBottom: '1em' }}>
+                {reservation.rooms?.lodgings?.address || '주소 정보 없음'}
               </div>
             </div>
-          </div>
-          <div className="reserve-card-action">
-            {isPast ? (
-              !isReviewed ? (
-                <Button6 onClick={() => navigate('/review', { state: { reservation } })}>
-                  리뷰 작성
-                </Button6>
+            <div className="reserve-card-action">
+              {isPast ? (
+                !reservation.isReviewed ? (
+                  <Button6
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/review', { state: { reservation } });
+                    }}
+                  >
+                    리뷰 작성
+                  </Button6>
+                ) : (
+                  <Button6
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate('/review', { state: { reservation, isPast } });
+                    }}
+                  >
+                    리뷰 수정
+                  </Button6>
+                )
               ) : (
-                <Button6 onClick={() => navigate('/review', { state: { reservation, isPast } })}>
-                  리뷰 수정
-                </Button6>
-              )
-            ) : (
-              <Button5 onClick={() => cancelReservation(reservation.reservation_id)}>
-                예약 취소
-              </Button5>
-            )}
+                <Button5
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    cancelReservation(reservation.reservation_id);
+                  }}
+                >
+                  예약 취소
+                </Button5>
+              )}
+            </div>
+          </div>
+          <div className="reserve-card-contents-container">
+            <div className="reserve-card-contents-user">
+              <div>사용자 정보</div>
+              <div className="reserve-card-contents-user-details">
+                <div className="reserve-card-contents-user-header">
+                  <p>이름</p>
+                  <p>전화번호</p>
+                </div>
+                <div className="reserve-card-contents-user-contents">
+                  <p>{reservation.username}</p>
+                  <p>{reservation.phonenumber}</p>
+                </div>
+              </div>
+            </div>
+            <div className="reserve-card-contents-lodging">
+              <div className="reserve-card-contents-room">객실 정보</div>
+              <div className="reserve-card-contents-details">
+                <div className="reserve-card-contents-details-header">
+                  <p>일정</p>
+                  <p>객실</p>
+                  <p>인원</p>
+                  <p>총 가격</p>
+                </div>
+                <div className="reserve-card-contents-details-details">
+                  <p>
+                    {new Date(reservation.check_in_date).toLocaleDateString()} 14:00 ~
+                    {new Date(reservation.check_out_date).toLocaleDateString()} 10:00
+                  </p>
+                  <p>{reservation.rooms?.room_name || '객실 정보 없음'}</p>
+                  <p>{reservation.person_num}명</p>
+                  <p>{new Intl.NumberFormat().format(reservation.total_price)} 원</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
   if (loading) {
-    return <div className="loading">로딩 중...</div>;
+    return (
+      <div
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (
@@ -229,7 +240,6 @@ export default function ProfileReserve() {
       <div className="reserve-info">
         <h2>예약 내역</h2>
         <div className="reserve-info-container">
-          {/* 현재 예약 */}
           <div className="reserve-info-title">현재 예약</div>
           {currentReservations.length > 0 ? (
             currentReservations.map((reservation) => (
@@ -244,7 +254,6 @@ export default function ProfileReserve() {
             </div>
           )}
 
-          {/* 지난 예약 */}
           <div className="reserve-info-title" style={{ marginTop: '1.2em' }}>
             지난 예약
           </div>
@@ -258,8 +267,6 @@ export default function ProfileReserve() {
             </div>
           )}
 
-
-          {/* 오류 메시지 처리 */}
           {error && (
             <div className="error-message">
               <p>{error}</p>

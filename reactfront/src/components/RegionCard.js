@@ -33,7 +33,7 @@ const swiperList = [
 ];
 
 export default function RegionCard() {
-  const { startDate, endDate, numPeople } = useContext(SearchContext); // Destructure the context values
+  const { setKeyword, startDate, endDate, numPeople } = useContext(SearchContext); // Destructure the context values
   const swiperRef = useRef(null); // Swiper 인스턴스를 저장할 ref
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
 
@@ -42,6 +42,7 @@ export default function RegionCard() {
     const checkIn = startDate ? startDate.toISOString().split('T')[0] : '';
     const checkOut = endDate ? endDate.toISOString().split('T')[0] : '';
     const personal = numPeople || 1;
+    setKeyword(regionName);
 
     navigate(
       `/accommodations?keyword=${encodeURIComponent(regionName)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,

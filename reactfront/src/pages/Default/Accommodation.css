@@ -1,8 +1,13 @@
 .hotel {
   padding: 1% 10%;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+@media (min-width: 1920px) {
+  .hotel {
+    padding: 1% 25%;
+  }
 }
 
 .hotel-image {
@@ -120,47 +125,77 @@
   margin-bottom: 5em;
 }
 
-@media screen and (max-width: 1600px) {
+@media screen and (max-width: 1200px) {
   .hotel-room-card {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1em;
   }
+
+  .hotel-room-card-containers {
+    display: block;
+    height: 20em;
+  }
+}
+
+@media screen and (min-width: 1200px) and (max-width: 1400px) {
+  .hotel-room-card-time {
+    grid-template-columns: 1fr !important;
+    gap: 1em;
+  }
+
+  .hotel-room-card-end {
+    grid-template-columns: 1fr !important;
+    gap: 1em;
+  }
+
+  .check-in-out,
+  .check-in-out {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
+  }
 }
 
 .hotel-room-card-container {
+  width: 100%;
+  height: 15em;
   background-color: #f5f7fa;
   border-radius: 15px;
-  padding: 3%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr 2.5fr;
-  gap: 3%;
   align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.hotel-room-card-containers {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: 1em;
+
+  padding: 1em;
 }
 
 .hotel-room-card-img {
-  width: 100%;
-  object-fit: cover;
-  overflow: hidden;
+  height: 100%; /* 부모 높이에 맞추기 */
+  aspect-ratio: 1 / 1; /* 1:1 비율 유지 */
   border-radius: 15px;
-  aspect-ratio: 1 / 1;
-  height: 100%;
+  overflow: hidden;
+  flex-shrink: 0; /* 너비 줄어들지 않게 고정 */
 }
 
 .hotel-room-card-img img {
   width: 100%;
   height: 100%;
-  margin: 0;
-  object-fit: cover;
+  object-fit: cover; /* 이미지 비율 유지하면서 꽉 채우기 */
   border-radius: 15px;
 }
 
 .hotel-room-card-content-container {
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
 }
 
 .hotel-room-card-details {
@@ -169,20 +204,22 @@
   background-color: white;
   border: none;
   border-radius: 15px;
-  padding: 5%;
+  padding: 1em;
+  height: 100%;
 }
 
 .hotel-room-card-time {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 3%;
+  gap: 1em;
   margin-bottom: 5%;
 }
 
 .hotel-room-card-end {
   margin: 1% 0%;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
 }
 
 .hotel-room-card-detail-modal {
@@ -210,4 +247,28 @@
 
 .more-photos-overlay {
   font-size: 0.8em;
+}
+
+.available-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.price-info {
+  text-align: right;
+}
+
+.reserve-button {
+  font-size: 0.8em;
+  font-weight: 800;
+  color: white;
+  width: 100%;
+  padding: 1em;
+  border-radius: 0.7em;
+  background-color: #097ce6;
+  border: none;
+}
+
+.hotel-room {
+  margin: 0 0 5em 0;
 }

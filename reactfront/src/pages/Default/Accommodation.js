@@ -6,6 +6,8 @@ import MapModal from '../../components/MapModal';
 import { Button2 } from '../../components/Button.style';
 import RoomModal from '../../components/RoomModal';
 import { BsFillImageFill } from 'react-icons/bs';
+import ReviewList from '../../components/ReviewList';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Accommodation() {
   const { id } = useParams();
@@ -19,23 +21,27 @@ export default function Accommodation() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 추가
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
       try {
-        const queryParams = new URLSearchParams(location.search);
+        const queryParams = new URLSearchParams(window.location.search);
         const checkIn = queryParams.get('checkIn');
         const checkOut = queryParams.get('checkOut');
 
         const response = await fetch(
-          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`
+          `http://localhost:3000/api/accommodations/${id}?checkIn=${checkIn}&checkOut=${checkOut}`,
         );
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
         }
         const data = await response.json();
         setAccommodation(data);
-        console.log(data);
       } catch (error) {
         console.error('Error fetching accommodation details:', error);
         setError(error.message);
@@ -44,14 +50,34 @@ export default function Accommodation() {
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/reviews/accommodation/${id}`);
+        if (!response.ok) {
+          throw new Error('리뷰를 가져오는 데 실패했습니다.');
+        }
+        const reviewData = await response.json();
+        setReviews(reviewData);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
     const loggedIn = sessionStorage.getItem('userEmail');
     setIsLoggedIn(!!loggedIn);
 
     fetchAccommodationDetails();
+    fetchReviews();
   }, [id, location.search]);
 
   if (loading) {
-    return <h2>로딩 중...</h2>;
+    return (
+      <div
+        style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
+        <CircularProgress />
+      </div>
+    );
   }
 
   if (error) {
@@ -83,33 +109,36 @@ export default function Accommodation() {
       alert('숙소 정보를 로드하는 중입니다. 잠시 후 다시 시도해주세요.');
       return;
     }
-  
+
     if (!accommodation) {
       alert('숙소 정보를 찾을 수 없습니다.');
       return;
     }
-  
+
     if (!isLoggedIn) {
       alert('예약을 하려면 로그인이 필요합니다. 로그인 페이지로 이동합니다.');
       navigate('/login');
       return;
     }
-  
+
     // 현재 URL에서 쿼리 파라미터 가져오기
     const queryParams = new URLSearchParams(location.search);
     const checkIn = queryParams.get('checkIn');
     const checkOut = queryParams.get('checkOut');
     const personal = queryParams.get('personal');
-  
+    console.log(queryParams, checkIn, checkOut);
+
     // 쿼리 파라미터가 있는 경우 예약 페이지로 함께 전달
-    navigate(`/reserve?accommodationId=${accommodation.lodging_id}&roomId=${room.room_id}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`, {
-      state: {
-        accommodation: accommodation,
-        room: room,
+    navigate(
+      `/reserve?accommodationId=${accommodation.lodging_id}&roomId=${room.room_id}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
+      {
+        state: {
+          accommodation: accommodation,
+          room: room,
+        },
       },
-    });
+    );
   };
-  
 
   const roomPhotos = accommodation.rooms.flatMap((room) => room.room_photos || []);
   const displayedPhotos = roomPhotos.slice(0, 4);
@@ -185,62 +214,69 @@ export default function Accommodation() {
         <div className="hotel-room-card">
           {accommodation.rooms.map((room) => (
             <div className="hotel-room-card-container" key={room.room_id}>
-              <div className="hotel-room-card-img">
-                <img
-                  src={room.room_photos && room.room_photos[0] ? room.room_photos[0] : defaultImage}
-                  alt="객실 이미지"
-                />
-              </div>
-              <div className="hotel-room-card-content-container">
-                <div className="hotel-room-card-header">
-                  <div>{room.room_name}</div>
-                  <div
-                    className="hotel-room-card-detail-modal"
-                    onClick={() => openRoomDetails(room)}
-                  >
-                    <div>상세정보</div>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: 'inherit', marginLeft: '4px' }}
+              <div className="hotel-room-card-containers">
+                <div className="hotel-room-card-img">
+                  <img
+                    src={
+                      room.room_photos && room.room_photos[0] ? room.room_photos[0] : defaultImage
+                    }
+                    alt="객실 이미지"
+                  />
+                </div>
+                <div className="hotel-room-card-content-container">
+                  <div className="hotel-room-card-header">
+                    <div>{room.room_name}</div>
+                    <div
+                      className="hotel-room-card-detail-modal"
+                      onClick={() => openRoomDetails(room)}
                     >
-                      arrow_forward_ios
-                    </span>
+                      <div>상세정보</div>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 'inherit', marginLeft: '4px' }}
+                      >
+                        arrow_forward_ios
+                      </span>
+                    </div>
+                  </div>
+                  <div className="hotel-room-card-details">
+                    <div className="hotel-room-card-time">
+                      <div className="check-in-out">
+                        <div className="check-label">체크인</div>
+                        <div className="check-time">14:00</div>
+                      </div>
+                      <div className="check-in-out">
+                        <div className="check-label">체크아웃</div>
+                        <div className="check-time">10:00</div>
+                      </div>
+                    </div>
+                    <div className="hotel-room-card-end">
+                      <div className="occupancy-info">
+                        기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
+                      </div>
+                      <div className="available-info">
+                        <div>잔여 객실 : {room.available_count}</div>
+                        <div className="price-info">
+                          {new Intl.NumberFormat().format(room.price_per_night)} 원
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ height: '100%' }}>
+                      <button
+                        onClick={room.available_count > 0 ? () => handleReserve(room) : null}
+                        disabled={room.available_count === 0}
+                        style={{
+                          width: '100%',
+                          backgroundColor: room.available_count == 0 ? 'grey' : '',
+                          cursor: room.available_count == 0 ? 'not-allowed' : 'pointer',
+                        }}
+                        className="reserve-button"
+                      >
+                        {room.available_count == 0 ? '예약 불가' : '예약하기'}
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div className="hotel-room-card-details">
-  <div className="hotel-room-card-time">
-    <div className="check-in-out">
-      <div className="check-label">체크인</div>
-      <div className="check-time">14:00</div>
-    </div>
-    <div className="check-in-out">
-      <div className="check-label">체크아웃</div>
-      <div className="check-time">10:00</div>
-    </div>
-  </div>
-  <div className="hotel-room-card-end">
-    <div className="occupancy-info">
-      기준 {room.min_occupancy}인 · 최대 {room.max_occupancy}인
-    </div>
-    <div className="available-info">
-      잔여석: {room.available_count}
-    </div>
-    <div className="price-info">
-      {new Intl.NumberFormat().format(room.price_per_night)} 원
-    </div>
-  </div>
-  <Button2
-    onClick={room.available_count > 0 ? () => handleReserve(room) : null}
-    disabled={room.available_count === 0}
-    style={{
-      width: '100%',
-      backgroundColor: room.available_count == 0 ? 'grey' : '',
-      cursor: room.available_count == 0 ? 'not-allowed' : 'pointer',
-    }}
-  >
-    {room.available_count == 0 ? '예약 불가' : '예약하기'}
-  </Button2>
-</div>
               </div>
             </div>
           ))}
@@ -265,6 +301,16 @@ export default function Accommodation() {
           </div>
         </MapModal>
       )}
+
+      {/* 리뷰 리스트 컴포넌트 추가 */}
+      <section className="hotel-reviews">
+        <div>
+          <div>
+            <span className="star-icon">★</span> 리뷰 <span>{reviews.length}건</span>
+          </div>
+          <ReviewList reviews={reviews} />
+        </div>
+      </section>
     </div>
   );
 }

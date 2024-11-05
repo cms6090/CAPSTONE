@@ -7,7 +7,7 @@ export const SearchContext = createContext();
 export const SearchProvider = ({ children }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [numPeople, setNumPeople] = useState(1);
+  const [numPeople, setNumPeople] = useState(2);
   const [keyword, setKeyword] = useState('');
 
   return (

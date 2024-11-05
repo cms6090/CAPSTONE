@@ -87,7 +87,7 @@ export default function SearchSection() {
     const encodedKeyword = keyword ? encodeURIComponent(keyword) : ''; // 검색어 인코딩
     const checkIn = startDate ? startDate.toISOString().split('T')[0] : ''; // 시작 날짜, 없으면 빈 값
     const checkOut = endDate ? endDate.toISOString().split('T')[0] : ''; // 종료 날짜, 없으면 빈 값
-    const personal = numPeople || 1; // 인원 수가 없으면 기본값 1
+    const personal = numPeople || 2; // 인원 수가 없으면 기본값 1
 
     // URL 생성
     const searchUrl = `/accommodations?keyword=${encodedKeyword}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`;
@@ -167,10 +167,12 @@ export default function SearchSection() {
           top: '115%',
           left: '60%', // input 왼쪽 정렬
           zIndex: 1000,
-          width: '25%', // 원하는 너비 설정
+          width: '30%', // 원하는 너비 설정
+          backgroundColor: 'transparent',
         }}
       >
-        <NumPicker onNumSelect={setNumPeople} /> {/* 인원 수 선택 후 상태 업데이트 */}
+        <NumPicker onNumSelect={setNumPeople} style={{ width: '100%' }} />
+        {/* 인원 수 선택 후 상태 업데이트 */}
       </div>
 
       <div>

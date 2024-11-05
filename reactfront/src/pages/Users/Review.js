@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Review.css';
-import { Button2, Button4 } from '../../components/Button.style';
+import { Button2, Button5 } from '../../components/Button.style';
 import Rating from '@mui/material/Rating';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import IconButton from '@mui/material/IconButton';
@@ -83,7 +83,6 @@ export default function Review() {
   // 리뷰 제출 처리 함수
   const handleSubmit = async () => {
     if (!rating) return setError('별점을 선택해주세요.');
-    if (!reviewText.trim()) return setError('리뷰 내용을 작성해주세요.');
     if (images.length > 5) return setError('이미지는 최대 5개까지 업로드할 수 있습니다.');
 
     try {
@@ -261,12 +260,12 @@ export default function Review() {
           {error && <div className="error-message">{error}</div>}
           <div className="review-actions">
             <Button2 onClick={handleSubmit}>리뷰 제출</Button2>
-            <Button4
+            <Button5
               onClick={() => navigate('/profile/reservations')}
-              style={{ marginLeft: '1em' }}
+              style={{ marginLeft: '1em', height: '100%' }}
             >
               취소
-            </Button4>
+            </Button5>
           </div>
         </div>
       </div>

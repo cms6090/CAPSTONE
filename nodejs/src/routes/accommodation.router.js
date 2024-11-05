@@ -15,11 +15,33 @@ AccommodationsRouter.use(compression());
 ---------------------------------------------*/
 AccommodationsRouter.get('/part', async (req, res, next) => {
   try {
-    let { keyword, checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
+    const { keyword = '', checkIn, checkOut, personal = '2', minPrice, maxPrice } = req.query;
 
-    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut); // 체크인과 체크아웃 날짜 로그 출력
+    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut);
 
-    // 숙소 검색 쿼리 실행
+    // 조건 빌딩을 위한 파라미터 배열
+    const queryParams = [];
+    const whereConditions = ['1=1'];
+
+    // 동적 조건 추가
+    if (keyword) {
+      whereConditions.push(`(l.name LIKE ? OR l.area LIKE ? OR l.sigungu LIKE ?)`);
+      queryParams.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
+    }
+    if (minPrice) {
+      whereConditions.push(`r.price_per_night >= ?`);
+      queryParams.push(Number(minPrice));
+    }
+    if (maxPrice) {
+      whereConditions.push(`r.price_per_night <= ?`);
+      queryParams.push(Number(maxPrice));
+    }
+    if (personal) {
+      whereConditions.push(`r.min_occupancy <= ? AND r.max_occupancy >= ?`);
+      queryParams.push(Number(personal), Number(personal));
+    }
+
+    // 최종 쿼리 생성
     const rawQuery = `
       SELECT
         l.lodging_id,
@@ -37,22 +59,29 @@ AccommodationsRouter.get('/part', async (req, res, next) => {
       LEFT JOIN
         rooms r ON l.lodging_id = r.lodging_id
       WHERE
-        1=1
-        ${keyword ? `AND (l.name LIKE '%${keyword}%' OR l.area LIKE '%${keyword}%' OR l.sigungu LIKE '%${keyword}%')` : ''}
-        ${minPrice ? `AND r.price_per_night >= ${minPrice}` : ''}
-        ${maxPrice ? `AND r.price_per_night <= ${maxPrice}` : ''}
+        ${whereConditions.join(' AND ')}
       GROUP BY
         l.lodging_id;
     `;
 
-    // Prisma를 사용하여 raw SQL 쿼리 실행
-    const accommodations = await prisma.$queryRawUnsafe(rawQuery);
+    console.log('Executing SQL Query:', rawQuery);
+    console.log('With parameters:', queryParams);
+
+    // Prisma를 통해 raw SQL 쿼리 실행
+    const accommodations = await prisma.$queryRawUnsafe(rawQuery, ...queryParams);
+
+    // BigInt 값을 문자열로 변환하여 JSON으로 반환
+    const sanitizedAccommodations = JSON.parse(
+      JSON.stringify(accommodations, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
 
     // 검색 결과를 클라이언트에게 반환
-    return res.status(StatusCodes.OK).json(accommodations);
+    return res.status(StatusCodes.OK).json(sanitizedAccommodations);
   } catch (error) {
-    // 에러 발생 시 상태 코드와 에러 메시지를 반환
-    throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
+    console.error('Error fetching accommodations:', error);
+    next(new StatusError(error.message, StatusCodes.BAD_REQUEST));
   }
 });
 
@@ -61,6 +90,8 @@ AccommodationsRouter.get('/part', async (req, res, next) => {
 ---------------------------------------------*/
 AccommodationsRouter.get('/', async (req, res, next) => {
   try {
+    console.log('Received request query:', req.query);
+
     let {
       keyword = '',
       checkIn,
@@ -68,22 +99,29 @@ AccommodationsRouter.get('/', async (req, res, next) => {
       personal = '2',
       minPrice = '0',
       maxPrice = '1000000',
+      tag = [], // 여러 태그를 배열로 처리
+      age_group, // 연령대 필터 추가
     } = req.query;
+
+    if (typeof tag === 'string') {
+      tag = [tag]; // 단일 태그도 배열로 변환
+    }
 
     personal = Number(personal);
 
-    // Log the incoming query parameters for debugging
-    console.log(req.query);
-    console.log('Final checkIn:', checkIn, 'Final checkOut:', checkOut);
-
-    // Ensure checkIn and checkOut dates have fallback values
     const today = dayjs().format('YYYY-MM-DD');
     const tomorrow = dayjs().add(1, 'day').format('YYYY-MM-DD');
 
     checkIn = checkIn || today;
     checkOut = checkOut || tomorrow;
 
-    // Prepare the SQL query
+    // 여러 태그 조건을 LIKE와 AND로 결합
+    const tagConditions = tag.map(() => `l.tag LIKE CONCAT('%', ?, '%')`).join(' AND ');
+    const tagQuery = tagConditions ? `AND (${tagConditions})` : '';
+
+    // 연령대 조건 추가
+    const ageGroupCondition = age_group ? `AND CONCAT(FLOOR((YEAR(CURDATE()) - YEAR(u.birth)) / 10) * 10, '대') = ?` : '';
+
     const rawQuery = `
       SELECT 
         l.lodging_id, 
@@ -117,39 +155,211 @@ AccommodationsRouter.get('/', async (req, res, next) => {
       ) reserved_rooms 
       ON 
         r.room_id = reserved_rooms.room_id 
+      ${age_group ? 'JOIN users u ON r.user_id = u.user_id' : ''} -- 연령대 조건이 있을 때만 사용자 정보와 연결
       WHERE 
-        (l.name LIKE CONCAT('%', ?, '%') OR l.area LIKE CONCAT('%', ?, '%') OR l.sigungu LIKE CONCAT('%', ?, '%'))
+        (l.name LIKE CONCAT('%', ?, '%') 
+         OR l.area LIKE CONCAT('%', ?, '%') 
+         OR l.sigungu LIKE CONCAT('%', ?, '%'))
         AND r.price_per_night BETWEEN ? AND ?
         AND r.min_occupancy <= ?
         AND r.max_occupancy >= ?
+        ${tagQuery} -- 모든 태그를 포함하는 조건 추가
+        ${ageGroupCondition} -- 연령대 조건 추가
       GROUP BY 
         l.lodging_id 
       HAVING 
         available_rooms > 0;
     `;
 
-    // Execute the query safely with placeholders
-    const accommodations = await prisma.$queryRawUnsafe(
-      rawQuery,
-      checkOut, // First ? for check_in_date in the subquery
-      checkIn, // Second ? for check_out_date in the subquery
-      keyword, // Third ? for name, area, sigungu search term
-      keyword, // Fourth ? for name, area, sigungu search term
-      keyword, // Fifth ? for name, area, sigungu search term
-      minPrice, // Sixth ? for min price
-      maxPrice, // Seventh ? for max price
-      personal, // Eighth ? for min occupancy
-      personal, // Ninth ? for max occupancy
+    // 쿼리 파라미터 설정
+    const queryParams = [
+      checkIn,
+      checkOut,
+      keyword,
+      keyword,
+      keyword,
+      minPrice,
+      maxPrice,
+      personal,
+      personal,
+      ...tag, // 각 태그를 파라미터에 추가
+    ];
+    if (age_group) {
+      queryParams.push(age_group); // 연령대 필터 파라미터 추가
+    }
+
+    console.log('Executing SQL Query:', rawQuery);
+    console.log('With parameters:', queryParams);
+
+    // 쿼리 실행
+    const accommodations = await prisma.$queryRawUnsafe(rawQuery, ...queryParams);
+
+    // BigInt 값을 문자열로 변환하여 JSON으로 반환
+    const sanitizedAccommodations = JSON.parse(
+      JSON.stringify(accommodations, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
     );
 
-    console.log('Search results:', accommodations);
-
-    // Return the search results to the client
-    return res.status(StatusCodes.OK).json(accommodations);
+    return res.status(StatusCodes.OK).json(sanitizedAccommodations);
   } catch (error) {
-    // Log the error and return an appropriate response
     console.error('Error fetching accommodations:', error);
     throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
+  }
+});
+
+/*---------------------------------------------
+    [태그별 숙박 업소 조회]
+---------------------------------------------*/
+AccommodationsRouter.get('/tag', async (req, res, next) => {
+  try {
+    const { tag, personal = 2 } = req.query;
+
+    // SQL 쿼리 생성 - 태그 조건 및 인원 수 조건에 맞는 숙소 검색
+    const rawQuery = `
+      SELECT
+        l.lodging_id,
+        l.name,
+        l.part,
+        l.area,
+        l.sigungu,
+        l.rating,
+        l.tel,
+        l.address,
+        l.main_image,
+        MIN(r.price_per_night) AS min_price_per_night
+      FROM
+        lodgings l
+      LEFT JOIN
+        rooms r ON l.lodging_id = r.lodging_id
+      WHERE
+        ${tag ? `l.tag LIKE ?` : '1=1'} -- tag 조건 추가
+        AND r.min_occupancy <= ? AND r.max_occupancy >= ? -- 인원 수 조건 추가
+      GROUP BY
+        l.lodging_id;
+    `;
+
+    // 쿼리 실행에 필요한 파라미터 설정
+    const queryParams = [];
+    if (tag) queryParams.push(`%${tag}%`);
+    queryParams.push(Number(personal), Number(personal));
+
+    // 생성된 쿼리 로그 출력
+    console.log('Executing SQL Query:', rawQuery);
+    console.log('With parameters:', queryParams);
+
+    // Prisma로 raw SQL 쿼리 실행
+    const accommodations = await prisma.$queryRawUnsafe(rawQuery, ...queryParams);
+
+    // BigInt 값을 문자열로 변환하여 JSON으로 반환
+    const sanitizedAccommodations = JSON.parse(
+      JSON.stringify(accommodations, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+
+    // 검색 결과를 클라이언트에게 반환
+    return res.status(StatusCodes.OK).json(sanitizedAccommodations);
+  } catch (error) {
+    // 에러 발생 시 에러 메시지와 상태 코드 반환
+    console.error('Error fetching accommodations by tag:', error);
+    throw new StatusError(error.message, StatusCodes.BAD_REQUEST);
+  }
+});
+
+/*---------------------------------------------
+    [숙박 업소 연령대별 조회]
+---------------------------------------------*/
+AccommodationsRouter.get('/age-group', async (req, res, next) => {
+  try {
+    const { age_group, personal = 2 } = req.query;
+
+    if (!age_group) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Age group is required' });
+    }
+
+    // 연령대와 인원 수에 맞는 숙소 조회 쿼리
+    const rawQuery = `
+      WITH AgeGroupReservations AS (
+          SELECT 
+              l.lodging_id, -- 숙소 ID
+              l.name AS lodging_name, -- 숙소 이름
+              l.part AS lodging_part, -- 숙소 파트
+              l.area AS lodging_area, -- 숙소 지역
+              l.sigungu AS lodging_sigungu, -- 숙소 시군구
+              l.rating AS lodging_rating, -- 숙소 평점
+              l.tel AS lodging_tel, -- 숙소 전화번호
+              l.address AS lodging_address, -- 숙소 주소
+              l.main_image AS lodging_main_image, -- 숙소 메인 이미지
+              CONCAT(FLOOR((YEAR(CURDATE()) - YEAR(u.birth)) / 10) * 10, '대') AS age_group, -- 연령대 계산
+              COUNT(r.reservation_id) AS reservation_count, -- 해당 숙소에서 해당 연령대의 예약 수
+              MIN(rm.price_per_night) AS min_price_per_night -- 최소 1박 가격
+          FROM 
+              reservations AS r
+          JOIN 
+              rooms AS rm ON r.room_id = rm.room_id
+          JOIN 
+              lodgings AS l ON rm.lodging_id = l.lodging_id
+          JOIN 
+              users AS u ON r.user_id = u.user_id
+          WHERE
+              rm.min_occupancy <= ? AND rm.max_occupancy >= ? -- 인원 수 필터링
+          GROUP BY 
+              l.lodging_id, age_group
+      ),
+      MaxAgeGroupReservations AS (
+          SELECT 
+              lodging_id,
+              MAX(reservation_count) AS max_reservation_count -- 각 숙소에서 가장 예약 수가 많은 연령대의 예약 수
+          FROM 
+              AgeGroupReservations
+          GROUP BY 
+              lodging_id
+      )
+
+      SELECT 
+          agr.lodging_id,
+          agr.lodging_name,
+          agr.lodging_part,
+          agr.lodging_area,
+          agr.lodging_sigungu,
+          agr.lodging_rating,
+          agr.lodging_tel,
+          agr.lodging_address,
+          agr.lodging_main_image,
+          agr.min_price_per_night
+      FROM 
+          AgeGroupReservations AS agr
+      JOIN 
+          MaxAgeGroupReservations AS mgr ON agr.lodging_id = mgr.lodging_id
+          AND agr.reservation_count = mgr.max_reservation_count -- 가장 많은 예약 수인 연령대만 선택
+      WHERE 
+          agr.age_group = ? -- 사용자가 입력한 연령대 필터링
+      ORDER BY 
+          agr.reservation_count DESC
+      LIMIT 12; -- 결과를 12개로 제한
+    `;
+
+    // 쿼리 실행 시 필요한 파라미터 (personal과 age_group)
+    const accommodations = await prisma.$queryRawUnsafe(
+      rawQuery,
+      Number(personal),
+      Number(personal),
+      age_group,
+    );
+
+    // BigInt 값을 문자열로 변환하여 JSON으로 반환
+    const sanitizedAccommodations = JSON.parse(
+      JSON.stringify(accommodations, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+
+    // 검색 결과를 클라이언트에게 반환
+    return res.status(StatusCodes.OK).json(sanitizedAccommodations);
+  } catch (error) {
+    console.error('Error fetching accommodations by age group:', error);
+    next(error);
   }
 });
 
@@ -160,6 +370,8 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
   try {
     const { lodgingId } = req.params;
     const { checkIn, checkOut } = req.query;
+
+    console.log(checkIn, checkOut);
 
     // 기본 숙소 정보 쿼리
     const query = `
@@ -228,6 +440,7 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
 
     // 잔여석 확인 쿼리 (checkIn과 checkOut이 있을 경우)
     if (checkIn && checkOut) {
+      console.log(checkIn, checkOut);
       const availabilityQuery = `
         SELECT r.room_id, r.room_count - IFNULL(COUNT(res.room_id), 0) AS available_rooms
         FROM rooms r
@@ -241,7 +454,7 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
         availabilityQuery,
         checkOut,
         checkIn,
-        parseInt(lodgingId)
+        parseInt(lodgingId),
       );
 
       // 방 별로 잔여석 수를 설정
@@ -260,8 +473,8 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
     // BigInt를 문자열로 변환
     const sanitizedLodgingDetails = JSON.parse(
       JSON.stringify(lodgingDetails, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value
-      )
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
     );
 
     console.log(sanitizedLodgingDetails);
@@ -271,6 +484,5 @@ AccommodationsRouter.get('/:lodgingId', async (req, res, next) => {
     next(error);
   }
 });
-
 
 export default AccommodationsRouter;

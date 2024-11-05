@@ -8,6 +8,12 @@
   margin-bottom: 0;
 }
 
+@media (min-width: 1920px) {
+  .header {
+    padding: 1% 25%; /* 1% 30%로 padding 변경 */
+  }
+}
+
 .user-set {
   display: flex;
   align-items: center;

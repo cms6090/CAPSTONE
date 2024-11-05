@@ -1,6 +1,5 @@
 .review-page {
-  margin: 3% auto;
-  width: 80%;
+  margin: 3% 25%;
 }
 
 .review-container {
@@ -46,6 +45,7 @@
 .review-text-input {
   width: 100%;
   padding: 1em;
+  height: 25em;
   border-radius: 10px;
   border: 1px solid lightgray;
 }

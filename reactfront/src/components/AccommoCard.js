@@ -3,37 +3,36 @@ import React, { useRef, useState, useEffect, useContext } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './AccommoCard.css';
 import { useNavigate } from 'react-router-dom';
-import { SearchContext } from './SearchContext'; // Import the context
+import { SearchContext } from './SearchContext';
 import { Button3 } from './Button.style';
 
 import arrowLeft from '../assets/Arrowleft.svg';
 import arrowRight from '../assets/Arrowright.svg';
 
 export default function AccommoCard() {
-  const { startDate, endDate, numPeople } = useContext(SearchContext); // Destructure the context values
-  const [accommodations, setAccommodations] = useState([]); // 숙소 데이터를 저장할 상태 관리
-  const [selectedCategory, setSelectedCategory] = useState('전체'); // 선택된 숙소 카테고리 상태 관리
-  const swiperRef = useRef(null); // Swiper 인스턴스를 참조하기 위한 ref
-  const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
+  const { startDate, endDate, numPeople } = useContext(SearchContext);
+  const [accommodations, setAccommodations] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const swiperRef = useRef(null);
+  const navigate = useNavigate();
 
   // 컴포넌트가 마운트될 때 숙소 데이터를 가져오는 useEffect
   useEffect(() => {
     const fetchAccommodations = async () => {
       try {
-        // 숙소 데이터를 API에서 가져옴
-        const response = await fetch('http://localhost:3000/api/accommodations/part');
-        if (!response.ok) {
-          throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
-        }
+        const response = await fetch(
+          `http://localhost:3000/api/accommodations/part?personal=${numPeople}`,
+        );
+        if (!response.ok) throw new Error('Failed to fetch accommodations data.');
+
         const data = await response.json();
-        setAccommodations(data); // 가져온 데이터를 상태에 저장
+        setAccommodations(data);
       } catch (error) {
-        console.error('Error fetching accommodations:', error); // 에러 발생 시 콘솔에 출력
+        console.error('Error fetching accommodations:', error);
       }
     };
-
-    fetchAccommodations(); // 함수 호출
-  }, []);
+    fetchAccommodations();
+  }, [numPeople]);
 
   // 숙소 데이터를 카테고리별로 필터링한 객체
   const categories = {
@@ -49,15 +48,15 @@ export default function AccommoCard() {
     '전통 숙소': accommodations.filter((data) => data.part === '한옥'),
   };
 
-  console.log(startDate, endDate);
-
   // 특정 숙소 상세 페이지로 이동하는 함수
   const goToAccommo = (accommoId) => {
     const checkIn = startDate ? startDate.toISOString().split('T')[0] : '';
     const checkOut = endDate ? endDate.toISOString().split('T')[0] : '';
     const personal = numPeople || 1;
 
-    navigate(`/accommodations/${encodeURIComponent(accommoId)}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`); // 숙소 ID를 URL에 포함하여 이동
+    navigate(
+      `/accommodations/${encodeURIComponent(accommoId)}?checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`,
+    ); // 숙소 ID를 URL에 포함하여 이동
   };
 
   // 슬라이드 이동 처리 함수
@@ -116,11 +115,29 @@ export default function AccommoCard() {
                 <div className="accommo-info">
                   <div className="accommo-part">{data.part}</div>
                   <div className="accommo-title">{data.name}</div>
-                  <div className="accommo-addr">{data.address}</div>
+                  <div className="accommo-addr">
+                    {data.area} {data.sigungu}
+                  </div>
                   <div className="accommo-price">
+                    {data.rating && data.rating !== '0' ? (
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          backgroundColor: 'rgb(255,173,10)',
+                          padding: '1px 4px',
+                          borderRadius: '4px',
+                          color: 'black',
+                          fontSize: '0.7em',
+                        }}
+                      >
+                        ★ {parseFloat(data.rating).toFixed(1)}
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
                     {data.min_price_per_night ? (
                       // 가격이 있을 경우 가격 표시, 없을 경우 '정보 없음' 표시
-                      <>
+                      <div>
                         {parseInt(data.min_price_per_night).toLocaleString()}
                         <span
                           style={{
@@ -132,7 +149,7 @@ export default function AccommoCard() {
                         >
                           원 ~
                         </span>
-                      </>
+                      </div>
                     ) : (
                       '정보 없음'
                     )}

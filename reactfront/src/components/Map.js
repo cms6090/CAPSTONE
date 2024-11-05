@@ -7,15 +7,22 @@ export default function Map({ locations }) {
 
     if (naver) {
       const geocodeAddress = (address) => {
-        return new Promise((resolve, reject) => {
+        console.log('Geocoding address:', address);
+        return new Promise((resolve) => {
           naver.maps.Service.geocode({ address }, (status, response) => {
-            if (status === naver.maps.Service.Status.OK && response.v2.addresses.length > 0) {
+            if (
+              status === naver.maps.Service.Status.OK &&
+              response.v2 &&
+              response.v2.addresses &&
+              response.v2.addresses.length > 0
+            ) {
               const result = response.v2.addresses[0];
               const position = new naver.maps.LatLng(result.y, result.x);
               resolve(position);
             } else {
-              console.error('주소 변환 실패:', status, response);
-              reject('주소 변환 실패');
+              console.warn('주소 변환 실패:', status, response); // 로그 출력
+              // 기본 위치로 설정 (예: 경기도청 위치)
+              resolve(new naver.maps.LatLng(37.2752, 127.0096));
             }
           });
         });
@@ -34,12 +41,20 @@ export default function Map({ locations }) {
 
       const createPriceMarkers = async () => {
         try {
-          // 모든 주소를 병렬로 변환
           const positions = await Promise.all(
-            locations.map((location) => geocodeAddress(location.addr)),
+            locations.map(async (location) => {
+              try {
+                return await geocodeAddress(location.addr);
+              } catch (error) {
+                console.warn(`주소 변환 실패: ${location.addr}`, error);
+                return null;
+              }
+            }),
           );
 
           positions.forEach((position, index) => {
+            if (!position) return; // 유효한 위치만 마커 생성
+
             const location = locations[index];
             bounds.extend(position);
 

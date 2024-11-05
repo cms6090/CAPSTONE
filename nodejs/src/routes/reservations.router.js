@@ -39,6 +39,7 @@ reservationsRouter.post('/', async (req, res) => {
     const checkOut = new Date(checkOutDate);
     const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24)); // 숙박일수 계산
     const totalPrice = parseFloat(roomPrice) * nights; // 총 가격 계산
+    const pNum = parseInt(personNum);
 
     // Prisma를 사용하여 reservations 테이블에 데이터 삽입
     const reservation = await prisma.reservations.create({
@@ -47,7 +48,7 @@ reservationsRouter.post('/', async (req, res) => {
         room_id: roomId, // 객실 ID
         check_in_date: checkIn, // 체크인 날짜
         check_out_date: checkOut, // 체크아웃 날짜
-        person_num: personNum, // 인원 수
+        person_num: pNum, // 인원 수
         total_price: totalPrice, // 총 가격
         status: 'confirmed', // 예약 상태 (기본값: confirmed)
         username: userName,

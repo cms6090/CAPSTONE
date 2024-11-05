@@ -14,7 +14,7 @@ import ProfileSetting from './pages/Users/ProfileSetting';
 import Accommodations from './pages/Default/Accommodations';
 import Accommodation from './pages/Default/Accommodation';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Reserve from './pages/Reserve';
+import Reserve from './pages/Users/Reserve';
 import AdminUsers from './pages/Admin/AdminUsers';
 import AdminLodgings from './pages/Admin/AdminLodgings';
 import AdminReserves from './pages/Admin/AdminReserves';
@@ -28,29 +28,33 @@ function App() {
   return (
     <SearchProvider>
       <Router>
-        <Header /> {/* 모든 페이지에 Header가 표시됩니다 */}
-        <Routes>
-          <Route path="/" element={<Main />} /> {/* 메인 페이지 */}
-          <Route path="/login" element={<Login />} /> {/* 로그인 페이지 */}
-          <Route path="/signup" element={<Signup />} /> {/*회원가입 페이지 */}
-          <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/}
-          <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
-          <Route path="/accommodations" element={<Accommodations />} />
-          <Route path="/accommodations/:id" element={<Accommodation />} />
-          <Route path="/profile/reservations" element={<ProfileReserve />} />
-          <Route path="/profile/info" element={<ProfileInfo />} />
-          <Route path="/profile/setting" element={<ProfileSetting />} />
-          <Route path="/reserve" element={<Reserve />} />
-          <Route path="/review" element={<Review />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/lodgings" element={<AdminLodgings />} />
-          <Route path="/admin/rooms" element={<AdminRooms />} />
-          <Route path="/admin/reservations" element={<AdminReserves />} />
-          <Route path="/admin/reviews" element={<AdminReviews />} />
-          <Route path="/admin/statistics" element={<AdminStatics />} />
-          {/* 필요한 다른 라우트 추가 */}
-        </Routes>
-        <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}
+        <div className="app-container">
+          <Header /> {/* 모든 페이지에 Header가 표시됩니다 */}
+          <div className="content">
+            <Routes>
+              <Route path="/" element={<Main />} /> {/* 메인 페이지 */}
+              <Route path="/login" element={<Login />} /> {/* 로그인 페이지 */}
+              <Route path="/signup" element={<Signup />} /> {/*회원가입 페이지 */}
+              <Route path="/notices" element={<Notice />} /> {/* 안내 페이지*/}
+              <Route path="/faq" element={<FAQ />} /> {/* 자주묻는질문 페이지*/}
+              <Route path="/accommodations" element={<Accommodations />} />
+              <Route path="/accommodations/:id" element={<Accommodation />} />
+              <Route path="/profile/reservations" element={<ProfileReserve />} />
+              <Route path="/profile/info" element={<ProfileInfo />} />
+              <Route path="/profile/setting" element={<ProfileSetting />} />
+              <Route path="/reserve" element={<Reserve />} />
+              <Route path="/review" element={<Review />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/lodgings" element={<AdminLodgings />} />
+              <Route path="/admin/rooms" element={<AdminRooms />} />
+              <Route path="/admin/reservations" element={<AdminReserves />} />
+              <Route path="/admin/reviews" element={<AdminReviews />} />
+              <Route path="/admin/statistics" element={<AdminStatics />} />
+              {/* 필요한 다른 라우트 추가 */}
+            </Routes>
+          </div>
+          <Footer /> {/* 모든 페이지에 Footer가 표시됩니다 */}
+        </div>
       </Router>
     </SearchProvider>
   );

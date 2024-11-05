@@ -6,6 +6,12 @@
     background-color: #f8f9fa; /* 상단 배경색 */
   }
 
+  @media (min-width: 1920px) {
+    .footer {
+      padding: 0% 25% 3%; /* 1% 30%로 padding 변경 */
+    }
+  }
+
   .footer-content {
     display: grid;
     justify-content: space-between;

@@ -3,13 +3,28 @@
 
 /* 모든 요소에 기본 폰트 적용 */
 * {
-    font-family: 'pretendard-bold', 'pretendard-regular', 'pretendard-light', Arial, sans-serif;  /* 기본 폰트 설정 */
-    margin: 0; /* 기본 여백 제거 */
-    padding: 0; /* 기본 패딩 제거 */
-    box-sizing: border-box; /* 박스 모델 설정 */
+  font-family: 'pretendard-bold', 'pretendard-regular', 'pretendard-light', Arial, sans-serif; /* 기본 폰트 설정 */
+  margin: 0; /* 기본 여백 제거 */
+  padding: 0; /* 기본 패딩 제거 */
+  box-sizing: border-box; /* 박스 모델 설정 */
 }
 
 /* 필요에 따라 추가적인 스타일을 여기에 작성 */
 Header {
-    margin-bottom: 0;
+  margin-bottom: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 화면 전체 높이로 설정 */
+}
+
+.content {
+  flex-grow: 1; /* 여유 공간을 차지하게 설정 */
+  padding-bottom: 1em; /* footer와의 간격 확보 */
+}
+
+.footer {
+  margin-top: auto; /* footer를 항상 페이지 끝에 배치 */
 }
