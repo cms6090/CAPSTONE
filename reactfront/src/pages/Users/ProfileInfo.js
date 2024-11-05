@@ -14,6 +14,8 @@ export default function ProfileInfo() {
   const [email, setEmail] = useState('');
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const storedEmail = sessionStorage.getItem('userEmail');
     if (storedEmail) {
       const fetchUserInfo = async () => {

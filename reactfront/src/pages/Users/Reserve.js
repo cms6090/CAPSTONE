@@ -57,6 +57,10 @@ export default function Reserve() {
     fetchUserInfo();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // 숙박일수와 총 가격 계산
   useEffect(() => {
     if (checkIn && checkOut && room) {

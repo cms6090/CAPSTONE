@@ -24,6 +24,10 @@ function Signup() {
     general: '',
   });
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // 일 수 계산
   const getDaysInMonth = (year, month) => {
     return dayjs(`${year}-${month}`).daysInMonth();

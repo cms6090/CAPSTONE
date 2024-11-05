@@ -11,7 +11,7 @@ export default function ReviewList({ reviews = [] }) {
   const [expandedComments, setExpandedComments] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
 
-  const reviewsPerPage = 10;
+  const reviewsPerPage = 5;
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
 
   // 현재 페이지에 보여줄 리뷰 슬라이스
