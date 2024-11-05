@@ -74,94 +74,102 @@ export default function TagCard() {
         ))}
       </div>
 
-      {/* 숙소 카드 슬라이드 컨테이너 */}
-      <div className="accomo-card-container">
-        <Swiper
-          onBeforeInit={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-          slidesPerView={1}
-          breakpoints={{
-            400: { slidesPerView: 2 },
-            600: { slidesPerView: 3 },
-            800: { slidesPerView: 4 },
-            1000: { slidesPerView: 4 },
-            1200: { slidesPerView: 4 },
-            1600: { slidesPerView: 4 },
-            1920: { slidesPerView: 4 },
-          }}
-        >
-          {/* 선택된 태그에 따른 숙소 표시 */}
-          {accommodations.slice(0, 10).map((data) => (
-            <SwiperSlide key={data.lodging_id}>
-              <div className="accommo-card-wrap" onClick={() => goToAccommo(data.lodging_id)}>
-                <img
-                  src={data.main_image || 'https://via.placeholder.com/300'}
-                  alt={data.name}
-                  className="accommo-image"
-                />
-                <div className="accommo-info">
-                  <div className="accommo-part">{data.part}</div>
-                  <div className="accommo-title">{data.name}</div>
-                  <div className="accommo-addr">
-                    {data.area} {data.sigungu}
-                  </div>
-                  <div className="accommo-price">
-                    {data.rating && data.rating !== '0' ? (
-                      <div
-                        style={{
-                          display: 'inline-block',
-                          backgroundColor: 'rgb(255,173,10)',
-                          padding: '1px 4px',
-                          borderRadius: '4px',
-                          color: 'black',
-                          fontSize: '0.7em',
-                        }}
-                      >
-                        ★ {parseFloat(data.rating).toFixed(1)}
+      {accommodations.length === 0 ? (
+        <div style={{ color: 'red', fontSize: '1em', textAlign: 'center', marginTop: '20px' }}>
+          해당 키워드의 데이터가 없습니다
+        </div>
+      ) : (
+        <>
+          {/* 숙소 카드 슬라이드 컨테이너 */}
+          <div className="accomo-card-container">
+            <Swiper
+              onBeforeInit={(swiper) => {
+                swiperRef.current = swiper;
+              }}
+              slidesPerView={1}
+              breakpoints={{
+                400: { slidesPerView: 2 },
+                600: { slidesPerView: 3 },
+                800: { slidesPerView: 4 },
+                1000: { slidesPerView: 4 },
+                1200: { slidesPerView: 4 },
+                1600: { slidesPerView: 4 },
+                1920: { slidesPerView: 4 },
+              }}
+            >
+              {/* 선택된 태그에 따른 숙소 표시 */}
+              {accommodations.slice(0, 10).map((data) => (
+                <SwiperSlide key={data.lodging_id}>
+                  <div className="accommo-card-wrap" onClick={() => goToAccommo(data.lodging_id)}>
+                    <img
+                      src={data.main_image || 'https://via.placeholder.com/300'}
+                      alt={data.name}
+                      className="accommo-image"
+                    />
+                    <div className="accommo-info">
+                      <div className="accommo-part">{data.part}</div>
+                      <div className="accommo-title">{data.name}</div>
+                      <div className="accommo-addr">
+                        {data.area} {data.sigungu}
                       </div>
-                    ) : (
-                      <div></div>
-                    )}
-                    {data.min_price_per_night ? (
-                      // 가격이 있을 경우 가격 표시, 없을 경우 '정보 없음' 표시
-                      <div>
-                        {parseInt(data.min_price_per_night).toLocaleString()}
-                        <span
-                          style={{
-                            fontSize: '0.8em',
-                            fontFamily: 'pretendard-light',
-                            marginLeft: '0.3em',
-                            color: 'gray',
-                          }}
-                        >
-                          원 ~
-                        </span>
+                      <div className="accommo-price">
+                        {data.rating && data.rating !== '0' ? (
+                          <div
+                            style={{
+                              display: 'inline-block',
+                              backgroundColor: 'rgb(255,173,10)',
+                              padding: '1px 4px',
+                              borderRadius: '4px',
+                              color: 'black',
+                              fontSize: '0.7em',
+                            }}
+                          >
+                            ★ {parseFloat(data.rating).toFixed(1)}
+                          </div>
+                        ) : (
+                          <div></div>
+                        )}
+                        {data.min_price_per_night ? (
+                          // 가격이 있을 경우 가격 표시, 없을 경우 '정보 없음' 표시
+                          <div>
+                            {parseInt(data.min_price_per_night).toLocaleString()}
+                            <span
+                              style={{
+                                fontSize: '0.8em',
+                                fontFamily: 'pretendard-light',
+                                marginLeft: '0.3em',
+                                color: 'gray',
+                              }}
+                            >
+                              원 ~
+                            </span>
+                          </div>
+                        ) : (
+                          '정보 없음'
+                        )}
                       </div>
-                    ) : (
-                      '정보 없음'
-                    )}
+                    </div>
                   </div>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
 
-      {/* 슬라이드 내비게이션 버튼 */}
-      <img
-        src={arrowLeft}
-        alt="Previous"
-        className="accomo-prev-btn"
-        onClick={() => handleSlideChange(-1)}
-      />
-      <img
-        src={arrowRight}
-        alt="Next"
-        className="accomo-next-btn"
-        onClick={() => handleSlideChange(1)}
-      />
+          {/* 슬라이드 내비게이션 버튼 */}
+          <img
+            src={arrowLeft}
+            alt="Previous"
+            className="accomo-prev-btn"
+            onClick={() => handleSlideChange(-1)}
+          />
+          <img
+            src={arrowRight}
+            alt="Next"
+            className="accomo-next-btn"
+            onClick={() => handleSlideChange(1)}
+          />
+        </>
+      )}
     </div>
   );
 }
