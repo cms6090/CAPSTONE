@@ -11,6 +11,10 @@ export default function ProfileReserve() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // 예약 데이터 가져오기
   const fetchReservations = useCallback(async () => {
     const token = sessionStorage.getItem('accessToken');

@@ -21,7 +21,7 @@ export default function TagCard() {
     const fetchAccommodations = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/accommodations/tag?tag=${selectedTag}`,
+          `http://localhost:3000/api/accommodations/tag?tag=${selectedTag}&personal=${numPeople}`,
         );
         if (!response.ok) {
           throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
@@ -34,10 +34,10 @@ export default function TagCard() {
     };
 
     fetchAccommodations();
-  }, [selectedTag]); // selectedTag가 변경될 때마다 데이터 다시 가져오기
+  }, [selectedTag, numPeople]); // selectedTag가 변경될 때마다 데이터 다시 가져오기
 
   // 태그 목록 정의
-  const tags = ['가성비', '직원 만족', '청결', '가족 여행', '위치', '풍경'];
+  const tags = ['가성비', '서비스', '청결', '가족 여행', '위치', '풍경', '연인'];
 
   // 숙소 상세 페이지로 이동하는 함수
   const goToAccommo = (accommoId) => {
@@ -107,8 +107,25 @@ export default function TagCard() {
                     {data.area} {data.sigungu}
                   </div>
                   <div className="accommo-price">
+                    {data.rating && data.rating !== '0' ? (
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          backgroundColor: 'rgb(255,173,10)',
+                          padding: '1px 4px',
+                          borderRadius: '4px',
+                          color: 'black',
+                          fontSize: '0.7em',
+                        }}
+                      >
+                        ★ {parseFloat(data.rating).toFixed(1)}
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
                     {data.min_price_per_night ? (
-                      <>
+                      // 가격이 있을 경우 가격 표시, 없을 경우 '정보 없음' 표시
+                      <div>
                         {parseInt(data.min_price_per_night).toLocaleString()}
                         <span
                           style={{
@@ -120,7 +137,7 @@ export default function TagCard() {
                         >
                           원 ~
                         </span>
-                      </>
+                      </div>
                     ) : (
                       '정보 없음'
                     )}

@@ -5,6 +5,7 @@ import AccommoCard from '../../components/AccommoCard';
 import MainBottom from '../../components/MainBottom';
 import SearchSection from '../../components/SearchSection';
 import TagCard from '../../components/TagCard';
+import AgeCard from '../../components/AgeCard';
 
 function Main() {
   return (
@@ -19,21 +20,27 @@ function Main() {
       </div>
       <div className="contents">
         <div className="content">
-          <div className="main-content">국내 인기 여행지</div>
+          <div className="main-content">국내 여행지</div>
           <div className="card-container">
             <RegionCard />
           </div>
         </div>
         <div className="content">
-          <div className="main-content">국내 추천 숙소</div>
+          <div className="main-content">국내 숙소</div>
           <div className="card-container">
             <AccommoCard />
           </div>
         </div>
         <div className="content">
-          <div className="main-content">태그 숙소</div>
+          <div className="main-content">추천 키워드</div>
           <div className="card-container">
             <TagCard />
+          </div>
+        </div>
+        <div className="content">
+          <div className="main-content">연령대별 인기 숙소</div>
+          <div className="card-container">
+            <AgeCard />
           </div>
         </div>
         <div>

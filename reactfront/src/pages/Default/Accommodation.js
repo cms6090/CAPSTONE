@@ -24,6 +24,10 @@ export default function Accommodation() {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const fetchAccommodationDetails = async () => {
       try {
         const queryParams = new URLSearchParams(window.location.search);
