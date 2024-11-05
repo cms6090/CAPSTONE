@@ -22,6 +22,7 @@ import AdminRooms from './pages/Admin/AdminRooms';
 import Review from './pages/Users/Review';
 import { SearchProvider } from './components/SearchContext';
 import AdminReviews from './pages/Admin/AdminReviews';
+import AdminStatics from './pages/Admin/AdminStatics'
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
               <Route path="/admin/rooms" element={<AdminRooms />} />
               <Route path="/admin/reservations" element={<AdminReserves />} />
               <Route path="/admin/reviews" element={<AdminReviews />} />
+              <Route path="/admin/statistics" element={<AdminStatics />} />
               {/* 필요한 다른 라우트 추가 */}
             </Routes>
           </div>
