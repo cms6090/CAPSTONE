@@ -87,7 +87,7 @@ export default function SearchSection() {
     const encodedKeyword = keyword ? encodeURIComponent(keyword) : ''; // 검색어 인코딩
     const checkIn = startDate ? startDate.toISOString().split('T')[0] : ''; // 시작 날짜, 없으면 빈 값
     const checkOut = endDate ? endDate.toISOString().split('T')[0] : ''; // 종료 날짜, 없으면 빈 값
-    const personal = numPeople || 1; // 인원 수가 없으면 기본값 1
+    const personal = numPeople || 2; // 인원 수가 없으면 기본값 1
 
     // URL 생성
     const searchUrl = `/accommodations?keyword=${encodedKeyword}&checkIn=${checkIn}&checkOut=${checkOut}&personal=${personal}`;
