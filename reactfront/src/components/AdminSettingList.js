@@ -34,6 +34,12 @@ const buttons = [
     path: '/admin/reviews',
     icon: <span className="material-symbols-outlined">reviews</span>,
   },
+  {
+    key: 'seven',
+    name: '통계',
+    path: '/admin/statistics',
+    icon: <span className="material-symbols-outlined">bar_chart</span>, // 차트 아이콘 사용
+  },
 ];
 
 // AdminSettingList 컴포넌트 - 사이드바 메뉴를 렌더링함

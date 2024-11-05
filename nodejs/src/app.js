@@ -10,6 +10,7 @@ import errorMiddleware from './middlewares/error.middleware.js';
 import reservationsRouter from './routes/reservations.router.js';
 import reviewsRouter from './routes/review.router.js';
 import compression from 'compression';
+import staticsRouter from './routes/statics.router.js';
 
 // ES Module에서 __dirname 대체 정의
 const __filename = fileURLToPath(import.meta.url);
@@ -45,6 +46,7 @@ app.use('/api/accommodations', accommodationsRouter); // accommodationsRouter는
 app.use('/api/admin', adminRouter); // adminRouter는 /api/admin 경로로 접근
 app.use('/api/reservations', reservationsRouter); // reservationsRouter는 /api/reservations 경로로 접근
 app.use('/api/reviews', reviewsRouter); // reviewsRouter는 /api/reviews 경로로 접근
+app.use('/api/statistics', staticsRouter);
 
 // 에러 처리 미들웨어 설정
 app.use(errorMiddleware);
