@@ -192,16 +192,12 @@ export default function Review() {
               <div style={{ fontSize: '1.3em' }}>{reservation.rooms.lodgings.name}</div>
               <div style={{ fontSize: '1em' }}>{reservation.rooms.room_name}</div>
               <div className="review-lodging-schedule">
-                <div className="review-lodging-schedule-header">
-                  <div>체크인</div>
-                  <div>체크아웃</div>
-                </div>
-                <div style={{ marginLeft: '1em' }}>
-                  <div>{new Date(reservation.check_in_date).toLocaleDateString()} 14:00</div>
-                  <div>{new Date(reservation.check_out_date).toLocaleDateString()} 10:00</div>
-                </div>{' '}
-              </div>{' '}
-            </div>{' '}
+                <div className="review-lodging-schedule-header">체크인</div>
+                <div className="review-lodging-schedule-content">{new Date(reservation.check_in_date).toLocaleDateString()} 14:00</div>
+                <div className="review-lodging-schedule-header">체크아웃</div>
+                <div className="review-lodging-schedule-content">{new Date(reservation.check_out_date).toLocaleDateString()} 10:00</div>
+              </div>
+            </div>
           </div>
         )}
         <div className="rating-container">
