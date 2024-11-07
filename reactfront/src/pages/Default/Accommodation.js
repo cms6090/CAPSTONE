@@ -20,7 +20,7 @@ export default function Accommodation() {
   const [accommodation, setAccommodation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 추가
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
