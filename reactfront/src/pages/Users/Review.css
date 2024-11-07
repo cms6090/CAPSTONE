@@ -69,16 +69,11 @@
   overflow: hidden;
 }
 
-.review-lodging-schedule {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-}
-
 .review-lodging-schedule-header {
   font-family: pretendard;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.6);
-  border-right: 1px solid lightgray;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.8em;
 }
 
 .image-preview-container {
@@ -114,4 +109,9 @@
   color: rgba(0, 0, 0, 0.6);
   background-color: transparent;
   border: none;
+}
+
+.review-lodging-schedule-content {
+  font-size: 0.9em;
+  color: rgba(0, 0, 0, 0.7);
 }
