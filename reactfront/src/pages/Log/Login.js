@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
 import logo from '../../assets/logo.svg';
 
@@ -6,6 +6,10 @@ export default function Login() {
   const [email, setEmail] = useState(''); // 이메일 상태 관리
   const [password, setPassword] = useState(''); // 비밀번호 상태 관리
   const [errors, setErrors] = useState({ email: '', password: '', general: '' }); // 에러 메시지 상태 관리
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // 입력값이 변경될 때 상태 업데이트 및 에러 초기화
   const handleChange = (setter) => (e) => {

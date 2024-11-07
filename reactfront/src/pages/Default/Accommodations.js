@@ -17,10 +17,14 @@ export default function Accommodations() {
   const [isMapModalOpen, setMapModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [value, setValue] = useState([0, 500000]);
-  const [selectedTags, setSelectedTags] = useState([]); // 여러 태그를 저장할 배열 상태
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleChange = useCallback((event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) return;
@@ -124,23 +128,17 @@ export default function Accommodations() {
   }, [isMapModalOpen]);
 
   const formatMinFee = useCallback((min_price_per_night) => {
-    const formatted = min_price_per_night
-      ? Number(min_price_per_night).toLocaleString() + '원 ~'
-      : '정보없음';
-    return formatted;
+    return min_price_per_night ? Number(min_price_per_night).toLocaleString() + '원 ~' : '정보없음';
   }, []);
 
   const formatFee = useCallback((price, isMax) => {
-    const formatted =
-      isMax && price === 500000
-        ? '500,000원 이상'
-        : price
-          ? Number(price).toLocaleString() + '원'
-          : '0원';
-    return formatted;
+    return isMax && price === 500000
+      ? '500,000원 이상'
+      : price
+        ? Number(price).toLocaleString() + '원'
+        : '0원';
   }, []);
 
-  // 태그 버튼 클릭 핸들러 함수
   const handleTagClick = useCallback((tag) => {
     setSelectedTags(
       (prevTags) =>
@@ -227,37 +225,40 @@ export default function Accommodations() {
               </div>
               <div className="filter-tag">
                 <div className="tag-button-group">
-                  <div className="tag-button-row">
-                    {['가성비', '청결도', '위치', '풍경'].map((tag) => (
-                      <Button3
-                        key={tag}
-                        onClick={() => handleTagClick(tag)}
-                        style={{
-                          backgroundColor: selectedTags.includes(tag) ? '#C9DFF2' : 'transparent',
-                          color: selectedTags.includes(tag) ? '#097ce6' : 'black',
-                          padding: '0.5em 1.5em',
-                          borderColor: selectedTags.includes(tag) ? '#097ce6' : 'lightgray',
-                        }}
-                      >
-                        {tag}
-                      </Button3>
-                    ))}
-                  </div>
-                  <div className="tag-button-row">
-                    {['직원 만족', '가족 여행', '연인'].map((tag) => (
-                      <Button3
-                        key={tag}
-                        onClick={() => handleTagClick(tag)}
-                        style={{
-                          backgroundColor: selectedTags.includes(tag) ? '#C9DFF2' : 'transparent',
-                          color: selectedTags.includes(tag) ? '#097ce6' : 'black',
-                          padding: '0.5em 1.5em',
-                          borderColor: selectedTags.includes(tag) ? '#097ce6' : 'lightgray',
-                        }}
-                      >
-                        {tag}
-                      </Button3>
-                    ))}
+                  <div style={{ margin: '1em 0 0.5em 0', fontSize: '1.1em' }}>추천 키워드</div>
+                  <div>
+                    <div className="tag-button-row">
+                      {['가성비', '청결', '위치', '서비스'].map((tag) => (
+                        <Button3
+                          key={tag}
+                          onClick={() => handleTagClick(tag)}
+                          style={{
+                            backgroundColor: selectedTags.includes(tag) ? '#C9DFF2' : 'transparent',
+                            color: selectedTags.includes(tag) ? '#097ce6' : 'black',
+                            padding: '0.5em 1.5em',
+                            borderColor: selectedTags.includes(tag) ? '#097ce6' : 'lightgray',
+                          }}
+                        >
+                          {tag}
+                        </Button3>
+                      ))}
+                    </div>
+                    <div className="tag-button-row">
+                      {['가족 여행', '연인', '풍경'].map((tag) => (
+                        <Button3
+                          key={tag}
+                          onClick={() => handleTagClick(tag)}
+                          style={{
+                            backgroundColor: selectedTags.includes(tag) ? '#C9DFF2' : 'transparent',
+                            color: selectedTags.includes(tag) ? '#097ce6' : 'black',
+                            padding: '0.5em 1.5em',
+                            borderColor: selectedTags.includes(tag) ? '#097ce6' : 'lightgray',
+                          }}
+                        >
+                          {tag}
+                        </Button3>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -326,18 +327,20 @@ export default function Accommodations() {
                     <p
                       style={{ margin: '5px 0', color: '#666' }}
                     >{`${item.area} ${item.sigungu}`}</p>
-                    <div
-                      style={{
-                        display: 'inline-block',
-                        backgroundColor: 'rgb(255,173,10)',
-                        padding: '2px 4px',
-                        borderRadius: '4px',
-                        color: 'black',
-                        fontSize: '0.8em',
-                      }}
-                    >
-                      ★ {item.rating}
-                    </div>
+                    {item.rating && item.rating !== '0' && (
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          backgroundColor: 'rgb(255,173,10)',
+                          padding: '2px 4px',
+                          borderRadius: '4px',
+                          color: 'black',
+                          fontSize: '0.8em',
+                        }}
+                      >
+                        ★ {item.rating}
+                      </div>
+                    )}
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <p style={{ margin: '5px 0', color: '#666' }}>

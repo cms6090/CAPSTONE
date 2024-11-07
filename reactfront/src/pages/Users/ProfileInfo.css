@@ -1,11 +1,17 @@
 .profilemain {
   display: grid;
-  padding: 3% 25%;
+  padding: 3% 10%;
   grid-template-columns: 1fr 4fr;
   gap: 5%;
   background-color: #f8f9fa; /* 상단 배경색 */
   justify-content: space-between;
   box-sizing: border-box; /* 모든 요소에 대해 패딩과 테두리를 포함 */
+}
+
+@media (min-width: 1920px) {
+  .profilemain {
+    padding: 3% 25%;
+  }
 }
 
 .profile-setting-container {

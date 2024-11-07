@@ -20,20 +20,19 @@ export default function AccommoCard() {
   useEffect(() => {
     const fetchAccommodations = async () => {
       try {
-        // 숙소 데이터를 API에서 가져옴
-        const response = await fetch('http://localhost:3000/api/accommodations/part');
-        if (!response.ok) {
-          throw new Error('숙소 정보를 가져오는 데 실패했습니다.');
-        }
+        const response = await fetch(
+          `http://localhost:3000/api/accommodations/part?personal=${numPeople}`,
+        );
+        if (!response.ok) throw new Error('Failed to fetch accommodations data.');
+
         const data = await response.json();
-        setAccommodations(data); // 가져온 데이터를 상태에 저장
+        setAccommodations(data);
       } catch (error) {
-        console.error('Error fetching accommodations:', error); // 에러 발생 시 콘솔에 출력
+        console.error('Error fetching accommodations:', error);
       }
     };
-
-    fetchAccommodations(); // 함수 호출
-  }, []);
+    fetchAccommodations();
+  }, [numPeople]);
 
   // 숙소 데이터를 카테고리별로 필터링한 객체
   const categories = {
@@ -120,9 +119,25 @@ export default function AccommoCard() {
                     {data.area} {data.sigungu}
                   </div>
                   <div className="accommo-price">
+                    {data.rating && data.rating !== '0' ? (
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          backgroundColor: 'rgb(255,173,10)',
+                          padding: '1px 4px',
+                          borderRadius: '4px',
+                          color: 'black',
+                          fontSize: '0.7em',
+                        }}
+                      >
+                        ★ {parseFloat(data.rating).toFixed(1)}
+                      </div>
+                    ) : (
+                      <div></div>
+                    )}
                     {data.min_price_per_night ? (
                       // 가격이 있을 경우 가격 표시, 없을 경우 '정보 없음' 표시
-                      <>
+                      <div>
                         {parseInt(data.min_price_per_night).toLocaleString()}
                         <span
                           style={{
@@ -134,7 +149,7 @@ export default function AccommoCard() {
                         >
                           원 ~
                         </span>
-                      </>
+                      </div>
                     ) : (
                       '정보 없음'
                     )}

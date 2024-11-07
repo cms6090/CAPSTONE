@@ -45,7 +45,7 @@
 .accommo-addr {
   color: #919090;
   font-weight: 300;
-  height: 3em;
+  height: 2.5em;
   font-size: 0.8em;
 }
 
@@ -64,11 +64,11 @@
 }
 
 .accomo-prev-btn {
-  left: -0.5% /* 왼쪽 버튼 위치 */
+  left: -0.8em; /* 왼쪽 버튼 위치 */
 }
 
 .accomo-next-btn {
-  right: -0.5%; /* 오른쪽 버튼 위치 */
+  right: -0.8em; /* 오른쪽 버튼 위치 */
 }
 
 .accommo-title {
@@ -77,4 +77,9 @@
 
 .accommo-price {
   font-size: 1em;
+}
+
+.accommo-price {
+  display: flex;
+  justify-content: space-between;
 }
