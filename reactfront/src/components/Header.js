@@ -60,22 +60,21 @@ function Header() {
     navigate(path);
   };
 
-  const renderAdminMenuItems = () => (
+  const renderAdminMenuItems = () =>
     [
+      { key: 'statistics', label: '통계', path: '/admin/statistics' },
       { key: 'users', label: '사용자 관리', path: '/admin/users' },
       { key: 'accommodations', label: '숙소 관리', path: '/admin/lodgings' },
       { key: 'rooms', label: '객실 관리', path: '/admin/rooms' },
       { key: 'reservations', label: '예약 관리', path: '/admin/reservations' },
       { key: 'reviews', label: '리뷰 관리', path: '/admin/reviews' },
-      { key: 'statistics', label: '통계', path: '/admin/statistics' }, // 통계 페이지 항목 추가
     ].map((item) => (
       <MenuItem key={item.key} onClick={() => handleNavigation(item.path)}>
         <ListItemText primary={item.label} />
       </MenuItem>
-    ))
-  );
+    ));
 
-  const renderUserMenuItems = () => (
+  const renderUserMenuItems = () =>
     [
       { key: 'profile-reservations', label: '예약 내역', path: '/profile/reservations' },
       { key: 'profile-info', label: '사용자 정보', path: '/profile/info' },
@@ -84,8 +83,7 @@ function Header() {
       <MenuItem key={item.key} onClick={() => handleNavigation(item.path)}>
         <ListItemText primary={item.label} />
       </MenuItem>
-    ))
-  );
+    ));
 
   return (
     <header className="header">
@@ -122,10 +120,7 @@ function Header() {
                 },
               }}
             >
-              {userPermission === '관리자'
-                ? renderAdminMenuItems()
-                : renderUserMenuItems()
-              }
+              {userPermission === '관리자' ? renderAdminMenuItems() : renderUserMenuItems()}
               <Divider />
               <MenuItem
                 key="logout"
