@@ -62,7 +62,7 @@ function Header() {
 
   const renderAdminMenuItems = () =>
     [
-      { key: 'statistics', label: '통계', path: '/admin/statistics' },
+      { key: 'statistics', label: '대시보드', path: '/admin/statistics' },
       { key: 'users', label: '사용자 관리', path: '/admin/users' },
       { key: 'accommodations', label: '숙소 관리', path: '/admin/lodgings' },
       { key: 'rooms', label: '객실 관리', path: '/admin/rooms' },
@@ -78,7 +78,7 @@ function Header() {
     [
       { key: 'profile-reservations', label: '예약 내역', path: '/profile/reservations' },
       { key: 'profile-info', label: '사용자 정보', path: '/profile/info' },
-      { key: 'profile-setting', label: '설정', path: '/profile/setting' },
+      { key: 'profile-setting', label: '탈퇴', path: '/profile/setting' },
     ].map((item) => (
       <MenuItem key={item.key} onClick={() => handleNavigation(item.path)}>
         <ListItemText primary={item.label} />

@@ -38,5 +38,13 @@
 }
 
 .highlight .setting-name {
-  color: #4E8AD9; /* 강조된 텍스트 색상 */
+  color: #4e8ad9; /* 강조된 텍스트 색상 */
+}
+
+.setting-container.red {
+  color: rgba(255,0,0,0.5); /* 텍스트 색상 빨간색 */
+}
+
+.setting-container.red .setting-arrow {
+  filter: invert(27%) sepia(94%) saturate(749%) hue-rotate(350deg) brightness(91%) contrast(92%);
 }
