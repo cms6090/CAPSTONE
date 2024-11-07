@@ -60,7 +60,7 @@ UsersRouter.post('/sign/signup', async (req, res, next) => {
 });
 
 /*---------------------------------------------
-    [로그인] Updated for Permission
+    [로그인] 
 ---------------------------------------------*/
 UsersRouter.post('/sign/signin', async (req, res, next) => {
   try {
@@ -228,6 +228,37 @@ UsersRouter.put('/modify', async (req, res, next) => {
         birth: updatedUser.birth,
       },
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/*---------------------------------------------     
+    [사용자 탈퇴] 
+---------------------------------------------*/
+UsersRouter.delete('/delete', async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized' });
+    }
+
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY);
+
+    const user = await prisma.users.findUnique({
+      where: { user_id: decoded.id },
+    });
+
+    if (!user) {
+      return res.status(StatusCodes.NOT_FOUND).json({ message: 'User not found' });
+    }
+
+    await prisma.users.delete({
+      where: { user_id: decoded.id },
+    });
+
+    res.clearCookie('refreshToken');
+    return res.status(StatusCodes.OK).json({ message: '회원 탈퇴 완료' });
   } catch (error) {
     next(error);
   }
