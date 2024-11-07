@@ -55,6 +55,7 @@ staticsRouter.get('/reservations', async (req, res) => {
 });
 
 // 3. 사용자 연령대 및 성별 통계 + 요일별 예약 통계
+// 기존 코드의 일부를 가져와 수정합니다.
 staticsRouter.get('/demographics', async (req, res) => {
   try {
     const ageGroups = [
@@ -65,7 +66,6 @@ staticsRouter.get('/demographics', async (req, res) => {
       { min: 60, max: 100, label: '60-100' },
     ];
 
-    // Existing code for demographics data
     const demographicsData = await Promise.all(
       ageGroups.map(async ({ min, max, label }) => {
         const maleCount = await prisma.users.count({
@@ -92,17 +92,51 @@ staticsRouter.get('/demographics', async (req, res) => {
       }),
     );
 
+    // 날짜 계산 수정
     const today = new Date();
-    const twoMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 1, 1); 
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
 
-    const reservationsPerDayRaw = await prisma.$queryRaw`
+    // 이번 달의 시작과 끝
+    const startOfThisMonth = new Date(currentYear, currentMonth, 1);
+    const startOfNextMonth = new Date(currentYear, currentMonth + 1, 1);
+
+    // 저번 달의 시작과 끝
+    const startOfLastMonth = new Date(currentYear, currentMonth - 1, 1);
+    const startOfThisMonthCopy = new Date(currentYear, currentMonth, 1);
+
+    const reservationsThisMonthRaw = await prisma.$queryRaw`
       SELECT 
-        DAYOFWEEK(check_in_date) as dayOfWeek,
-        COUNT(*) as reservationCount
+        DAYOFWEEK(check_in_date) AS dayOfWeek,
+        COUNT(*) AS reservationCount
       FROM reservations
-      WHERE check_in_date >= ${twoMonthsAgo}
+      WHERE check_in_date >= ${startOfThisMonth} AND check_in_date < ${startOfNextMonth}
       GROUP BY dayOfWeek
     `;
+
+    const reservationsThisMonth = reservationsThisMonthRaw.map((item) => ({
+      dayOfWeek: Number(item.dayOfWeek),
+      reservationCount: Number(item.reservationCount),
+    }));
+
+    // reservationsLastMonth 변환
+    const reservationsLastMonthRaw = await prisma.$queryRaw`
+      SELECT 
+        DAYOFWEEK(check_in_date) AS dayOfWeek,
+        COUNT(*) AS reservationCount
+      FROM reservations
+      WHERE check_in_date >= ${startOfLastMonth} AND check_in_date < ${startOfThisMonthCopy}
+      GROUP BY dayOfWeek
+    `;
+
+    const reservationsLastMonth = reservationsLastMonthRaw.map((item) => ({
+      dayOfWeek: Number(item.dayOfWeek),
+      reservationCount: Number(item.reservationCount),
+    }));
+
+    // 디버깅 정보 출력
+    console.log('reservationsThisMonth:', reservationsThisMonth);
+    console.log('reservationsLastMonth:', reservationsLastMonth);
 
     const dayOfWeekMap = {
       1: '일',
@@ -114,25 +148,26 @@ staticsRouter.get('/demographics', async (req, res) => {
       7: '토',
     };
 
-    const daySortOrder = {
-      월: 1,
-      화: 2,
-      수: 3,
-      목: 4,
-      금: 5,
-      토: 6,
-      일: 7,
-    };
+    const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
 
-    const reservationsPerDay = reservationsPerDayRaw.map((item) => ({
-      dayOfWeek: Number(item.dayOfWeek),
-      dayName: dayOfWeekMap[Number(item.dayOfWeek)],
-      reservationCount: Number(item.reservationCount),
-    }));
+    // 두 달의 데이터를 결합하여 각 요일별 데이터 생성
+    const reservationsPerDayCombined = daysOfWeek.map((dayName, index) => {
+      const dayOfWeek = index + 2; // DAYOFWEEK는 일요일=1부터 시작
+      const thisMonthData = reservationsThisMonth.find(
+        (item) => item.dayOfWeek === dayOfWeek || (item.dayOfWeek === 1 && dayOfWeek === 8),
+      );
+      const lastMonthData = reservationsLastMonth.find(
+        (item) => item.dayOfWeek === dayOfWeek || (item.dayOfWeek === 1 && dayOfWeek === 8),
+      );
 
-    reservationsPerDay.sort((a, b) => daySortOrder[a.dayName] - daySortOrder[b.dayName]);
+      return {
+        dayName,
+        thisMonth: thisMonthData ? Number(thisMonthData.reservationCount) : 0,
+        lastMonth: lastMonthData ? Number(lastMonthData.reservationCount) : 0,
+      };
+    });
 
-    res.json({ demographicsData, reservationsPerDay });
+    res.json({ demographicsData, reservationsPerDayCombined });
   } catch (error) {
     console.error('Failed to fetch data:', error);
     res.status(500).json({ error: 'Failed to fetch data' });

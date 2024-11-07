@@ -4,7 +4,7 @@ import { Bar } from 'react-chartjs-2';
 
 export default function GenderAge() {
   const [userDemographics, setUserDemographics] = useState([]);
-  const [reservationsPerDay, setReservationsPerDay] = useState([]);
+  const [reservationsPerDayCombined, setReservationsPerDayCombined] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,7 +17,7 @@ export default function GenderAge() {
         const data = await demographicsResponse.json();
 
         setUserDemographics(data.demographicsData);
-        setReservationsPerDay(data.reservationsPerDay);
+        setReservationsPerDayCombined(data.reservationsPerDayCombined);
         console.log(data);
       } catch (error) {
         console.error('Failed to fetch statistics:', error);
@@ -37,6 +37,11 @@ export default function GenderAge() {
   if (error) {
     return <Typography color="error">{error}</Typography>;
   }
+
+  // 차트에 사용할 데이터 준비
+  const labels = reservationsPerDayCombined.map((item) => item.dayName);
+  const thisMonthData = reservationsPerDayCombined.map((item) => item.thisMonth);
+  const lastMonthData = reservationsPerDayCombined.map((item) => item.lastMonth);
 
   return (
     <div
@@ -83,12 +88,17 @@ export default function GenderAge() {
         <div style={{ marginTop: '2em' }}>최근 2달의 요일별 예약 횟수</div>
         <Bar
           data={{
-            labels: reservationsPerDay.map((item) => item.dayName),
+            labels: labels,
             datasets: [
               {
-                label: '예약 건수',
-                data: reservationsPerDay.map((item) => item.reservationCount),
+                label: '이번 달',
+                data: thisMonthData,
                 backgroundColor: 'rgba(75, 192, 192, 0.6)',
+              },
+              {
+                label: '저번 달',
+                data: lastMonthData,
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
               },
             ],
           }}

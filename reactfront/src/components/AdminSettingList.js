@@ -6,7 +6,7 @@ import './AdminSettingList.css'; // 새로운 CSS 파일 생성
 const buttons = [
   {
     key: 'one',
-    name: '통계',
+    name: '대시보드',
     path: '/admin/statistics',
     icon: <span className="material-symbols-outlined">bar_chart</span>, // 차트 아이콘 사용
   },
